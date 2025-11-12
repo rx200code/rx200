@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>load map</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<link rel="stylesheet" href="files/rx.css" type="text/css">
+<style type="text/css">
+</style>
+<script src="files/rx_v_7.js"></script>
+<script type="text/javascript">
+let div_map, map;
+window.onload = function(){
+	let center = [55, 83, 15.5];// lat, lon, zoom.
+	let width = 1800;
+	let height = 800;
+	
+	div_map = document.getElementById("map");
+	div_map.style.width = width+"px";
+	div_map.style.height = height+"px";
+	// Устанавливаем карту в div_map
+	
+	map = rx.map('map', center);
+};
+function test(){
+	//let elm_map = document.getElementById("map");
+	//elm_map.style.width = "2000px";
+	//elm_map.style.height = "2000px";
+	out("test");
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+</script>
+</head>
+<body>
+<div id="map"></div>
+<input type="button" value="тест" onClick="test()"><br>
+<span id="output"></span><br>
+</body>
+</html>
