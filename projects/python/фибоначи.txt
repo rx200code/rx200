@@ -1,0 +1,84 @@
+from timeit import timeit
+from decimal import *
+getcontext().prec = 200
+
+def fib(n):
+    a = n & 1
+    b = a ^ 1
+    n //= 2
+    while n > 0:
+        n -= 1
+        b += a
+        a += b
+    return a
+
+
+test = 700
+test_i = 1000
+
+
+print(f"Среднее время вычисления: "
+      f"{round(timeit('fib(test)', number=test_i, globals=globals()) / 10, 7)} с.")
+
+def fib3(n):
+    a = n & 1
+    b = a ^ 1
+    for i in range(n // 2):
+        b += a
+        a += b
+    return a
+
+print(f"Среднее время вычисления: "
+      f"{round(timeit('fib3(test)', number=test_i, globals=globals()) / 10, 7)} с.")
+
+def fib2(n):
+    f_1, f = 0, 1
+    for i in range(n - 1):
+        f_1, f = f, f_1 + f
+    return f
+
+
+print(f"Среднее время вычисления: "
+      f"{round(timeit('fib2(test)', number=test_i, globals=globals()) / 10, 7)} с.")
+
+a = Decimal(Decimal(1) + Decimal(Decimal(5) ** Decimal(.5))) / Decimal(2)
+b = Decimal(Decimal(1) - Decimal(Decimal(5) ** Decimal(.5))) / Decimal(2)
+c = Decimal(5) ** Decimal(.5)
+
+def fib4(n):
+    return round(((Decimal(a) ** Decimal(n)) - (Decimal(b) ** Decimal(n))) / c)
+
+print(f"Среднее время вычисления: "
+      f"{round(timeit('fib4(test)', number=test_i, globals=globals()) / 10, 7)} с.")
+
+
+test2 = 3
+print(fib(test2))
+print(fib2(test2))
+print(fib3(test2))
+print(fib4(test2))
+
+
+VKScript
+	var n = 10;
+	var a = n & 1;
+	var b = 0;
+	if(a == 0)b = 1;
+	n = n / 2;
+	n = n | 0;
+	while(n > 0){
+		n = n - 1;
+		b = b + a;
+		a = a + b;
+	};
+	return a;
+
+
+
+
+
+
+
+
+
+
