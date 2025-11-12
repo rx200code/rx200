@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- 
+Создатель © feb7e9c4d5539ae0f1496cdb2aaee27c
+-->
+<title>CMR</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+
+<style type="text/css">
+.col{
+	border: 2px solid black;
+}
+</style>
+
+<script type="text/javascript">
+// Гранулы
+// https://cmr.earthdata.nasa.gov/search/granules?collection_concept_id=C1214565628-NOAA_NCEI&bounding_box=82.512131,55.067535,82.894592,55.263681
+
+///####
+var url_cmr = 'https://cmr.earthdata.nasa.gov/search/collections';
+var id_format = 2;
+var method = 1;
+var page_size = 5;
+var page_num = 1;
+var keyword = 'fire';
+
+
+var bounding_box = '82.512131,55.067535,82.894592,55.263681';// Квадрат в котором искать коллекции.
+
+var formats = [// формат ответа.
+	["", "application/xml"],
+	[".html", "text/html"],
+	[".json", "application/json"],
+	[".xml", "application/xml"],
+	[".echo10", "application/echo10+xml"],
+	[".iso", "application/iso19115+xml"],
+	[".iso19115", "application/iso19115+xml"],
+	[".dif", "application/dif+xml"],
+	[".dif10", "application/dif10+xml"],
+	[".csv", "text/csv"],
+	[".atom", "application/atom+xml"],
+	[".opendata", "application/opendata+json"],// (only supported for collections)
+	[".kml", "application/vnd.google-earth.kml+xml"],
+	[".native", "application/metadata+xml"],// (Returns search results in their individual native formats)
+	[".umm-json", "application/vnd.nasa.cmr.legacy_umm_results+json"],// (only supported for collections) The UMM JSON format was originally used for an alpha version of UMM JSON search results. Currently it still returns data in that style to avoid breaking clients dependent on it. This will be changed in a future version to return the latest version of the UMM.
+	[".umm_json", "application/vnd.nasa.cmr.umm_results+json"],// (supported for collections, granules, variables and services) The UMM JSON extension returns concepts in the latest version of the UMM.
+	[".umm_json_vN_N_N", "application/vnd.nasa.cmr.umm_results+json; version=N.N.N (where _N can be repeat as many times as is necessary)."]
+];
+window.onload = function(){
+	document.getElementById("options").onchange = out_url;
+	out_url();
+}
+function by_default(){
+	document.getElementById("url_cmr").value = url_cmr;
+	document.getElementById("format").selectedIndex = id_format + 1;
+	document.getElementById("method").selectedIndex = method;
+	document.getElementById("page_size").value = page_size;
+	document.getElementById("page_num").value = page_num;
+	document.getElementById("keyword").value = keyword;
+	out_url();
+}
+function out_url(){
+	let url = document.getElementById("url_cmr").value+formats[document.getElementById("format").selectedIndex - 1][0];
+	if(document.getElementById("method").selectedIndex == 1){
+		let opt = "?";
+		if(document.getElementById("page_size").value != ""){
+			url += opt+'page_size='+document.getElementById("page_size").value;
+			opt = "&";
+		}
+		if(document.getElementById("page_num").value != ""){
+			url += opt+'page_num='+document.getElementById("page_num").value;
+			opt = "&";
+		}
+		if(document.getElementById("keyword").value != ""){
+			url += opt+'keyword='+document.getElementById("keyword").value;
+			opt = "&";
+		}
+		
+	}
+	document.getElementById("url_text").value = url;
+}
+function request(){
+	let url = document.getElementById("url_text").value;
+	cmr_request(url, formats[document.getElementById("format").selectedIndex - 1][1]);
+}
+function cmr_request(url, mime_type = 'text/plain'){
+	var httpRequest = false;
+	if(window.XMLHttpRequest){ // Mozilla, Safari, ...
+		httpRequest = new XMLHttpRequest();
+		//httpRequest.responseType = 'json';
+		if(httpRequest.overrideMimeType){
+			httpRequest.overrideMimeType(mime_type);
+		}
+	}else if(window.ActiveXObject){ // IE
+		try{
+			httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+		}catch(e){
+			try{
+				httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch(e){}
+		}
+	}
+	
+	if(!httpRequest){
+		alert('Не вышло :( Невозможно создать экземпляр класса XMLHTTP ');
+		return false;
+	}
+	httpRequest.onreadystatechange = function(){alertContents(httpRequest);};
+	httpRequest.open('GET', url, true);
+	
+	httpRequest.send(null);
+	
+}
+
+
+
+function test(n = 1){//JSON.stringify(
+	page_num = n;
+	//let url = 'https://firms.modaps.eosdis.nasa.gov/web-services/mapkey_status.php?MAP_KEY=feaa3223062496431512156c2cceda84';
+	//let url = 'https://cmr.earthdata.nasa.gov/search/collections'+formats[id_format][0]+'?bounding_box='+bounding_box+'&page_size='+page_size+'&page_num='+page_num;
+	let url = 'https://cmr.earthdata.nasa.gov/search/collections'+formats[id_format][0]+'?keyword=fire&bounding_box='+bounding_box+'&page_size='+page_size+'&page_num='+page_num;
+	
+	//'https://cmr.earthdata.nasa.gov/search/collections.json?bounding_box=82.512131,55.067535,82.894592,55.263681&page_size=20'
+	
+	document.getElementById("url_text").value = url;
+	
+	makeRequest(url, formats[id_format][1]);
+	//out("test");
+	//info("info");
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").innerHTML=text;
+}
+function makeRequest(url, mime_type = 'text/plain'){
+	var httpRequest = false;
+	if(window.XMLHttpRequest){ // Mozilla, Safari, ...
+		httpRequest = new XMLHttpRequest();
+		//httpRequest.responseType = 'json';
+		if(httpRequest.overrideMimeType){
+			httpRequest.overrideMimeType(mime_type);
+		}
+	}else if(window.ActiveXObject){ // IE
+		try{
+			httpRequest = new ActiveXObject("Msxml2.XMLHTTP");
+		}catch(e){
+			try{
+				httpRequest = new ActiveXObject("Microsoft.XMLHTTP");
+			} catch(e){}
+		}
+	}
+	
+	if(!httpRequest){
+		alert('Не вышло :( Невозможно создать экземпляр класса XMLHTTP ');
+		return false;
+	}
+	httpRequest.onreadystatechange = function(){alertContents(httpRequest);};
+	httpRequest.open('GET', url, true);
+	
+	httpRequest.send(null);
+	
+}
+function alertContents(httpRequest){
+	if(httpRequest.readyState == 4){
+		if(httpRequest.status == 200){
+			//out(httpRequest.responseText);
+			// для json
+			f_json_out(httpRequest);
+			
+			
+			info("Количество результатов: "+httpRequest.getResponseHeader('cmr-hits')+"<br><b>Все заголовки ответа:</b><br>"+httpRequest.getAllResponseHeaders());
+		}else{
+			alert('С запросом возникла проблема. '+httpRequest.status);
+			
+			let text = "";
+			for(let key in httpRequest)text += key+" = "+httpRequest[key]+"<br>";
+			out(text);
+			
+		}
+	}
+}
+function f_json_out(httpRequest){
+	let text = '';
+	let obj = JSON.parse(httpRequest.responseText);
+	// шапка
+	let hits = httpRequest.getResponseHeader('cmr-hits');
+	let start_n = page_size * page_num - (page_size - 1);
+	let all_n = obj.feed.entry.length;
+	let end_n = start_n + all_n - 1;
+	text += 'По запросу: '+obj.feed.id+'<br>Всего результатов: <b>'+hits+'</b>; отображено: <b>'+all_n+'</b>; Начиная с: <b>'+start_n+'</b>, по: <b>'+end_n+'</b>.<br>';
+	// Коллекции.
+	for(let i = 0; i < all_n; i++){
+		text += '<div class="col">';
+		text += '<b>'+(start_n + i)+'</b><br>';
+		text += obj.feed.entry[i].title+'<br><br>';
+		text += obj.feed.entry[i].summary;
+		
+		// ### 1 error ### Проблему перевода со спец символами решить потом.
+		//text += ' <a href="https://translate.google.ru/#view=home&op=translate&sl=en&tl=ru&text='+encodeURIComponent(obj.feed.entry[i].title)+'%0A%0A'+encodeURIComponent(obj.feed.entry[i].summary)+'" target="_blank">Перевести...</a>';
+		//text += ' <a href="https://translate.google.ru/#view=home&op=translate&sl=en&tl=ru&text='+fixedEncodeURIComponent(obj.feed.entry[i].title)+'%0A%0A'+fixedEncodeURIComponent(obj.feed.entry[i].summary)+'" target="_blank">Перевести...</a>';
+		text += ' <a href="https://translate.google.ru/#view=home&op=translate&sl=en&tl=ru&text='+obj.feed.entry[i].title+'%0A%0A'+obj.feed.entry[i].summary+'" target="_blank">Перевести...</a>';
+		text += ' <a href="https://cmr.earthdata.nasa.gov/search/granules?collection_concept_id='+obj.feed.entry[i].id+'&bounding_box=82.512131,55.067535,82.894592,55.263681" target="_blank">test</a>';
+		text += '</div>';
+	}
+	// листать страницы.
+	let max_page = (hits / page_size) | 0;
+	if(hits % page_size > 0)max_page++;
+	if(page_num > 1)text += '<a href="#" onclick="test(1);return false"><<</a> | <a href="#" onclick="test('+(page_num - 1)+');return false"><</a> | ';
+	text += '<input type="text" size="2" value="'+page_num+'" onkeydown="enter_page_num(event.key, this, '+(max_page)+')">';
+	if(page_num < max_page)text += '<a href="#" onclick="test('+(page_num + 1)+');return false">></a> | <a href="#" onclick="test('+max_page+');return false">>></a> | ';
+	out(text);
+}
+function enter_page_num(e_key, elm, max){
+	if(e_key == "Enter"){
+		let n = elm.value * 1;
+		if(n < 1)n = 1;
+		if(n > max)n = max;
+		test(n);
+	}
+}
+// ### 1 error ### Проблему перевода со спец символами решить потом.
+function fixedEncodeURIComponent_2(str){
+	str = str.replace("%","‰");
+	return str.replace(/[\/,!'()*]/g, function(c) {
+		return '%' + c.charCodeAt(0).toString(16);
+	});
+}
+function fixedEncodeURIComponent(str){
+	alert(str);
+	str = str.replace("%","‰");
+	return encodeURIComponent(str).replace(/[!'()*]/g, function(c) {
+		return '%' + c.charCodeAt(0).toString(16);
+	});
+}
+</script>
+</head>
+<body>
+<input type="button" value="test" onClick="test()">
+<br>
+<input type="button" value="Запрос" onClick="request()">
+<input type="text" id="url_cmr" size="200" value="https://cmr.earthdata.nasa.gov/search/collections">
+<input type="button" value="Настроить" onClick="by_default()">
+<br>
+<span id="options">
+Формат: <select id="format">
+	<option disabled>Формат</option>
+	<option>По умолчанию (xml)</option>
+	<option>html</option>
+	<option selected>json</option>
+	<option>xml</option>
+	<option>echo10</option>
+	<option>iso</option>
+	<option>iso19115</option>
+	<option>dif</option>
+	<option>dif10</option>
+	<option>csv</option>
+	<option>atom</option>
+	<option>opendata</option>
+	<option>kml</option>
+	<option>native</option>
+	<option>umm-json(только для коллекций)</option>
+	<option>umm_json</option>
+</select>
+Метод: <select id="method"><option disabled>Метод</option><option selected>GET</option><option>POST</option></select>
+Размер: <input type="text" size="3" value="5" id="page_size">
+Страница: <input type="text" size="3" value="1" id="page_num">
+Ключевое слово: <input type="text" size="10" value="fire" id="keyword">
+
+</span>
+<br>
+<input type="text" id="url_text" size="300">
+<table width="100%" height="900" bordercolor="#ddd" border="2">
+	<tr valign="top">
+		<td width="70%">
+			<span id="output"></span>
+		</td>
+		<td bgcolor="#ddd">
+			<div id="info"></div>
+		</td>
+	</tr>
+</table>
+</body>
+</html>

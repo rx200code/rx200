@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- 
+Создатель © feb7e9c4d5539ae0f1496cdb2aaee27c
+-->
+<title>text.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style type="text/css">
+</style>
+</head>
+<body>
+<svg id="svg" class="svg" xmlns="http://www.w3.org/2000/svg">
+<defs><filter x="0" y="0" width="1" height="0.9" id="bord_t"><feFlood flood-color="#fff" flood-opacity=".75" in="FillPaint" result="b"/><feBlend mode="normal" in2="b" in="SourceGraphic"/></filter></defs>
+<path fill="none" stroke="#000" stroke-width="2" d="M0,100h400zM0,200h400zM0,300h400z"/>
+<text x="20" y="100" id="text_1">Ra 12345 1</text>
+<text x="20" y="200" id="text_2">Ra 12345 2</text>
+<text x="20" y="300"  id="text_x">
+	<tspan x="20" id="text_3">Ra 12345 3</tspan>
+	<tspan x="20" dy="-14" id="text_4">Ra 12345 4</tspan>
+</text>
+</svg>All:<input type="checkbox" id="ch_all"> x:<input type="checkbox" id="ch_x"> 1:<input type="checkbox" id="ch_1"> 2:<input type="checkbox" id="ch_2"> 3:<input type="checkbox" id="ch_3"> 4:<input type="checkbox" id="ch_4">
+<br>
+dominant-baseline:
+<select id="db">
+	<option>auto</option>
+	<option>use-script</option>
+	<option>no-change</option>
+	<option>reset-size</option>
+	<option>ideographic</option>
+	<option>alphabetic</option>
+	<option>hanging</option>
+	<option>mathematical</option>
+	<option>central</option>
+	<option>middle</option>
+	<option>text-after-edge</option>
+	<option>text-before-edge</option>
+	<option>text-top</option>
+</select>
+alignment-baseline:
+<select id="ab">
+	<option>auto</option>
+	<option>baseline</option>
+	<option>before-edge</option>
+	<option>text-bottom</option>
+	<option>text-before-edge</option>
+	<option>middle</option>
+	<option>central</option>
+	<option>after-edge</option>
+	<option>text-top</option>
+	<option>text-after-edge</option>
+	<option>ideographic</option>
+	<option>alphabetic</option>
+	<option>hanging</option>
+	<option>mathematical</option>
+	<option>top</option>
+	<option>center</option>
+	<option>bottom</option>
+</select>
+baseline-shift:
+<select id="bs">
+	<option>sub</option>
+	<option>super</option>
+	<option>50%</option>
+	<option>20px</option>
+	<option>40px</option>
+	<option>1em</option>
+	<option>2em</option>
+	<option>1rem</option>
+	<option>1rem</option>
+</select>
+<script type="text/javascript">
+let text_x = document.getElementById("text_x");
+let text_1 = document.getElementById("text_1");
+let text_2 = document.getElementById("text_2");
+let text_3 = document.getElementById("text_3");
+let text_4 = document.getElementById("text_4");
+text_x.setAttributeNS(null,'filter', 'url(#bord_t)');
+let ch_all = document.getElementById("ch_all");
+let ch_x = document.getElementById("ch_x");
+let ch_1 = document.getElementById("ch_1");
+let ch_2 = document.getElementById("ch_2");
+let ch_3 = document.getElementById("ch_3");
+let ch_4 = document.getElementById("ch_4");
+document.getElementById("svg").style.width = "1000px";
+document.getElementById("svg").style.height = "800px";
+document.getElementById("svg").style.backgroundColor = "#ddd";
+document.getElementById("db").onchange = e => out('dominant-baseline', e.target.value);
+document.getElementById("ab").onchange = e => out('alignment-baseline', e.target.value);
+document.getElementById("bs").onchange = e => out('baseline-shift', e.target.value);
+function out(attr, value){
+	if(ch_x.checked)text_x.setAttributeNS(null, attr, value);
+	if(ch_1.checked)text_1.setAttributeNS(null, attr, value);
+	if(ch_2.checked)text_2.setAttributeNS(null, attr, value);
+	if(ch_3.checked)text_3.setAttributeNS(null, attr, value);
+	if(ch_4.checked)text_4.setAttributeNS(null, attr, value);
+}
+ch_all.onchange = function(e){
+	ch_4.checked = ch_3.checked = ch_2.checked = ch_1.checked = ch_x.checked = ch_all.checked;
+};
+</script>
+</body>
+</html>
