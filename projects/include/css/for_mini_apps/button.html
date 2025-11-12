@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>дизайн шаблон</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!----
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><!--временно-->
+<link rel="stylesheet" type="text/css" href="button.css">
+<script src="frame_init.js"></script>
+
+<script type="text/javascript">
+
+window.onload = function(){
+	document.getElementById("rem").value = parseFloat(getComputedStyle(document.documentElement).fontSize);
+	document.getElementById("out_rem").innerHTML = document.getElementById("rem").value + "px";
+	document.getElementById("rem").oninput = e => {
+		document.getElementById("out_rem").innerHTML = e.target.value + "px";
+		document.documentElement.style.fontSize = e.target.value + "px";
+	};
+	
+	//alert(document.querySelector(':root').style.getPropertyValue('--angle_shadow'));// неработает
+	//document.documentElement.style.setProperty('--height_app', document.querySelector(".app").offsetHeight + "px");
+	//document.documentElement.style.setProperty('--height_app', document.querySelector(".app").offsetWidth + "px");
+}
+function test(){
+	out("test");
+};
+function out(text){
+	document.getElementById("out").innerHTML = text;
+};
+</script>
+</head>
+<body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+
+</svg>
+<input id="rem" style="position: absolute;width: 512px;" type="range" min="0" max="255" step="1" value="16"><span id="out_rem" style="position: absolute; left: 540px; font-size: 16px;">out_rem</span><br>
+<span id="out">out</span>
+
+<span id="pos"><span class="button_2">Кнопка</span></span>
+
+<span id="pos_button"><span class="button">Кнопка</span></span>
+
+</body>
+</html>

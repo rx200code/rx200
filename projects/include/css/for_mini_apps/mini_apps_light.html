@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>дизайн шаблон</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!----
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><!--временно-->
+<link rel="stylesheet" type="text/css" href="App.css">
+<link rel="stylesheet" type="text/css" href="main_container_ligth.css">
+<script src="frame_init.js"></script>
+
+<script type="text/javascript">
+function int_to_str4(n){
+	if(n < 10_000)return n.toString();
+	if(n < 1_000_000)return Math.round(n / 1_000) + "K";
+	if(n < 10_000_000 && n % 1_000_000 >= 50_000)return (n / 1_000_000).toFixed(1) + "M";
+	if(n < 1_000_000_000)return Math.round(n / 1_000_000) + "M";
+	if(n < 10_000_000_000 && n % 1_000_000_000 >= 50_000_000)return (n / 1_000_000_000).toFixed(1) + "G";
+	return Math.round(n / 1_000_000_000) + "G";
+}
+/*
+0_reaction.png
+data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAACXBIWXMAABYlAAAWJQFJUiTwAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAASqSURBVHgBrVZdbBRVFP7OZbtlqU2tUoqtsQtqLQ1gq0SJsUlbeCAhYGJi5IHEmBjEBxPwQXhoAkggEpL6pI1ogmJ4AEOMGIKJ0G58UKOIlarF1Mhi2io0pn+W2u7uPZw7szM725ntLnS/buf+zJ37ffc7d85cQoHgptZ7ocKbpdoO0HoQKqW+LH17BMyD0t8P0l9Ah2L00/mRQualfAP48Q31epHqUKS2SrMCBYGmRdApaDpAvV/G5x2Z6wY/ubFCp9Q+UnhdmiEQ5VcbOBEOY6r0bfr97GTBAsTuqKZwj3BGMyPvUoAtIi5utAW5oXxj121YqakkBi/5QmHmUtzD6zavnFeAWXkqRd1SrUOxYURwqpubNkWzux3yx7aW68j0FZaBVudcyxcSgizwNUA3048Xxk3LdWA2MrWXUUTbc4JWgNU+t2VpEuuTCF3LWnnAiomK44EgiZRupN6vBkKmldC0X1432azemMhPGlRdBWx7DtjUBlTdLynnX+DSz0DXCeDvG/bYmuXAju3A083A0vuA4X+Ay33AsZOZMdmQ11p1SPkSTTa3VJVy+DoxRQy7s0rrWrsc6thR4IFq/xTT/wNvddr1jl1A2RL/mGEhf/XNXCLGkZqJ0q017S8sUnTaENIc++nMhxKxh5AT/03ZtpWX5R7T1w+8vNvXbR7TKd6uhGuL1fLcsNC8en5yg3vK5ic3WLMKeGKtj1xStUQB7UpajQ4tO+ymsupRFA2PRH3kBsS83my9Wnb7ODMoHEbRIPvD5WCP3USVJg9UwUueHsD9AygW+OofDnt2v3zOlSG0/zLiTMnfXwbHB7FgDMkr+c0Pvm5HihFw02G3/hw3NEMf7My27E5h5ty5x0fsGs56xIRg1HHAudh6pJRkors+xl3j3eN2UvIRc5qHhowD31lkXgc4I0J/cBL6/U9wp+D3PoI+fioHsRuC3xbtqaorl7TzvJuE7UzkJiTr2UtXQIkk6Kkmty8nxifBHUfAZ875RWU1GCnQIRqVw2ZoVsclC1YYWiInI1Kai1xOerAGIZOaa6qDyf8agn5tLzg49WaFWMrpEIXrVGVvbEwzn/WGIKsOJzxSHxxG8pU3oD8775tbn/gUqW07wSb/Ox47tntD7GjR6rQ5OVtrm2h4tl6W+ausPGSvPOOEtXL300zOD2pjC9SuHbKFx6CPdoFNzs8Db7JLUcmKiJwR3YBONLR0ysy7vfbbAtJ1W4nnjEB5t0OgCCM+RYdKfrlgPseZE1FytvSA1oi7b4QTisC2JzTuvTnOIysC3rniocSSI5lleDDa0BpVSMaku84Ng28zejalcy3ECeu0w3FW3BbpjcUDBRjcWP3Mw+GEuqgIdU44ECgkXQ+cJVDAdfn+tkf6Lv7p7Q581DgBTvTI9FGvE8gqM4/n2wtkTsIhaveu3IEKeqDyaiyeBNbK63lYs4Y23wUTP6vU6dLEU9vZ0m37/pNyeWf6VklzELktLg8sN3Riv4TwRTk+LaasTOmpe2YU4gkpPw8zHVzc//XA/O4UiIn61qUJPdOmFG0RzxsVqFaIlkmI5JuCm0w0JserbyXBdOsZda4yHhsrZN7bSa9ZWh1bmcIAAAAASUVORK5CYII=
+
+1_reaction.png
+data:image/png;base64,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
+
+2_reaction.png
+data:image/png;base64,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
+
+3_reaction.png
+data:image/png;base64,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
+
+4_reaction.png
+data:image/png;base64,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
+
+5_reaction.png
+data:image/png;base64,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
+
+
+/**/
+window.onload = function(){
+	frame_init("for_frame_init");
+	document.getElementById("rem").value = parseFloat(getComputedStyle(document.documentElement).fontSize);
+	document.getElementById("out_rem").innerHTML = document.getElementById("rem").value + "px";
+	document.getElementById("rem").oninput = e => {
+		document.getElementById("out_rem").innerHTML = e.target.value + "px";
+		document.documentElement.style.fontSize = e.target.value + "px";
+	};
+	
+	
+	//document.documentElement.style.setProperty('--height_app', document.querySelector(".app").offsetHeight + "px");
+	document.documentElement.style.setProperty('--height_app', document.querySelector(".app").offsetWidth + "px");
+}
+function test(){
+	out("test");
+};
+function out(text){
+	document.getElementById("out").innerHTML = text;
+};
+</script>
+</head>
+<body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<defs> 
+<g id="date" fill="none" fill-rule="evenodd"><path d="M8 1.5a.9.9 0 0 1 .9.9V3h6.2v-.6a.9.9 0 1 1 1.8 0v.653c.628.053 1.183.164 1.698.427a4.4 4.4 0 0 1 1.922 1.922c.267.523.377 1.087.43 1.726.05.62.05 1.386.05 2.334v5.076c0 .948 0 1.714-.05 2.334-.053.64-.163 1.203-.43 1.726a4.4 4.4 0 0 1-1.922 1.922c-.523.267-1.087.377-1.726.43-.62.05-1.386.05-2.334.05H9.462c-.948 0-1.714 0-2.334-.05-.64-.053-1.203-.163-1.726-.43a4.4 4.4 0 0 1-1.922-1.922c-.267-.523-.377-1.087-.43-1.726C3 16.252 3 15.486 3 14.538V9.462c0-.948 0-1.714.05-2.334.053-.64.163-1.203.43-1.726A4.4 4.4 0 0 1 5.402 3.48c.515-.263 1.07-.374 1.698-.427V2.4a.9.9 0 0 1 .9-.9m-.9 3.361c-.422.046-.68.12-.88.222A2.6 2.6 0 0 0 5.083 6.22c-.115.226-.195.527-.238 1.054-.037.444-.043.991-.045 1.726h14.4c-.002-.735-.008-1.282-.045-1.726-.043-.527-.123-.828-.238-1.054a2.6 2.6 0 0 0-1.137-1.137c-.2-.102-.458-.176-.88-.222V5.6a.9.9 0 0 1-1.8 0v-.8H8.9v.8a.9.9 0 1 1-1.8 0zM19.2 10.8H4.8v3.7c0 .995 0 1.687.045 2.226.043.527.123.828.238 1.054a2.6 2.6 0 0 0 1.137 1.137c.226.115.527.195 1.055.238.538.044 1.23.045 2.225.045h5c.995 0 1.687 0 2.226-.045.527-.043.828-.123 1.054-.238a2.6 2.6 0 0 0 1.137-1.137c.115-.226.195-.527.238-1.055.044-.538.045-1.23.045-2.225z"  fill="currentColor" fill-rule="nonzero"></path></g>
+<g id="comments" fill="none" fill-rule="evenodd">
+<path d="M16.9 4H7.1c-1.15 0-1.73.11-2.35.44-.56.3-1 .75-1.31 1.31C3.11 6.37 3 6.95 3 8.1v5.8c0 1.15.11 1.73.44 2.35.3.56.75 1 1.31 1.31l.15.07c.51.25 1.04.35 1.95.37h.25v2.21c0 .44.17.85.47 1.16l.12.1c.64.55 1.6.52 2.21-.08L13.37 18h3.53c1.15 0 1.73-.11 2.35-.44.56-.3 1-.75 1.31-1.31.33-.62.44-1.2.44-2.35V8.1c0-1.15-.11-1.73-.44-2.35a3.17 3.17 0 0 0-1.31-1.31A4.51 4.51 0 0 0 16.9 4zM6.9 5.8h9.99c.88 0 1.18.06 1.5.23.25.13.44.32.57.57.17.32.23.62.23 1.5v6.16c-.02.61-.09.87-.23 1.14-.13.25-.32.44-.57.57-.32.17-.62.23-1.5.23h-4.02a.9.9 0 0 0-.51.26l-3.47 3.4V17.1c0-.5-.4-.9-.9-.9H6.74a2.3 2.3 0 0 1-1.14-.23 1.37 1.37 0 0 1-.57-.57c-.17-.32-.23-.62-.23-1.5V7.74c.02-.61.09-.87.23-1.14.13-.25.32-.44.57-.57.3-.16.58-.22 1.31-.23z" fill="currentColor" fill-rule="nonzero"></path></g>
+<g id="likes" fill="none" fill-rule="evenodd"><path d="M16 4a5.95 5.95 0 0 0-3.89 1.7l-.12.11-.12-.11A5.96 5.96 0 0 0 7.73 4 5.73 5.73 0 0 0 2 9.72c0 3.08 1.13 4.55 6.18 8.54l2.69 2.1c.66.52 1.6.52 2.26 0l2.36-1.84.94-.74c4.53-3.64 5.57-5.1 5.57-8.06A5.73 5.73 0 0 0 16.27 4zm.27 1.8a3.93 3.93 0 0 1 3.93 3.92v.3c-.08 2.15-1.07 3.33-5.51 6.84l-2.67 2.08a.04.04 0 0 1-.04 0L9.6 17.1l-.87-.7C4.6 13.1 3.8 11.98 3.8 9.73A3.93 3.93 0 0 1 7.73 5.8c1.34 0 2.51.62 3.57 1.92a.9.9 0 0 0 1.4-.01c1.04-1.3 2.2-1.91 3.57-1.91z" fill="currentColor" fill-rule="nonzero"></path></g>
+<g id="reposts" fill="none" fill-rule="evenodd"><path d="M12 3.73c-1.12.07-2 1-2 2.14v2.12h-.02a9.9 9.9 0 0 0-7.83 10.72.9.9 0 0 0 1.61.46l.19-.24a9.08 9.08 0 0 1 5.84-3.26l.2-.03.01 2.5a2.15 2.15 0 0 0 3.48 1.69l7.82-6.14a2.15 2.15 0 0 0 0-3.38l-7.82-6.13c-.38-.3-.85-.46-1.33-.46zm.15 1.79c.08 0 .15.03.22.07l7.82 6.14a.35.35 0 0 1 0 .55l-7.82 6.13a.35.35 0 0 1-.57-.28V14.7a.9.9 0 0 0-.92-.9h-.23l-.34.02c-2.28.14-4.4.98-6.12 2.36l-.17.15.02-.14a8.1 8.1 0 0 1 6.97-6.53.9.9 0 0 0 .79-.9V5.87c0-.2.16-.35.35-.35z" fill="currentColor" fill-rule="nonzero"></path></g>
+<g id="views" fill="none" fill-rule="evenodd"><path d="M12 4.6c5.2 0 10.4 4.237 10.4 7.4s-5.2 7.4-10.4 7.4S1.6 15.163 1.6 12 6.8 4.6 12 4.6m0 1.8c-4.278 0-8.6 3.522-8.6 5.6s4.322 5.6 8.6 5.6 8.6-3.522 8.6-5.6-4.322-5.6-8.6-5.6m0 2.2a3.4 3.4 0 1 1 0 6.8 3.4 3.4 0 0 1 0-6.8m0 1.8a1.6 1.6 0 1 0 0 3.2 1.6 1.6 0 0 0 0-3.2"  fill="currentColor" fill-rule="nonzero"></path></g>
+</defs> 
+</svg>
+<input id="rem" style="position: absolute;width: 512px;" type="range" min="0" max="255" step="1" value="16"><span id="out_rem" style="position: absolute; left: 540px; font-size: 16px;">out_rem</span><br>
+<span id="out">out</span>
+<!----
+<div id="for_frame_init" style="width: 23%;
+	height: 90%;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	top: 5%;
+	left: 70%;
+	/*transform: translate(-50%, -50%);*/
+	background-color: #000;">
+	
+</div>
+<!---->
+
+<div id="for_frame_init" style="width: 23%;
+	height: 90%;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	top: 5%;
+	left: 10%;
+	background-color: #000;">
+	<div class="app">
+		<div class="header">
+			<span class="button" >Стены</span><span class="button" >Условия</span><span class="button" >Поиск</span><span class="button right" >?</span>
+		</div>
+		<!----
+		<div class="content">
+			<div class="help">
+				I. Добавления стены с постами.<br>
+				I. 1. Перейдите на страничку группы или пользователя.<br>
+				I. 2. Скопируйте из адресной строки браузера ссылку.<br>
+				I. 3. В приложении нажмите кнопку "Стены".<br>
+				I. 4. В верхнее окошко вставьте ссылку и нажмите "добавить".<br>
+				После чего стена пользователя или группы будет в списке стен приложения.<br>
+				Максимальное количество стен 25.<br><br>
+				
+				II. Критерии для выбора постов.<br>
+				II. 1. Нажмите кнопку "Стены" и в списке стен выберите стены в которых осуществлять поиск, отметив их галочками с лева.<br>
+				II. 2. Нажмите кнопку "Условия" и задайте нужные условия фильтрации постов.<br>
+				II. 2. 1. В условиях для фильтрации, вы можете выбрать. по количеству лайкам(реакциям), комментариев, репостов, просмотров, по отношению просмотров к лайкам, просмотров к комментариям, или просмотров к репостам. Вы можете выбрать как одно условие для фильтрации, тогда остальные надо установить в 0 так и несколько. Так же присутствует возможность фильтрации постов в которых есть видео.<br><br>
+				
+				III. Фильтрация постов.<br>
+				III. 1. Нажмите кнопку "Поиск" и кнопку "Искать".<br>
+				III. 2. Если в результатах поиска уже есть список постов, то прокрутите его в низ и нажмите кнопку "Искать дальше".<br>
+				III. 3. Поиск происходит по честям, приложение просматривает по 100 постов за раз. если групп для поиска выбрано несколько то в каждой группе просматривается часть постов(100 / количество групп).<br>
+				III. 4. Пока идет поиск внизу приложения появляется надпись "Идет поиск.", по завершению поиска там отображается результат, и смещения для продолжения поиска. Так же смещение можно задать в условиях поиска(см. пункт II).<br>
+				III. 5. В результатах поиска, с права от значков <svg viewBox="0 0 24 24"><use href="#likes"/></svg> лайки <svg viewBox="0 0 24 24"><use href="#comments"/></svg> комментарии  и<svg viewBox="0 0 24 24"><use href="#reposts"/></svg> репосты, появятся два числа, верхние количество лайков, комментариев и репостов, а нижние число это отношения этого количества к <svg viewBox="0 0 24 24"><use href="#views"/></svg> просмотрам.<br><br>
+				
+				IV. Сортировка результатов.<br>
+				IV. 1. После надписи "Сорт", отображается количество результатов, для сортировки нажмите одну из кнопок <svg class="button_svg_help" viewBox="0 0 24 24"><use href="#likes"/></svg> <svg class="button_svg_help" viewBox="0 0 24 24"><use href="#comments"/></svg> <svg class="button_svg_help" viewBox="0 0 24 24"><use href="#reposts"/></svg> <svg class="button_svg_help" viewBox="0 0 24 24"><use href="#views"/></svg>, при первом нажатии сортирует в обычном порядке "▼", при втором нажатии в обратном порядке "▲", при третьем нажатии сортирует по отношению к просмотрам "ᐱ" при четвертом нажатии сортирует в обратном порядке по отношению к просмотрам "ᐯ", при дальнейших нажатий процесс повторяется.<br>
+				IV. 2. Для удаления результатов нажмите кнопку X.
+			</div>
+		</div>
+		<!---->
+		<!----
+		<div class="content">
+			<div class="help">
+				Создано для поиска фильмов
+			</div>
+		</div>
+		<!---->
+		<!----
+		<div class="content">
+			<div class="criteria">
+				<input type="text" value="1000" /> >= лайков
+				<br />
+				<input type="text" value="0" /> >= комментариев
+				<br />
+				<input type="text" value="0" /> >= репостов
+				<br />
+				<input type="text" value="0" /> >= просмотров
+				<br />
+				<input type="text" value="0" /> &lt;= просмотры / лайки
+				<br />
+				<input type="text" value="0" /> &lt;= просмотры / комментарии
+				<br />
+				<input type="text" value="0" /> &lt;= просмотры / репосты
+				<br />
+				<input type="text" value="0" /> = смещение
+				<br />
+				в посте есть видео <input type="checkbox" />
+			</div>
+		</div>
+		<!---->
+		<!----
+		<div  class="content">
+			<span><input type="text" value="1000" /> >= лайков</span>
+			<span><input type="text" value="0" /> >= комментариев</span>
+			<span><input type="text" value="0" /> >= репостов</span>
+			<span><input type="text" value="0" /> >= просмотров</span>
+			<span><input type="text" value="0" /> &lt;= просмотры / лайки</span>
+			<span><input type="text" value="0" /> &lt;= просмотры / комментарии</span>
+			<span><input type="text" value="0" /> &lt;= просмотры / репосты</span>
+			<span><input type="text" value="0" /> = смещение</span>
+			<span>в посте есть видео <input type="checkbox" /></span>
+		</div>
+		<!---->
+		<!----
+		<div class="elm">
+			<input class="c_4" type="url" placeholder="Введите URL сообщества" value="" />
+			<span> </span>
+			<span class="button c_2" >Добавить</span>
+		</div>
+		<!---->
+		<!---->
+		<div class="elm" ><span>Сорт</span>
+			<svg class="button_svg" viewBox="0 0 24 24"><use href="#date"/></svg>
+			<svg class="button_svg" viewBox="0 0 24 24"><use href="#likes"/></svg>
+			<svg class="button_svg" viewBox="0 0 24 24"><use href="#comments"/></svg>
+			<svg class="button_svg" viewBox="0 0 24 24"><use href="#reposts"/></svg>
+			<svg class="button_svg" viewBox="0 0 24 24"><use href="#views"/></svg>
+			<span class="button right" >X</span>
+		</div>
+		<!---->
+		<!---->
+		<div class="content">
+			<div class="elm">
+				<img class="avatar_c2" src="resources/2.jpg" />
+				<span title="👁️ 👁 /999"><svg viewBox="0 0 24 24"><use href="#likes"/></svg><span class="n_4">1000<div>3000</div></span></span>
+				<span><svg viewBox="0 0 24 24"><use href="#comments"/></svg><span class="n_4">122<div>3</div></span></span>
+				<span><svg viewBox="0 0 24 24"><use href="#reposts"/></svg><span class="n_4">11<div>3</div></span></span>
+				<span><svg viewBox="0 0 24 24"><use href="#views"/></svg><span class="n_4">1<div>&nbsp;</div></span></span>
+				<span class="button right" >X</span>
+				<span><span class="r_0"></span><span class="n_4">1222</span></span>
+				<span><span class="r_1"></span><span class="n_4">133</span></span>
+				<span><span class="r_2"></span><span class="n_4">999G</span></span>
+				<span><span class="r_3"></span><span class="n_4">188</span></span>
+				<span><span class="r_5"></span><span class="n_4">1</span></span>
+				<span><span class="r_4"></span><span class="n_4">16</span></span>
+				<span class="text">text post text post text1 post text2 post text post4 text post5</span>
+				<a class="date" href="https://yandex.ru/12" target="_blank">1 ноя 2024, 01:27</a>
+			</div>
+			<div class="elm" >
+				<img class="avatar_c2" src="resources/1.jpg" />
+				<span><svg viewBox="0 0 24 24"><use href="#likes"/></svg><span class="n_4">14</span></span>
+				<span><svg viewBox="0 0 24 24"><use href="#comments"/></svg><span class="n_4">1</span></span>
+				<span><svg viewBox="0 0 24 24"><use href="#reposts"/></svg><span class="n_4">12</span></span>
+				<span><svg viewBox="0 0 24 24"><use href="#views"/></svg><span class="n_4">11</span></span>
+				<b class="button right" >X</b>
+				<span><span class="r_0"></span><span class="n_4">1</span></span>
+				<span><span class="r_1"></span><span class="n_4">12</span></span>
+				<span><span class="r_2"></span><span class="n_4">13</span></span>
+				<span><span class="r_3"></span><span class="n_4">144</span></span>
+				<span><span class="r_5"></span><span class="n_4">1555</span></span>
+				<span><span class="r_4"></span><span class="n_4">8,888</span></span>
+				<span class="text">text</span>
+				<a class="date" href="" target="_blank">1 ноя 2024, 01:27</a>
+			</div>
+			<div class="next" ><span class="button" >Искать дальше</span></div>
+		</div>
+		<!---->
+		<!----
+		<div class="content">
+			<label class="elm">
+				<input type="checkbox" />
+				<img
+					class="avatar"
+					src="resources/1.jpg"
+				/>
+				<b class="c_3">Профессиональная психотерапевтическая лига (ППЛ)</b>
+				<span class="users">12345</span>
+				<span class="button right" >X</span>
+			</label>
+			<label class="elm">
+				<input type="checkbox" />
+				<img
+					class="avatar"
+					src="resources/2.jpg"
+				/>
+				<b class="c_3">Пристроить/продать/купить/найти домашн. животное</b>
+				<span class="users">12451231</span>
+				<span class="button right" >X</span>
+			</label>
+		</div>
+		<!---->
+		<!----
+		<div class="content">
+			<div class="elm">
+				<img class="avatar" src="resources/2.jpg" />
+				<span><img src="resources/likes.svg" />20xx</span>
+				<span><img src="resources/comments.svg"/>10xx</span>
+				<span><img src="resources/reposts.svg"/>3xxx</span>
+				<span><img src="resources/views.svg"/>100x</span>
+				<b class="button right" >X</b>
+				<span><img src="resources/0_reaction.png" />13xx</span>
+				<span><img src="resources/1_reaction.png" />1xxx</span>
+				<span><img src="resources/2_reaction.png" />2xxx</span>
+				<span><img src="resources/3_reaction.png" />1xxx</span>
+				<span><img src="resources/5_reaction.png" />1xxx</span>
+				<span><img src="resources/4_reaction.png" />2xxx</span>
+				<span class="text">text post</span>
+				<a class="date" href="" target="_blank">1 ноя 2024, 01:27</a>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/1.jpg" />
+				<span><img src="resources/likes.svg" />20</span>
+				<span><img src="resources/comments.svg"/>10</span>
+				<span><img src="resources/reposts.svg"/>3</span>
+				<span><img src="resources/views.svg"/>100</span>
+				<b class="button right" >X</b>
+				<span><img src="resources/0_reaction.png" />13</span>
+				<span><img src="resources/1_reaction.png" />1</span>
+				<span><img src="resources/2_reaction.png" />2</span>
+				<span><img src="resources/3_reaction.png" />1</span>
+				<span><img src="resources/5_reaction.png" />1</span>
+				<span><img src="resources/4_reaction.png" />2</span>
+				<span class="text">text</span>
+				<a class="date" href="" target="_blank">1 ноя 2024, 01:27</a>
+			</div>
+		</div>
+		<!---->
+		<div class="footer">
+			footer
+			<!----
+			<div class="test">test</div>
+			<!---->
+		</div>
+	</div>
+</div>
+<div style="width: 23%;
+	height: 90%;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #000;">
+	<div class="app2">
+		<div class="elm2">
+			<span class="button" >Стены</span>
+			<span class="button" >Условия</span>
+			<span class="button" >Поиск</span>
+			<span class="button float_right" >?</span>
+		</div>
+		<!----
+		<div class="elm2">
+			<input type="url" placeholder="Введите URL сообщества" value="" />
+			<span class="button float_right" > Добавить стену</span>
+		</div>
+		<div class="app_content">
+			<div class="elm2">
+				<input type="checkbox" />
+				<img
+					class="avatar2"
+					src="resources/1.jpg"
+				/>
+				<b>name</b>
+				<span>12345 </span>
+				<b class="button float_right" >Удалить</b>
+			</div>
+			<div class="elm2">
+				<input type="checkbox" />
+				<img
+					class="avatar2"
+					src="resources/2.jpg"
+				/>
+				<b>name</b>
+				<span>12345 </span>
+				<b class="button float_right" >Удалить</b>
+			</div>
+		</div>
+		<!---->
+		<!---->
+		<div class="elm2" > Сортировать по: 
+			<img src="resources/likes.svg" />
+			<img src="resources/comments.svg" />
+			<img src="resources/reposts.svg" />
+			<img src="resources/views.svg" />
+			<b class="button float_right" >Очистить</b>
+		</div>
+		<div class="app_content">
+			<div class="elm2" >
+				<img class="avatar2" src="resources/1.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm2" >
+				<img class="avatar2" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			
+			<div class="elm2" > Искать дальше</div>
+		</div>
+		<!---->
+		<div class="elm2">info</div>
+	</div>
+</div>
+</body>
+</html>

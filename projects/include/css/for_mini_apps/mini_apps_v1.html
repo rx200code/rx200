@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>дизайн шаблон</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!----
+<meta name="viewport" content="width=device-width, initial-scale=1.0"><!--временно-->
+<link rel="stylesheet" type="text/css" href="App_v1.css">
+<link rel="stylesheet" type="text/css" href="main_container_v1.css">
+<script src="frame_init.js"></script>
+
+<script type="text/javascript">
+window.onload = function(){
+	frame_init("for_frame_init");
+	document.getElementById("rem").value = parseFloat(getComputedStyle(document.documentElement).fontSize);
+	document.getElementById("out_rem").innerHTML = document.getElementById("rem").value + "px";
+	document.getElementById("rem").oninput = e => {
+		document.getElementById("out_rem").innerHTML = e.target.value + "px";
+		document.documentElement.style.fontSize = e.target.value + "px";
+	};
+	
+	
+	//document.documentElement.style.setProperty('--height_app', document.querySelector(".main_container").offsetHeight + "px");
+	document.documentElement.style.setProperty('--height_app', document.querySelector(".main_container").offsetWidth + "px");
+}
+function test(){
+	out("test");
+};
+function out(text){
+	document.getElementById("out").innerHTML = text;
+};
+</script>
+</head>
+<body>
+<input id="rem" style="position: absolute;width: 512px;" type="range" min="0" max="255" step="1" value="16"><span id="out_rem" style="position: absolute; left: 540px; font-size: 16px;">out_rem</span><br>
+<span id="out">out</span>
+<!----
+<div id="for_frame_init" style="width: 23%;
+	height: 90%;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	top: 5%;
+	left: 70%;
+	/*transform: translate(-50%, -50%);*/
+	background-color: #000;">
+	
+</div>
+<!---->
+
+<div id="for_frame_init" style="width: 23%;
+	height: 90%;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	top: 5%;
+	left: 10%;
+	background-color: #000;">
+	<div class="main_container">
+		<div class="header">
+			<span class="button_h" >Стены</span><span class="button_h" >Условия</span><span class="button_h" >Поиск</span><span class="button_h button_right" >?</span>
+		</div>
+		<!---->
+		<div class="menu">
+			<input type="url" placeholder="Введите URL сообщества" value="" />
+			<span> </span>
+			<span class="button_h b_m" >Добавить</span>
+		</div>
+		<!---->
+		<!---->
+		<div class="menu2" ><span>Сорт</span>
+			<img src="resources/likes.svg" />
+			<img src="resources/comments.svg" />
+			<img src="resources/reposts.svg" />
+			<img src="resources/views.svg" />
+			<span class="button_h button_right" >X</span>
+		</div>
+		<!---->
+		<!---->
+		<div class="content">
+			<div class="group">
+				<input type="checkbox" />
+				<img
+					class="avatar3"
+					src="resources/1.jpg"
+				/>
+				<b class="group_name">name</b>
+				<span>12345 </span>
+				<span class="button_h button_right button_v2" >X</span>
+			</div>
+			<div class="group">
+				<input type="checkbox" />
+				<img
+					class="avatar3"
+					src="resources/2.jpg"
+				/>
+				<b class="group_name">name</b>
+				<span>12345 </span>
+				<span class="button_h button_right button_v2" >X</span>
+			</div>
+			<div class="post">
+				<img class="avatar2" src="resources/2.jpg" />
+				<span><img src="resources/likes.svg" />20xx</span>
+				<span><img src="resources/comments.svg"/>10xx</span>
+				<span><img src="resources/reposts.svg"/>3xxx</span>
+				<span><img src="resources/views.svg"/>100x</span>
+				<span class="button_h button_right button_v2" >X</span>
+				<span><img src="resources/0_reaction.png" />13xx</span>
+				<span><img src="resources/1_reaction.png" />1xxx</span>
+				<span><img src="resources/2_reaction.png" />2xxx</span>
+				<span><img src="resources/3_reaction.png" />1xxx</span>
+				<span><img src="resources/5_reaction.png" />1xxx</span>
+				<span><img src="resources/4_reaction.png" />2xxx</span>
+				<span class="text_item">text post</span>
+				<a class="date_item" href="" target="_blank">1 ноя 2024, 01:27</a>
+			</div>
+		</div>
+		<!---->
+		
+		<!----
+		<div class="content">
+			<div class="post">
+				<img class="avatar2" src="resources/2.jpg" />
+				<span><img src="resources/likes.svg" />20xx</span>
+				<span><img src="resources/comments.svg"/>10xx</span>
+				<span><img src="resources/reposts.svg"/>3xxx</span>
+				<span><img src="resources/views.svg"/>100x</span>
+				<b class="button_h button_right button_v2" >X</b>
+				<span><img src="resources/0_reaction.png" />13xx</span>
+				<span><img src="resources/1_reaction.png" />1xxx</span>
+				<span><img src="resources/2_reaction.png" />2xxx</span>
+				<span><img src="resources/3_reaction.png" />1xxx</span>
+				<span><img src="resources/5_reaction.png" />1xxx</span>
+				<span><img src="resources/4_reaction.png" />2xxx</span>
+				<span class="text_item">text post</span>
+				<a class="date_item" href="" target="_blank">1 ноя 2024, 01:27</a>
+			</div>
+			<div class="post" >
+				<img class="avatar2" src="resources/1.jpg" />
+				<span><img src="resources/likes.svg" />20</span>
+				<span><img src="resources/comments.svg"/>10</span>
+				<span><img src="resources/reposts.svg"/>3</span>
+				<span><img src="resources/views.svg"/>100</span>
+				<b class="button_h button_right" >X</b>
+				<span><img src="resources/0_reaction.png" />13</span>
+				<span><img src="resources/1_reaction.png" />1</span>
+				<span><img src="resources/2_reaction.png" />2</span>
+				<span><img src="resources/3_reaction.png" />1</span>
+				<span><img src="resources/5_reaction.png" />1</span>
+				<span><img src="resources/4_reaction.png" />2</span>
+				<span class="text_item">text</span>
+				<a class="date_item" href="" target="_blank">1 ноя 2024, 01:27</a>
+			</div>
+		</div>
+		<!---->
+		<div class="footer">
+			footer
+			<!----
+			<div class="test">test</div>
+			<!---->
+		</div>
+	</div>
+</div>
+<div style="width: 23%;
+	height: 90%;
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: #000;">
+	<div class="app">
+		<div class="elm">
+			<span class="button" >Стены</span>
+			<span class="button" >Условия</span>
+			<span class="button" >Поиск</span>
+			<span class="button float_right" >?</span>
+		</div>
+		<!----
+		<div class="elm">
+			<input type="url" placeholder="Введите URL сообщества" value="" />
+			<span class="button float_right" > Добавить стену</span>
+		</div>
+		<div class="app_content">
+			<div class="elm">
+				<input type="checkbox" />
+				<img
+					class="avatar"
+					src="resources/1.jpg"
+				/>
+				<b>name</b>
+				<span>12345 </span>
+				<b class="button float_right" >Удалить</b>
+			</div>
+			<div class="elm">
+				<input type="checkbox" />
+				<img
+					class="avatar"
+					src="resources/2.jpg"
+				/>
+				<b>name</b>
+				<span>12345 </span>
+				<b class="button float_right" >Удалить</b>
+			</div>
+		</div>
+		<!---->
+		<!---->
+		<div class="elm" > Сортировать по: 
+			<img src="resources/likes.svg" />
+			<img src="resources/comments.svg" />
+			<img src="resources/reposts.svg" />
+			<img src="resources/views.svg" />
+			<b class="button float_right" >Очистить</b>
+		</div>
+		<div class="app_content">
+			<div class="elm" >
+				<img class="avatar" src="resources/1.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/2.jpg" />
+				<span>
+					<span>text post</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			<div class="elm" >
+				<img class="avatar" src="resources/1.jpg" />
+				<span>
+					<span>text</span>
+					<img src="resources/likes.svg" />20
+					<img src="resources/comments.svg"/>10
+					<img src="resources/reposts.svg"/>3
+					<img src="resources/views.svg"/>100
+					<b class="button float_right" >X</b>
+					<br />
+					<span class="reactions">
+						<span><img src="resources/0_reaction.png" />13</span>
+						<span><img src="resources/1_reaction.png" />1</span>
+						<span><img src="resources/2_reaction.png" />2</span>
+						<span><img src="resources/3_reaction.png" />1</span>
+						<span><img src="resources/5_reaction.png" />1</span>
+						<span><img src="resources/4_reaction.png" />2</span>
+					</span>
+					<a href="" target="_blank">1 ноя 2024, 01:27</a>
+				</span>
+			</div>
+			
+			<div class="elm" > Искать дальше</div>
+		</div>
+		<!---->
+		<div class="elm">info</div>
+	</div>
+</div>
+</body>
+</html>

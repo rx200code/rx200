@@ -1,0 +1,336 @@
+:root{
+	--base_size: 10rem;
+	
+	--angle_shadow: 15deg;
+	--angle_view: 50deg;
+	--sin_angle_shadow: sin(var(--angle_shadow));
+	--cos_angle_shadow: cos(var(--angle_shadow));
+	--sin_angle_view: sin(var(--angle_view));
+	--cos_angle_view: cos(var(--angle_view));
+	
+	--tan_angle_view: tan(var(--angle_view));
+	--tan90_angle_view: tan(calc(90deg - var(--angle_view)));
+	
+	--width_button: calc(var(--base_size) * 6);
+	--width_button_x: calc(var(--width_button) * 1);
+	--width_button_y: calc(var(--width_button) * var(--tan_angle_view) * -1);
+	
+	--height_button: calc(var(--width_button) * .4);
+	--height_button_x: calc(var(--height_button) * var(--tan90_angle_view) * -1);
+	--height_button_y: calc(var(--height_button) * 1);
+	
+	
+	--h_button: calc(var(--height_button) * 0.2);
+	--distance_shadow: calc(var(--base_size) * .7 + var(--h_button));
+	--distance_shadow_x: calc(var(--distance_shadow) * var(--cos_angle_shadow));
+	--distance_shadow_y: calc(var(--distance_shadow) * var(--sin_angle_shadow));
+	
+	--filter_shadow: drop-shadow(var(--distance_shadow_x) var(--distance_shadow_y) calc(var(--distance_shadow) * .03) #0008);
+	
+	
+	
+	
+	--h_offset_x: calc(var(--h_button) * var(--cos_angle_view));
+	--h_offset_y: calc(var(--h_button) * var(--sin_angle_view));
+	
+	--hover_offset_x: calc(var(--width_button) + var(--h_offset_x));
+	
+	
+	--width_elm_button: calc(var(--width_button) + var(--h_offset_x));
+	--height_elm_button: calc(var(--height_button) + var(--h_offset_y));
+	--text_offset_center: calc((var(--width_elm_button) - var(--width_button)) * -.5);
+	
+	
+	/**
+	--distance_border: calc(var(--base_size) * 2);
+	/**/
+	--distance_border: calc(var(--base_size) * .3);
+	--distance_border_x: calc(var(--distance_border) * var(--cos_angle_view));
+	--distance_border_y: calc(var(--distance_border) * var(--sin_angle_view));
+	
+	--hover_offset_x: calc(var(--h_offset_x) - var(--distance_border_x));
+	--hover_offset_y: calc(var(--h_offset_y) - var(--distance_border_y));
+	
+	
+	
+	--filter_shadow_hover: drop-shadow(var(--distance_border_x) var(--distance_border_y) calc(var(--distance_border) * .03) #0008);
+	
+	
+	
+	--shadow_color: #ddd;
+	
+	--transition_all: all .1s ease;
+	
+	/**/
+	--size: 1rem;
+	--size_width: calc(var(--size) * 6);
+	--size_height: calc(var(--size_width) * .4);
+	/**
+	--size_border: max(2px, calc(var(--size) / 16));
+	/**/
+	--size_offset: calc(var(--size) * .4);
+	--diffusion: calc(var(--size) * .1);
+	--hover_offset: calc(var(--size_offset) * .5);
+	--cof_diffusion_offset: 1;
+	--diffusion_offset_border: calc(var(--size) * .05);
+	--size_border: calc((var(--size_offset) - var(--hover_offset)) * var(--cof_diffusion_offset));
+	--size_border_offset: calc(var(--size_border) * .5);
+	
+	/**
+	--variable: calc(sin(20deg) * 1000);
+	--variable: calc(var(--distance_shadow_x) * 1000);
+	counter-reset: variable var(--variable);
+	--test: counter(variable);
+	/**/
+}
+
+#pos_button{
+	position: absolute;
+	margin: 0px;
+	padding: 0px;
+	top: 100px;
+	left: 500px;
+	
+}
+
+.button{
+	/**
+	outline: 1px solid #000;
+	/**/
+	position: absolute;
+	font-size: var(--base_size);
+	width: var(--width_elm_button);
+	height: var(--height_elm_button);
+	line-height: var(--height_button);
+	
+	
+	color: #0000;
+	text-shadow: var(--text_offset_center) 0 0 #000;
+	
+	/**
+	padding-right: 300px;
+	padding-left: 300px;
+	background-color: var(--shadow_color);
+	/**/
+	
+	transition: var(--transition_all);
+	/* TEST */
+	filter: var(--filter_shadow);
+	/**/
+	
+	text-align: center;
+	cursor: pointer;
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.button:hover{
+	filter: var(--filter_shadow_hover);
+	text-shadow: calc(var(--text_offset_center) + var(--hover_offset_x)) var(--hover_offset_y) 0 #000;
+}
+
+.button::before{
+	content: "";
+	position: absolute;
+	top: calc(var(--distance_border_y) * .5);
+	left: 0;
+	height: var(--height_button);
+	width: var(--distance_border_x);
+	background-color: #1f907322;
+	
+	transform: rotate(0deg) skewY(var(--angle_view));
+	
+	box-shadow: var(--width_button_x) var(--width_button_y) 0 #1f907355;
+	transition: var(--transition_all);
+	
+	/* TEST *
+	filter: drop-shadow(100px 100px 10px #0008);
+	/**/
+}
+.button:hover::before{
+	top: calc(var(--distance_border_y) * .5 + var(--hover_offset_y));
+	left: var(--hover_offset_x);
+}
+.button::after{
+	content: "";
+	position: absolute;
+	top: 0;
+	left: calc(var(--distance_border_x) * .5);
+	height: var(--distance_border_y);
+	width: var(--width_button);
+	background-color: #1f907311;
+	transform: rotate(0deg) skewX(calc(90deg - var(--angle_view)));
+	
+	box-shadow: var(--height_button_x) var(--height_button_y) 0 #1f907333;
+	/**
+	transform: rotate(0deg) skewY(var(--angle_view));
+	
+	box-shadow: var(--width_button_x) var(--width_button_y) 0 #1f907355;
+	/**/
+	transition: var(--transition_all);
+	/* TEST *
+	filter: drop-shadow(100px 100px 10px #0008);
+	/**/
+}
+.button:hover::after{
+	top: var(--hover_offset_y);
+	left: calc(var(--distance_border_x) * .5 + var(--hover_offset_x));
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#pos{
+	position: absolute;
+	width: calc(var(--size_width) + var(--hover_offset));
+	height: calc(var(--size_height) + var(--hover_offset));
+	line-height: var(--size_height);
+	font-size: var(--size);
+	margin: 0px;
+	padding: 0px;
+	top: 100px;
+	left: 100px;
+}
+
+.button_2{
+	
+	/**
+	border-radius: 50% 50% 50% 50%;
+	/**/
+	
+	position: absolute;
+	width: var(--size_width);
+	height: var(--size_height);
+	line-height: var(--size_height);
+	font-size: var(--size);
+	margin: 0px;
+	padding: 0px;
+	
+	
+	text-align: center;
+	cursor: pointer;
+	
+	background-color: #ddd;
+	
+	color: #000;
+	/**
+	border: max(1px, calc(1rem / 16)) solid #0008;
+	text-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #aaa, 0px 0px calc(var(--size) * .07) #fff;
+	/**/
+	box-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #ddd, inset var(--size_offset) var(--size_offset) var(--diffusion) #f7f7f7;
+	text-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #aaa, 0px 0px calc(var(--size) * .07) #fff;
+	
+	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.button_2::before{
+	content: "";
+	position: absolute;
+	top: var(--size_border_offset);
+	right: calc(var(--size_border) * -1);
+	height: 100%;
+	width: var(--size_border);
+	background-color: #1f907355;
+	transform: rotate(0deg) skewY(45deg);
+	/**
+	box-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #0008;
+	/**/
+	/**/
+	box-shadow: calc(var(--size_width) * -1) var(--size_width) 0 #1f907322, var(--size_offset) 0px var(--diffusion) #0002;
+	/**/
+	
+}
+
+.button_2::after{
+	content: "";
+	position: absolute;
+	bottom: calc(var(--size_border) * -1);
+	left: var(--size_border_offset);
+	height: var(--size_border);
+	width: 100%;
+	background-color: #1f907333;
+	transform: rotate(0deg) skewX(45deg);
+	/**
+	box-shadow: calc(var(--size_height) * -1) var(--size_height) 0 #0002;
+	/**/
+	box-shadow: var(--size_height) calc(var(--size_height) * -1) 0 #1f907311, 0px var(--size_offset) var(--diffusion) #0002;
+}
+
+#pos:hover{
+	.button_2{
+		/**
+		--size_offset: calc(var(--size) * .4 - var(--hover_offset) * 1.25);
+		/**/
+		--size_offset: calc(var(--size) * .4 - var(--hover_offset));
+		--diffusion: calc(var(--size) * .1 * (1 - var(--cof_diffusion_offset)));
+		transform: translate(var(--hover_offset), var(--hover_offset));
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
