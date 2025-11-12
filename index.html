@@ -20,6 +20,7 @@
 			const repo = "rx200";
 			const path = "https://api.github.com/repos/" + owner + "/" + repo + "/contents";
 			const href = "https://github.com/" + owner + "/" + repo;
+			const href_html = "https://" + owner + ".github.io/" + repo + "/";
 
 			let downloadFile = file => {
 				fetch(file.download_url)
@@ -74,6 +75,13 @@
 					let url = createElement("a", ["href", file.html_url], ["target", "_blank"]);
 					url.appendChild(document.createTextNode(file.html_url));
 					elm.appendChild(url);
+					if(file.name.endsWith(".html") || file.name.endsWith(".svg")){
+						let url_html = href_html + file.path;
+						let url = createElement("a", ["href", url_html], ["target", "_blank"]);
+						url.appendChild(document.createTextNode(url_html));
+						elm.appendChild(document.createTextNode(" open in browser: "));
+						elm.appendChild(url);
+					}
 					elm.appendChild(createElement("hr"));
 					file.elm = elm;
 				}
