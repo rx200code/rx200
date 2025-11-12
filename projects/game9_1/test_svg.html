@@ -1,0 +1,139 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>игра</title>
+<style>
+body{
+	background-color: #cef;
+}
+</style>
+</head>
+<body>
+<svg width="700" height="500" xmlns="http://www.w3.org/2000/svg">
+<defs> 
+    <linearGradient id="gradient_pp">
+		<stop offset="0%" stop-color="#000"/>
+		<stop offset="20%" stop-color="#00f"/>
+		<stop offset="50%" stop-color="#813"/>
+		<stop offset="85%" stop-color="#008"/>
+		<stop offset="100%" stop-color="#000"/>
+		
+    </linearGradient>
+	<linearGradient id="gradient_pp2">
+		<stop offset="0%" stop-color="#003"/>
+		<stop offset="38%" stop-color="#523"/>
+		<stop offset="100%" stop-color="#000"/>
+		
+    </linearGradient>
+</defs>
+	<path d="M30 400 q 200 0 300 -300 q 100 300 300 300"  fill="url(#gradient_pp)"/>
+	<path d="M200 400 q 90 0 135 -200 q 70 200 220 200" fill="url(#gradient_pp2)"/>
+</svg><br>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+<defs> 
+    <radialGradient id="gradient_forest"> 
+		<stop offset="0%" stop-color="#fff"/>
+		<stop offset="30%" stop-color="#050"/> 
+		<stop offset="95%" stop-color="#cef"/> 
+    </radialGradient>
+</defs> 
+	<circle cx="122" cy="110" r="17" fill="url(#gradient_forest)"/>
+	<circle cx="100" cy="100" r="20" fill="url(#gradient_forest)"/>
+	<circle cx="120" cy="80" r="25" fill="url(#gradient_forest)"/>
+</svg><br>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+	<path d="M100 200
+           A 100 50 0 1 1 300 200
+           " stroke="black" fill="green" stroke-width="2" fill-opacity="0.5"/>
+	<path d="M100 200 v-50" stroke="red" stroke-width="2" fill="transparent"/>
+	<path d="M100 200 h50" stroke="red" stroke-width="2" fill="transparent"/>
+	<path d="M125 200 v-25" stroke="red" stroke-width="2" fill="transparent"/>
+	<ellipse cx="100" cy="50" rx="50" ry="50" />
+</svg><br>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+<defs> 
+    <linearGradient id="gradient_mount" x2="0" y2="1"> 
+		<stop offset="0%" stop-color="#fff"/>
+		<stop offset="30%" stop-color="#00f"/> 
+		<stop offset="95%" stop-color="#cef"/> 
+    </linearGradient>
+</defs> 
+  <path d="M10 110 C 70 10, 70 10, 210 110" stroke="black" fill="transparent"/>
+  <path d="M10 110 h200" stroke="green" fill="transparent"/>
+  <path d="M10 110 L70 10 L210 110" stroke="red" fill="transparent"/>
+  <path d="M10 110 Q 70 10 210 110" stroke="blue" fill="transparent"/>
+  <path d="M30 200 q 50 0 80 -50 q30 50 80 50" stroke="black" fill="url(#gradient_mount)"/>
+  <!--<path d="M30 200 Q 80 200 110 150 Q140 200 190 200" stroke="black" fill="url(#gradient_mount)"/>-->
+  
+  
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="100" height="300" viewBox="0 0 100 300">
+
+  <text x="62.5" y="25" inline-size="200"
+	style="font: 25px IPAMincho; inline-size: 200px; writing-mode: vertical-rl;">
+    テキストは１０文字後に折り返されます。</text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="auto" viewBox="0 0 300 100">
+
+  <text x="50" y="30" text-rendering="auto" style="font: 20px sans-serif; inline-size: 200px; text-anchor: middle">
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="optimizeSpeed" viewBox="0 0 300 100">
+
+  <text x="50" y="30" text-rendering="optimizeSpeed" style="font: 20px sans-serif; inline-size: 200px; text-anchor: middle">
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="optimizeLegibility" viewBox="0 0 300 100">
+
+  <text x="50" y="30" text-rendering="optimizeLegibility" style="font: 20px sans-serif; inline-size: 200px; text-anchor: middle">
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="geometricPrecision" viewBox="0 0 300 100">
+	
+  <text x="50" y="30" text-rendering="geometricPrecision" style="fill: red; font: 20px sans-serif; inline-size: 200px; text-anchor: middle"><title style="fill: red; stroke: blue;">даааа!</title>
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg width="10cm" height="3cm" viewBox="0 0 1000 300"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+  <text x="250" y="180"
+        font-family="Verdana" font-size="64" fill="blue" >
+    Hello, out there!
+  </text>
+
+</svg><br>
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  
+  <path d="M10 20 v-10 h10 m10 0 h10 v10 m0 10 v10 h-10 m-10 0 h-10 v-10" fill="red" stroke="#000" stroke-width="1"/>
+
+</svg><br>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
