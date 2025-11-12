@@ -1,0 +1,94 @@
+{
+	"owner_id": [
+		"1477085"
+	]
+	"posts": [
+		{
+			"message": "Test post",
+			"attachments": [
+				{
+					"type": "photo",
+					"owner_id": "1477085",
+					"media_id": "368499178"
+				},
+				{
+					"type": "photo",
+					"owner_id": "3755331",
+					"media_id": "457251575"
+				}
+			]
+		}
+	]
+}
+
+
+Сервесный ключ
+c2c986f6c2c986f6c2c986f617c1dc1bf9cc2c9c2c986f6a79a0792f8b2951e2b1f78f5
+ид приложения
+51748111
+
+
+ссылка регистрации
+https://oauth.vk.com/blank.html#
+access_token=
+vk1.a.IL195yHHCu0WHmyFXpXWLxgGaD-PK5eOHcixrBFshe0TuRNmAVrNACtZXqqoU6g6ssb9KUWWZCF2dz3pcjUsQR2b3bxnV0mpLJC3L2kN3v3EGW-MObNxwAJ71JKV_gBF-waRMNatULG3Qmf1sfD3xJyOEgy-DEoi2MtjjpMHThDfCLOMMdQ7-0Wm5dqGNVVcW0EooebHRWfqVIS8x875ZA
+&expires_in=86400&user_id=1477085
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://oauth.vk.com/blank.html&display=page&scope=270340&response_type=token&v=5.131&state=123456
+https://oauth.vk.com/blank.html#access_token=
+vk1.a.RN2x_gJhPUkEkTjr8DoJy42eiqT2WzsmWFBzxymAk22sPoj7x8fuycTWykuJt4MBMHRP1unxFog-BYJsit4KfKw7KDitjboFIDRWUIZt85KoINw2uQZAYRfC-JvhC3m7VOCUiojceDhqW5BD--c18ACliwa2pqp-JaJx4q1wcxvbBYBRnL78_xV57rjJDePSZFE9YkpVo2s1_gATUAmeLQ
+&expires_in=86400&user_id=1477085&state=123456
+
+&expires_in=86400&user_id=1477085&state=123456
+
+
+photo1477085_368499178,photo3755331_457251575
+photo1477085_457239662,photo1477085_457239663 // Фото котов.
+
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://oauth.vk.com/blank.html&scope=8192&response_type=token
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://api.vk.com/blank.html&scope=8192&response_type=token
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://oauth.vk.com/blank.html&scope=wall&response_type=token
+https://oauth.vk.com/authorize?client_id=51748111&display=popup&redirect_uri=https://oauth.vk.com/blank.html&scope=wall&response_type=token&v=5.131&state=123456
+
+
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://oauth.vk.com/blank.html&display=page&scope=wall&response_type=token&v=5.131&state=123456
+
+
+
+
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://oauth.vk.com/blank.html&display=page&scope=wall&response_type=token&v=5.131&state=123456&test_mode=1
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://oauth.vk.com/blank.html&display=page&scope=wall,photos&response_type=code&v=5.131&state=123456
+
+
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=https://api.vk.com/blank.html&display=page&scope=wall,photos&response_type=token&v=5.131&state=123456
+https://oauth.vk.com/authorize?client_id=51748111&redirect_uri=&display=page&scope=wall,photos&response_type=token&v=5.131&state=123456
+https://oauth.vk.com/authorize?client_id=51748111&scope=wall,photos&response_type=token
+
+
+
+https://id.vk.com/auth?app_id=51748111&state=&response_type=token&redirect_uri=https://oauth.vk.com/blank.html&redirect_uri_hash=05e990dd8dfc8da472&code_challenge=&code_challenge_method=&return_auth_hash=c85004484d27bc385a&scope=8192&force_hash=1
+https://id.vk.com/auth?app_id=51748111&state=&response_type=token&redirect_uri=https://oauth.vk.com/blank.html&redirect_uri_hash=05e990dd8dfc8da472&code_challenge=&code_challenge_method=&return_auth_hash=c85004484d27bc385a&scope=8192&force_hash=1
+https://id.vk.com/auth?app_id=51748111&state=123456&response_type=token&redirect_uri=https://oauth.vk.com/blank.html&redirect_uri_hash=05e990dd8dfc8da472&code_challenge=&code_challenge_method=&return_auth_hash=c85004484d27bc385a&scope=8192&force_hash=1
+
+https://id.vk.com/auth?app_id=51748111&state=&response_type=token&redirect_uri=https://oauth.vk.com/blank.html&redirect_uri_hash=05e990dd8dfc8da472&code_challenge=&code_challenge_method=&return_auth_hash=c85004484d27bc385a&scope=8192&force_hash=1
+
+https://id.vk.com/auth?app_id=51748111&state=123456&response_type=token&redirect_uri=https://oauth.vk.com/blank.html&redirect_uri_hash=c715100041f98cfcce&code_challenge=&code_challenge_method=&return_auth_hash=726c56b74e812146e6&scope=8196&force_hash=1
+
+https://id.vk.com/auth?app_id=51748111&state=&response_type=token&redirect_uri=https://oauth.vk.com/blank.html&redirect_uri_hash=c715100041f98cfcce&code_challenge=&code_challenge_method=&return_auth_hash=726c56b74e812146e6&scope=8196&force_hash=
+
+
+https://oauth.vk.com/blank.html
+
+
+
+message Приложению недоступна авторизация через VK ID code: 0
+
+
+
+https://oauth.vk.com/authorize?client_id=51748111&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=friends&response_type=token&v=5.131
+
+https://oauth.vk.com/authorize?client_id=51748111&display=page&redirect_uri=https://oauth.vk.com/blank.html&scope=stats,wall,groups,photos,offline&response_type=token&v=5.92&state=123456
+
+
+
+
+

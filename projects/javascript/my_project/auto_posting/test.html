@@ -1,0 +1,23 @@
+<html>
+<title>JSONP</title>
+<head></head>
+<body>
+<script type="text/javascript">
+	//alert(4+8192+262144);//270340
+	//access_token=vk1.a.OfwR-PkxDBikjERtWoOKtG-J-IWt_alyZPRJjXeWVrDi8M-Y9h32pQb3KrTcxIT3Wh-fG4znEW0Fa4dDbXzZkjCjo0tSQP8m0Co8Jks6FeOZw4JN8dbPkbLkQggQjhUSYDg5AkYIxFHSK2R1KVkNv1t8Y6D1Wrkk53vqNcZbOYf3MqpMhkU0dpPh6Bni-W2nKQGn-BGKmxWLm8lZvJ9Now
+
+	var script = document.createElement('SCRIPT');
+	//script.src = "https://api.vk.com/method/users.get?user_id=1477085&fields=name&v=5.131&callback=callbackFunc";
+	//script.src = "https://api.vk.com/method/users.getById?access_token=vk1.a.8S82FhN64kIBlpJixFO1yOdyKqxCnLBe50zo5zOQb7NyES34noNCE24VuHhdWqQeq6jMfDYAnq77LUjixEGKkgO4oEIaJwcy_umTsCObwt7neGf34JdmP6jy6Dq-Yzfnu64W5jScWa4E82DYVUslV7XuygoWjH1SmyA_2SEctM7ly9EQSYtVvOSiw6I0IMgU&group_ids=public222541136&v=5.131&callback=callbackFunc";
+	//script.src = "https://api.vk.com/method/groups.getById?access_token=vk1.a.OfwR-PkxDBikjERtWoOKtG-J-IWt_alyZPRJjXeWVrDi8M-Y9h32pQb3KrTcxIT3Wh-fG4znEW0Fa4dDbXzZkjCjo0tSQP8m0Co8Jks6FeOZw4JN8dbPkbLkQggQjhUSYDg5AkYIxFHSK2R1KVkNv1t8Y6D1Wrkk53vqNcZbOYf3MqpMhkU0dpPh6Bni-W2nKQGn-BGKmxWLm8lZvJ9Now&group_ids=public222541136&v=5.131&callback=callbackFunc";
+	script.src = "https://api.vk.com/method/groups.getById?access_token=3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b&group_ids=public222541136&v=5.131&callback=callbackFunc";
+
+	//3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b
+	document.getElementsByTagName("head")[0].appendChild(script);
+	function callbackFunc(result) {
+		alert(result);
+		alert(JSON.stringify(result));
+	}
+</script>
+</body>
+</html>

@@ -1,0 +1,168 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Автопостинг</title>
+<script src="data.js"></script>
+<script type="text/javascript">
+let script = null;
+let ids_groups = [];
+window.onload = async function(){// async можно иногда добавить.
+	let text = "";// Для тестов.
+	
+	text += "<h3>Текст:</h3><pre>" + post.text + "</pre><h3>Идентификаторы фотографий:</h3><pre>" + post.photo + "</pre><h3>Местоположение:</h3><pre>" + post.lat + ", " + post.lon + "</pre>";
+	
+	
+	
+	
+	let group_ids = [];
+	post.targets.forEach(function(target) {
+		group_ids.push(target.url.slice(target.url.lastIndexOf('/') + 1));
+	});
+	
+	
+	text += "<h3>Предложить(опубликовать) в сообществах:</h3><pre>" + group_ids + "</pre>";
+	
+	//*
+	script = document.createElement('SCRIPT');
+	script.src = "https://api.vk.com/method/groups.getById?access_token=" + service_key + "&group_ids=" + group_ids + "&v=5.131&callback=callbackFunc";
+	document.getElementsByTagName("head")[0].appendChild(script);
+	//*/
+	
+	//let response = await fetch('https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits');
+	//fetch('https://api.github.com/repos/javascript-tutorial/en.javascript.info/commits').then(response => response.text()).then(commits => alert(commits[0].author.login));
+	
+	/*
+	let response = await fetch(
+		"https://api.vk.com/method/groups.getById",
+		{
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"//"multipart/form-data"//"application/x-www-form-urlencoded"//,
+				//"Authorization": "Bearer 3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b",
+				//"group_ids": ""+group_ids,
+				//"v": "5.131"
+			},
+			body: 'group_ids=public222541136&access_token=3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b&v=5.131'
+		}
+	);
+	
+	let groups = "";
+	if(response.ok()){
+		groups = await response.text();
+	}else groups = "ERROR"
+	text += "<h3>TEST:</h3><pre>" + groups + "</pre>";
+	//*/
+	
+	
+	
+	
+	
+	out(text);
+}
+function callbackFunc(result) {
+	/* Пример структуры result для метода API VK groups.getById
+	{
+		"response":[
+			{
+				"id":222541136,
+				"name":"для тестов API VK",
+				"screen_name":"club222541136",
+				"is_closed":0,
+				"type":"page",
+				"photo_50":"https://vk.com/images/community_50.png",
+				"photo_100":"https://vk.com/images/community_100.png",
+				"photo_200":"https://vk.com/images/community_200.png"
+			}
+		]
+	}
+	//*/
+	
+	let text = "<h3>Сообщества:</h3>";
+	
+	result.response.forEach(function(group) {
+		text += '<img src="' + group.photo_50 + '" alt="' + group.name + '">';
+		text += ' <b>' + group.name + '</b>, ';
+		text += 'id = <b>' + group.id + '</b><br>';
+		ids_groups.push(group.id)
+	});
+	
+	info(text);
+	document.getElementsByTagName("head")[0].removeChild(script);
+	script = null;
+	
+	
+}
+async function request_set_post(){
+	/*
+	text = encodeURI(
+		'access_token=' + user_key +
+		'&owner_id=-' + ids_groups[0] +
+		'&message=' + post.text +
+		'&attachments=' + post.photo +
+		'&lat=' + post.lat +
+		'&long=' + post.lon +
+		'&mute_notifications=0&v=5.131'
+	);
+	
+	out(text);
+	fetch(
+		"https://api.vk.com/method/wall.post",
+		{
+			method: 'POST',
+			headers: {
+				"Content-Type": "application/x-www-form-urlencoded"//"multipart/form-data"//"application/x-www-form-urlencoded"//,
+				//"Authorization": "Bearer 3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b",
+				//"group_ids": ""+group_ids,
+				//"v": "5.131"
+			},
+			body: text
+			//body: 'group_ids=public222541136&access_token=3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b&v=5.131'
+		}
+	);//*/
+	/*
+	for(let i = 0; i < post.targets.length; i++){
+			text = encodeURI(
+			'access_token=' + user_key +
+			'&owner_id=-' + ids_groups[i] +
+			'&message=' + post.targets[i].add_top_text + post.text + post.targets[i].add_buttom_text +
+			'&attachments=' + post.photo +
+			'&lat=' + post.lat +
+			'&long=' + post.lon +
+			'&mute_notifications=0&v=5.131'
+		);
+		fetch(
+			"https://api.vk.com/method/wall.post",
+			{
+				method: 'POST',
+				headers: {
+					"Content-Type": "application/x-www-form-urlencoded"//"multipart/form-data"//"application/x-www-form-urlencoded"//,
+					//"Authorization": "Bearer 3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b",
+					//"group_ids": ""+group_ids,
+					//"v": "5.131"
+				},
+				body: text
+				//body: 'group_ids=public222541136&access_token=3546ad4e3546ad4e3546ad4e2b36533041335463546ad4e5045c626f157d64db89da11b&v=5.131'
+			}
+		);
+	}
+	//*/
+	
+	
+	info(1);
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").innerHTML=text;
+}
+</script>
+</head>
+<body>
+	<input type="button" value="Предложить новость" onclick="request_set_post()">
+	<hr>
+	<span id="output"></span>
+	<hr>
+	<span id="info"></span>
+	<hr>
+</body>
+</html>
