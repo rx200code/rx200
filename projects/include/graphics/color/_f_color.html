@@ -1,0 +1,401 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>_f</title>
+
+<script type="text/javascript">
+
+///################### Ползунок ###################
+function create_input(i_to = 255, i_from = 0, i_step = 1){//создает input, i_to - до(длина/размер), i_from - от(начало отсчета), i_step - шаг.
+	if(i_from > i_to){
+		[i_from, i_to] = [i_to, i_from];
+	}
+	let i_value = i_from + ((i_to - i_from) / 2);
+	i_value = i_value > 0 ? Math.floor(i_value) : Math.ceil(i_value);
+	let span = document.createElement('span');
+	let input_r = document.createElement('input');
+		input_r.type = "range";
+		input_r.min = i_from;
+		input_r.max = i_to;
+		input_r.step = i_step;
+		input_r.value = i_value;
+	let input_n = document.createElement('input');
+		input_n.type = "number";
+		input_n.min = i_from;
+		input_n.max = i_to;
+		input_n.step = i_step;
+		input_n.style = "width: 4em;";
+		input_n.value = i_value;
+	let input_t = document.createElement('input');
+		input_t.type = "text";
+		input_t.size = 2;
+		input_t.value = i_value < 16 && i_value > -1  ? "0"+(i_value).toString(16) : (i_value).toString(16);
+		span.f_value = function(i_value){}
+		span.value = i_value;
+	span.f_input_set = function(i){
+		input_r.value = i;
+		input_n.value = i;
+		input_t.value = i < 16 && i >= 0 ? "0"+i.toString(16) : i > -16 && i < 0 ? "-0"+Math.abs(i).toString(16) : i.toString(16);
+		span.value = i;
+	}
+	let f_input = function(i){
+		if(isNaN(i))i = 0;
+		else i *= 1;
+		span.f_input_set(i);
+		span.f_value(i);
+	}
+	input_r.oninput = function(){
+		f_input(this.value);
+	}
+	input_n.oninput = function(){
+		f_input(this.value);
+	}
+	input_t.oninput = function(){
+		f_input(parseInt(this.value == '' ? '0' : this.value , 16));
+	}
+	span.append(input_r, input_n, " 0x", input_t);
+	return span;
+}
+///################### Блок для работы с цветом ###################
+function create_block_color(){
+	//block
+	let div = document.createElement('div');
+	let h3 = document.createElement('h3');
+	//function/method
+	let convert_i_to_t2_hex = function(i){return i < 16 ? "0"+i.toString(16) : i.toString(16);}// принимает значение i от 0 до 255.
+		div.f_value = function(t_value){}
+		div.value = "7f7f7f";
+	let set_value_div = function(t_color_rgb){// Сдда поступает итоговый цыет
+		div.f_value(t_color_rgb);
+		div.value = t_color_rgb;
+		// ТЕСТ
+		text_color_rgb = t_color_rgb;
+		f_draw();
+		
+	}
+	//red
+	let input_red = create_input(0, 255);
+	let span_red = document.createElement('span');
+	//green
+	let input_green = create_input(0, 255);
+	let span_green = document.createElement('span');
+	//blue
+	let input_blue = create_input(0, 255);
+	let span_blue = document.createElement('span');
+	//gray
+	let input_gray = create_input(0, 255);
+	let span_gray = document.createElement('span');
+	//color
+	let input_rgb = document.createElement('input');
+	let span_rgb = document.createElement('span');
+	//#block
+		h3.innerHTML = "Для работы с цветом.";
+	div.append(h3);
+	//#red
+		span_red.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		input_red.append(" ",span_red);
+		input_red.f_value = function(i){
+			let t_color_r = convert_i_to_t2_hex(i);
+			let t_color_rgb = t_color_r + convert_i_to_t2_hex(input_green.value) + convert_i_to_t2_hex(input_blue.value);
+			span_red.style.backgroundColor = "#"+t_color_r+"0000";
+			input_rgb.value = t_color_rgb;
+			span_rgb.style.backgroundColor = "#"+t_color_rgb;
+			set_value_div(t_color_rgb);
+		}
+		input_red.f_value(input_red.value);
+	div.append(input_red, document.createElement('br'));
+	//#green
+		span_green.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		input_green.append(" ",span_green);
+		input_green.f_value = function(i){
+			let t_color_g = convert_i_to_t2_hex(i);
+			let t_color_rgb = convert_i_to_t2_hex(input_red.value) + t_color_g + convert_i_to_t2_hex(input_blue.value);
+			span_green.style.backgroundColor = "#00"+t_color_g+"00";
+			input_rgb.value = t_color_rgb;
+			span_rgb.style.backgroundColor = "#"+t_color_rgb;
+			set_value_div(t_color_rgb);
+		}
+		input_green.f_value(input_green.value);
+	div.append(input_green, document.createElement('br'));
+	//#blue
+		span_blue.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		input_blue.append(" ",span_blue);
+		input_blue.f_value = function(i){
+			let t_color_b = convert_i_to_t2_hex(i);
+			let t_color_rgb = convert_i_to_t2_hex(input_red.value) + convert_i_to_t2_hex(input_green.value) + t_color_b;
+			span_blue.style.backgroundColor = "#0000"+t_color_b;
+			input_rgb.value = t_color_rgb;
+			span_rgb.style.backgroundColor = "#"+t_color_rgb;
+			set_value_div(t_color_rgb);
+		}
+		input_blue.f_value(input_blue.value);
+	div.append(input_blue, document.createElement('br'));
+	//#gray
+		span_gray.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		input_gray.append(" ",span_gray);
+		input_gray.f_value = function(i){
+			let gray_color = convert_i_to_t2_hex(i);
+			span_rgb.style.backgroundColor = span_gray.style.backgroundColor = "#"+gray_color+gray_color+gray_color;
+			input_rgb.value = gray_color+gray_color+gray_color;
+			input_red.f_input_set(i);
+			span_red.style.backgroundColor = "#"+gray_color+"0000";
+			input_green.f_input_set(i);
+			span_green.style.backgroundColor = "#00"+gray_color+"00";
+			input_blue.f_input_set(i);
+			span_blue.style.backgroundColor = "#0000"+gray_color;
+			set_value_div(gray_color+gray_color+gray_color);
+		}
+		input_gray.f_value(input_gray.value);
+	div.append(input_gray, document.createElement('br'));
+	//#color
+		input_rgb.type = "text";
+		input_rgb.size = 6;
+		input_rgb.value = "7f7f7f";
+		span_rgb.innerHTML = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;";
+		span_rgb.style.backgroundColor = "#"+input_rgb.value;
+		input_rgb.oninput = function(){
+			//this.value.length = 2;
+			this.value = this.value.toLowerCase();
+			let test_hex = function(t){return (!(typeof t === 'undefined') && /[\da-f]/.test(t));}
+			let t_color_r = (test_hex(this.value[0]) ? this.value[0] : "0")+(test_hex(this.value[1]) ? this.value[1] : "0");
+			span_red.style.backgroundColor = "#"+t_color_r+"0000";
+			input_red.f_input_set(parseInt(t_color_r, 16));
+			let t_color_g = (test_hex(this.value[2]) ? this.value[2] : "0")+(test_hex(this.value[3]) ? this.value[3] : "0");
+			span_green.style.backgroundColor = "#00"+t_color_g+"00";
+			input_green.f_input_set(parseInt(t_color_g, 16));
+			let t_color_b = (test_hex(this.value[4]) ? this.value[4] : "0")+(test_hex(this.value[5]) ? this.value[5] : "0");
+			span_blue.style.backgroundColor = "#0000"+t_color_b;
+			input_blue.f_input_set(parseInt(t_color_b, 16));
+			let i_selection = input_rgb.selectionStart;
+			this.value = t_color_r + t_color_g + t_color_b;
+			input_rgb.selectionEnd = input_rgb.selectionStart = i_selection;
+			span_rgb.style.backgroundColor = "#"+t_color_r + t_color_g + t_color_b;
+			set_value_div(t_color_r + t_color_g + t_color_b);
+		}
+	div.append(" 0x", input_rgb," ",span_rgb);
+	div.set_color = function(color){
+		input_rgb.value = color;
+		input_rgb.oninput();
+	};
+	return div;
+	
+}
+
+
+
+
+
+let canvas;
+let c;
+const width_canvas = 480;
+const height_canvas = 310;
+let background;
+
+let grd, grd_white, grd_black;
+
+function toString_16_rgba(n){
+	let t = n.toString(16);
+	return '0'.repeat(8 - t.length)+t;
+}
+function convert_i_to_t2_hex(i){return i < 16 ? "0"+i.toString(16) : i.toString(16);}// принимает значение i от 0 до 255.
+
+
+let x = 0;
+let y = 0;
+let width, height;
+let isTest = false;
+function f_mouseup(e){
+	isTest = false;
+	f_draw();
+}
+function f_mousedown(e){
+	x = e.offsetX;
+	y = e.offsetY;
+	pix = c.getImageData(x, y, 1, 1).data;
+	isTest = true;
+	for_color.set_color(convert_i_to_t2_hex(pix[0])+convert_i_to_t2_hex(pix[1])+convert_i_to_t2_hex(pix[2]));
+}
+function f_mousemove(e){
+	x = e.offsetX;
+	y = e.offsetY;
+	if(isTest){
+		pix = c.getImageData(x, y, 1, 1).data;
+		for_color.set_color(convert_i_to_t2_hex(pix[0])+convert_i_to_t2_hex(pix[1])+convert_i_to_t2_hex(pix[2]));
+	}else f_draw();
+}
+let coor_grd;
+let coor_grd_x = 0;
+let coor_grd_y = 0;
+let color_grd;
+function out_cof_rgb(r, g, b){
+	let max;
+	if(r === g && r === b)max = 0;
+	else max = Math.max(r, g, b);
+	if(max === 0){// r
+		coor_grd = 0;
+		color_grd = "#F00";
+		coor_grd_x = 20;
+		coor_grd_y = height_canvas - 39 - (r / 0xFF * 200);
+	}else if(max === r){// r
+		let r1 = r / 0xFF;
+		coor_grd_y = height_canvas - 39 - (r / 0xFF * 200);
+		g = g / r1;
+		b = b / r1;
+		if(g > b){// r g
+			coor_grd_x = 20 + 440 - ((b / 0xFF) * 440);// b
+			g = (g - b) / (1 - b / 0xFF);
+			
+			let cof = g / 0xFF;
+			
+			coor_grd = (1 - (cof / 6)) * 480;
+			color_grd = "#FF"+convert_i_to_t2_hex(g | 0)+"00";
+		}else{// r b
+			coor_grd_x = 20 + 440 - ((g / 0xFF) * 440);// g
+			b = (b - g) / (1 - g / 0xFF);
+			
+			let cof = b / 0xFF;
+			coor_grd = (cof / 6) * 480;
+			color_grd = "#FF00"+convert_i_to_t2_hex(b | 0);
+		}
+	}else if(max === g){// g
+		let g1 = g / 0xFF;
+		coor_grd_y = height_canvas - 39 - (g / 0xFF * 200);
+		r = r / g1;
+		b = b / g1;
+		if(b > r){// g b
+			coor_grd_x = 20 + 440 - ((r / 0xFF) * 440);// r
+			b = (b - r) / (1 - r / 0xFF);
+			let cof = b / 0xFF;
+			coor_grd = (((1 / 3) * 2) - (cof / 6)) * 480;
+			color_grd = "#00FF"+convert_i_to_t2_hex(b | 0);
+		}else{// g r
+			coor_grd_x = 20 + 440 - ((b / 0xFF) * 440);// b
+			r = (r - b) / (1 - b / 0xFF);
+			let cof = r / 0xFF;
+			coor_grd = (((1 / 3) * 2) + (cof / 6)) * 480;
+			color_grd = "#"+convert_i_to_t2_hex(r | 0)+"FF00";
+		}
+	}else{// b
+		let b1 = b / 0xFF;
+		coor_grd_y = height_canvas - 39 - (b / 0xFF * 200);
+		r = r / b1;
+		g = g / b1;
+		if(r > g){// b r
+			coor_grd_x = 20 + 440 - ((g / 0xFF) * 440);// g
+			r = (r - g) / (1 - g / 0xFF);
+			let cof = r / 0xFF;
+			coor_grd = ((1 / 3) - (cof / 6)) * 480;
+			color_grd = "#"+convert_i_to_t2_hex(r | 0)+"00FF";
+		}else{// b g
+			coor_grd_x = 20 + 440 - ((r / 0xFF) * 440);// r
+			g = (g - r) / (1 - r / 0xFF);
+			let cof = g / 0xFF;
+			coor_grd = ((1 / 3) + (cof / 6)) * 480;
+			color_grd = "#00"+convert_i_to_t2_hex(g | 0)+"FF";
+		}
+	}
+}
+
+let text_color_rgb;
+function f_draw(){
+	// Вычисляем.
+	background = parseInt(text_color_rgb, 16);
+	
+	let r = (background >> 16 & 0xFF) * .299;
+	let g = (background >> 8 & 0xFF) * .578;
+	let b = (background & 0xFF) * .114;
+	
+	// Рисуем.
+	c.fillStyle = "#"+text_color_rgb;
+	c.fillRect(0, 0, width_canvas, height_canvas);
+	
+	
+	let offset = 100;
+	let offset_cof = 1.1;
+	
+	width = width_canvas;
+	height = offset;
+	
+	
+	c.fillStyle = grd;
+	c.fillRect(0, height_canvas - 20, width_canvas, 20);
+	
+	
+	//////
+	r = background >> 16 & 0xFF;
+	g = background >> 8 & 0xFF;
+	b = background & 0xFF;
+	
+	out_cof_rgb(r, g, b);
+	
+	c.fillStyle = "#000";
+	c.beginPath();
+	c.moveTo(coor_grd, isTest ? height_canvas - 5: height_canvas - 10);
+	c.lineTo(coor_grd, height_canvas);
+	c.stroke();
+	
+	
+	c.fillStyle = color_grd;
+	c.fillRect(20, height_canvas - 240, 440, 200);
+	
+	c.fillStyle = grd_white;
+	c.fillRect(20, height_canvas - 240, 440, 200);
+	
+	c.fillStyle = grd_black;
+	c.fillRect(20, height_canvas - 240, 440, 200);
+	
+	////
+	c.strokeStyle = "#FFF";
+	c.beginPath();
+	c.arc(coor_grd_x, coor_grd_y, isTest ? 40: 4, 0, 2 * Math.PI);
+	c.stroke();
+	c.strokeStyle = "#000";
+	c.beginPath();
+	c.arc(coor_grd_x, coor_grd_y, isTest ? 50: 5, 0, 2 * Math.PI);
+	c.stroke();
+	
+	let pix = c.getImageData(x, y, 1, 1).data;
+	
+	c.fillStyle = "#"+convert_i_to_t2_hex(pix[0])+convert_i_to_t2_hex(pix[1])+convert_i_to_t2_hex(pix[2]);
+	c.fillRect(20, height_canvas - 290, 50, 50);
+	
+}
+let for_color;
+window.onload = function(){
+	let div_left = document.getElementById('left');
+	canvas = document.getElementById("canvas");
+	canvas.width = width_canvas;
+	canvas.height = height_canvas;
+	c = canvas.getContext('2d');
+	c.font = "48px serif";
+	c.textAlign = "center";
+	c.textBaseline = "middle";
+	
+	grd_white = c.createLinearGradient(20, 0, 460, 0);
+	grd_white.addColorStop(0, "#FFFFFFFF");
+	grd_white.addColorStop(1, "#FFFFFF00");
+	
+	grd_black = c.createLinearGradient(0, height_canvas - 239, 0, height_canvas - 39);
+	grd_black.addColorStop(0, "#00000000");
+	grd_black.addColorStop(1, "#000000FF");
+	
+	grd = c.createLinearGradient(0, 0, width_canvas, 0);
+	grd.addColorStop(0,     "#F00");
+	grd.addColorStop(1 / 6, "#F0F");
+	grd.addColorStop(2 / 6, "#00F");
+	grd.addColorStop(3 / 6, "#0FF");
+	grd.addColorStop(4 / 6, "#0F0");
+	grd.addColorStop(5 / 6, "#FF0");
+	grd.addColorStop(1,     "#F00");
+	for_color = create_block_color();
+	div_left.append(for_color);
+	canvas.addEventListener("mousemove", f_mousemove);
+	canvas.addEventListener("mousedown", f_mousedown);
+	canvas.addEventListener("mouseup", f_mouseup);
+}
+
+</script>
+</head>
+<body>
+<div id="left"></div><canvas id="canvas"></canvas>
+</body>
+</html>
