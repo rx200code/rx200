@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Фильтры.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body{
+	padding: 0px;
+	margin: 0px;
+}
+svg{
+	background-color: #aaa;
+	float: left;
+	padding: 0px;
+}
+div{
+	clear: left;
+	padding: 10px;
+}
+</style>
+
+<script type="text/javascript">
+let createElementNS = (name, ...attr) => {
+	let elm = document.createElementNS("http://www.w3.org/2000/svg", name);
+	for(let arr_set of attr)elm.setAttributeNS(null, arr_set[0], arr_set[1]);
+	return elm;
+};
+let createElement = (name, ...attr) => {
+	let elm = document.createElement(name);
+	for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+	return elm;
+};
+// массив настройки фильтров.
+const mode_filters = {
+	"feFlood":{
+		"flood-color":{
+			type:"color",
+			value:"#88FF00"
+		},
+		"flood-opacity":{
+			type:"number",
+			value:.5,
+			min:0,
+			max:1
+		}
+	}
+};
+
+function createFilter(filterName){
+	let div = createElement("div");
+	
+	let size_x = 430;
+	let size_y = 450;
+	let svg = createElementNS("svg", ["width", size_x+""], ["height", size_y+""], ["viewBox", "0 0 "+size_x+" "+size_y], ["filter", "url(#" + filterName + ")"]);
+	svg.appendChild(createElementNS("use", ["href", "#model_1"], ["x", "10"], ["y", "30"]));
+	svg.appendChild(createElementNS("use", ["href", "#model_2"], ["x", "220"], ["y", "30"]));
+	
+	let text = createElementNS("text", ["x", "215"], ["y", "18"], ["font-size", "18px"], ["text-anchor", "middle"], ["dominant-baseline", "middle"], ["fill", "#000"]);
+	text.textContent = "<"+filterName+">";
+	svg.appendChild(text);
+	
+	let model_1 = createElementNS("use", ["href", "#model_1"], ["x", "10"], ["y", "240"]);
+	let model_2 = createElementNS("use", ["href", "#model_2"], ["x", "220"], ["y", "240"]);
+	svg.appendChild(model_1);
+	svg.appendChild(model_2);
+	div.appendChild(svg);
+	
+	if(mode_filters[filterName] === undefined)return div;
+	
+	let mode = document.getElementById("mode_" + filterName);
+	
+	for(let attribute in mode_filters[filterName]){
+		mode.setAttributeNS(null, attribute, mode_filters[filterName][attribute].value);
+		if(mode_filters[filterName][attribute].type === "color"){
+			let input_color = createElement("input", ["type", "color"], ["value", mode_filters[filterName][attribute].value]);
+			input_color.onchange = () => {
+				mode.setAttributeNS(null, attribute, input_color.value);
+			};
+			div.insertAdjacentText('beforeend', " | " + attribute + ": ");
+			div.appendChild(input_color);
+		}else if(mode_filters[filterName][attribute].type === "number"){
+			let input_opacity = createElement("input", ["type", "range"], ["min", mode_filters[filterName][attribute].min], ["max", mode_filters[filterName][attribute].max], ["step", (mode_filters[filterName][attribute].max - mode_filters[filterName][attribute].min) / 100], ["value", mode_filters[filterName][attribute].value]);
+			input_opacity.oninput = () => {
+				mode.setAttributeNS(null, attribute, input_opacity.value);
+			};
+			div.insertAdjacentText('beforeend', " | " + attribute + ": ");
+			div.appendChild(input_opacity);
+		}
+	}
+	
+	
+	return div;
+};
+/*
+let input_opacity = createElement("input", ["type", "range"], ["class", "r_color"], ["min", "0"], ["max", "1"], ["step", ".01"], ["value", .5]);
+// Цвет.
+		input_color.onchange = () => {
+			line.setAttributeNS(null, "stroke", input_color.value);
+		};
+		// Прозрачность
+		input_opacity.oninput = () => {
+			line.setAttributeNS(null, "stroke-opacity", input_opacity.value);
+		};
+*/
+
+window.onload = function(){
+	let body = document.body;// главное окно.
+	body.appendChild(createFilter("feFlood"));
+	body.appendChild(createFilter("feColorMatrix"));
+	body.appendChild(createFilter("feComponentTransfer"));
+};
+
+
+</script>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="0" height="0">
+<defs>
+	<g id="model_1">
+		<path
+			d="M0,0 h100 v100 h-100 z"
+			fill="#f00"
+			fill-opacity="0.5"
+			stroke="#000"
+			stroke-width="5"
+		/>
+		<text
+			x="0"
+			y="0"
+			dx="50px"
+			dy="50px"
+			text-anchor="middle"
+			dominant-baseline="middle"
+			font-size="70px"
+			fill="black"
+		>Rx</text>
+		<path
+			d="M100,0 h100 v100 h-100 z"
+			fill="#0f0"
+		/>
+		<path
+			d="M0,100 h100 v100 h-100 z"
+			fill="#00f"
+		/>
+		<path
+			d="M100,100 h100 v100 h-100 z"
+			fill="#f00"
+		/>
+	</g>
+	<g id="model_2">
+		<image
+			href="resources/mona_200x200.jpg"
+			height="200"
+			width="200"
+		/>
+	</g>
+	<!-- Фильтры -->
+	<filter id="feFlood"
+		x="0"
+		y="0"
+		width="100%"
+		height="100%">
+		<feFlood id="mode_feFlood" flood-color="#000000" flood-opacity="1" result="filterEffect"
+			x="0"
+			y="53%"
+			width="100%"
+			height="47%"
+			/>
+		<feMerge>
+			<feMergeNode in="SourceGraphic" />
+			<feMergeNode in="filterEffect" />
+		</feMerge>
+		
+	</filter>
+</defs>
+<svg>
+</body>
+</html>

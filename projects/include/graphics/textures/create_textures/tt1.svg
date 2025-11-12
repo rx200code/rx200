@@ -1,0 +1,15 @@
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter">
+		<feComponentTransfer>
+			<feFuncR type="table" tableValues=".0 .9"/>
+			<feFuncG type="table" tableValues=".4 1"/>
+			<feFuncB type="table" tableValues=".7 1"/>
+		</feComponentTransfer>
+	</filter>
+	<image
+		filter="url(#filter)"
+		href="https://sun4-20.userapi.com/impg/Lbo-tbA9GEQCvaCUMr7eQ91cIXwsqtMM1QhtBA/Y3p0YWeHGb0.jpg?size=2560x2560&amp;quality=95&amp;sign=916e2fd88d874966f82414c69f5178ca&amp;type=album"
+		height="500"
+		width="500"
+	/>
+</svg>
