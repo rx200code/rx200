@@ -1,0 +1,480 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>игра</title>
+<style>
+#info{
+	border: 1px solid black;
+	height: 800px; /* Высота блока */
+	width: 800px; /* Ширина блока */
+	/*float: right; /* Обтекание */
+	/*display: inline-block;/**/
+}
+#grafika{
+	/*display: inline;/**/
+	/*float: left; /* Обтекание */
+	/*border: 1px solid black;/**/
+	/*height: 800px; /* Высота блока */
+	/*width: 1000px; /* Ширина блока */
+}
+#graf_geks{
+	/*display: inline;/**/
+	/*float: left; /* Обтекание */
+	border: 1px solid black;/**/
+	/*height: 800px; /* Высота блока */
+	/*width: 1000px; /* Ширина блока */
+}
+
+</style>
+<script type="text/javascript">
+//1.4142135623731 ход на искасок.
+var gi_kw = 1000;//Глобальный числовой размер ширины карты.
+var gi_kh = 800;//Глобальный числовой размер высоты карты.
+var gi_sp = 50;//Размер пункта.
+var gi_xp = gi_kw/gi_sp;//количество по оси x пунктов.
+var gi_yp = gi_kh/gi_sp;//количество по оси y пунктов.
+var gt_cp = "#270";//цвет пункта.
+var gt_ck = "#333";//цвет контура пункта.
+var gt_cv = "#fd0";//цвет выделеного контура.
+var gi_sw = 1;//толщина контура пункта.
+var go_v;//выделеный обект.
+var go_mir;
+var go_ger;
+var svgns = "http://www.w3.org/2000/svg";
+var svg;
+var svg_geks;
+var ga_xod = [];//глобальный массив, с ссылками на объекты, в которые при ходе нужно внести изменения.
+window.onload = function(){
+	//Строим гекс сетку.
+	
+	svg_geks = document.getElementById('graf_geks');
+	svg_geks.setAttributeNS(null, "width", gi_kw);
+	svg_geks.setAttributeNS(null, "height", gi_kh);
+	
+	var Size = 100;// Размер клетки
+	var StartPositionX = Size/2;//Позиция, в которой строится первая клетка X
+	var StartPositionY = Size/2;//Позиция, в которой строится первая клетка Y
+	var chet = false;// Четность ряда
+	for (var y = 0; y < 8; y++){
+		for(var x = 0; x < 8; x++){
+			if(chet){//Переменная chet является true значит ряд четный, необходимо смещение!
+				//Построить клетку в позиции: StartPositionX; StartPositionY + yStart;
+				var graf = document.createElementNS(svgns, "circle");
+				graf.setAttributeNS(null, "cx", (StartPositionX + Size*x) + Size/2);
+				graf.setAttributeNS(null, "cy", StartPositionY + Size*y);
+				graf.setAttributeNS(null, "r", Size/2);
+				graf.setAttributeNS(null, "fill", "#a00");
+				graf.setAttributeNS(null, "stroke", gt_ck);
+				graf.setAttributeNS(null, "stroke-width", gi_sw);
+				svg_geks.appendChild(graf);
+			}else{//ряд нечетный, значит стартовая позиция ряда равна стартовому Y поля.
+				//Построить клетку в позиции: StartPositionX; StartPositionY;
+				var graf = document.createElementNS(svgns, "circle");
+				graf.setAttributeNS(null, "cx", StartPositionX + Size*x);
+				graf.setAttributeNS(null, "cy", StartPositionY + Size*y);
+				graf.setAttributeNS(null, "r", Size/2);
+				graf.setAttributeNS(null, "fill", "#a00");
+				graf.setAttributeNS(null, "stroke", gt_ck);
+				graf.setAttributeNS(null, "stroke-width", gi_sw);
+				svg_geks.appendChild(graf);
+			}
+		}
+		//yStart = Size/2;
+		//StartPositionX += Size/2;
+		chet = !chet;
+	}
+	
+	
+	
+	//return;
+	svg = document.getElementById('grafika');
+	svg.setAttributeNS(null, "width", gi_kw);
+	svg.setAttributeNS(null, "height", gi_kh);
+	//svg.appendChild(get_circle(gi_rg,getRandomInRange(gi_rg,gi_kw - gi_rg),getRandomInRange(gi_rg,gi_kh - gi_rg),gt_cg));
+	//Далее, формируем игровой мир.
+	//children, child - дети.
+	//parent - родитель.
+	//Sibling - сосед.
+	go_mir = new Mir();
+	//out(JSON.stringify(go_mir));
+	go_mir.vid();
+}
+function Mir(){//Конструктор мира.
+	this.id = 0;
+	this.size = gi_xp*gi_yp;
+	this.child_pyn = new Array();
+	this.xod = function(){
+		
+	}
+	var i = 0;
+	while(i<gi_yp){
+		var k = 0;
+		while(k<gi_xp){
+			this.child_pyn[this.child_pyn.length] = new Pyn(this.child_pyn.length,k,i);
+			k++;
+		}
+		i++;
+	}
+	
+	this.child_ger = new Array();
+	this.child_ger[this.child_ger.length] = new Ger(this.child_ger.length,getRandomInRange(0, this.child_pyn.length - 1),this);
+	
+	go_v = this;
+	this.vid = function(){
+		go_v.vid_no(this);
+		info("x = "+gi_xp+"; y = "+gi_yp+"; Pyn = "+this.child_pyn.length+".");
+		go_v = this;
+	};
+	this.vid_no = function(obj){
+		//info("");
+	};
+}
+function Pyn(id,x,y){//Конструктор пунктов на карте.
+	this.id = id;
+	this.x = x;
+	this.y = y;
+	this.xod = function(){
+		
+	}
+	this.graf = document.createElementNS(svgns, "rect");
+	this.graf.setAttributeNS(null, "x", x*gi_sp);
+	this.graf.setAttributeNS(null, "y", y*gi_sp);
+	this.graf.setAttributeNS(null, "width",  gi_sp-gi_sw);
+	this.graf.setAttributeNS(null, "height",  gi_sp-gi_sw);
+	this.graf.setAttributeNS(null, "fill", gt_cp);
+	this.graf.setAttributeNS(null, "stroke", gt_ck);
+	this.graf.setAttributeNS(null, "stroke-width", gi_sw);
+	this.graf.obj = this;
+	this.vid = function(){
+		if(go_v === this){
+			go_mir.vid();
+			return;
+		}
+		if(go_v.vid_no(this) == -1)return;
+		this.graf.setAttributeNS(null, "stroke", gt_cv);
+		info("x = "+this.x+"; y = "+this.y+"; id = "+this.id+".");
+		go_v = this;
+	};
+	this.vid_no = function(obj){
+		this.graf.setAttributeNS(null, "stroke", gt_ck);
+	};
+	//this.graf.onclick = function(){alert("x = "+x+"; y = "+y+"; id = "+id+" x = "+get_xy(id).x+"; y = "+get_xy(id).y+"; id = "+get_id(x,y))};
+	//this.graf.onclick = function(){f_hod(x,y,xxx)};
+	//*
+	this.graf.onclick = function(){
+		this.obj.vid();
+	};//*/
+	svg.appendChild(this.graf);
+}
+function Ger(id,id_pyn,mir){//Конструктор героя.
+	this.id = id;
+	this.id_pyn = id_pyn;
+	this.x_pyn = mir.child_pyn[this.id_pyn].x;
+	this.y_pyn = mir.child_pyn[this.id_pyn].y;
+	this.speed = 5;
+	this.hods = 5;
+	this.a_id_hods = f_hod(this.x_pyn,this.y_pyn,this.hods);
+	this.flag_hod = true;
+	this.xod = function(){
+		this.hods = this.speed;
+		this.a_id_hods = f_hod(this.x_pyn,this.y_pyn,this.hods);
+		if(go_v === this){
+			go_mir.vid();
+			this.vid();
+		}
+	}
+	ga_xod[ga_xod.length] = this;
+	this.name = "Гер";
+	this.r = gi_sp/2;
+	this.ot = this.r-Math.floor(gi_sw/2)
+	this.graf = document.createElementNS(svgns, "circle");
+	this.graf.setAttributeNS(null, "cx", this.ot+this.x_pyn*gi_sp);
+	this.graf.setAttributeNS(null, "cy", this.ot+this.y_pyn*gi_sp);
+	this.graf.setAttributeNS(null, "r", this.r-Math.floor(gi_sp/5));
+	this.graf.setAttributeNS(null, "fill", "#a00");
+	this.graf.setAttributeNS(null, "stroke", gt_ck);
+	this.graf.setAttributeNS(null, "stroke-width", gi_sw);
+	this.graf.obj = this;//"Ggg";
+	this.vid = function(){
+		if(this.flag_hod && go_v === this){
+			go_mir.vid();
+			return;
+		}
+		this.flag_hod = true;
+		go_v.vid_no(this);
+		this.graf.setAttributeNS(null, "stroke", gt_cv);
+		info("Имя = "+this.name+"; Скорость = "+this.speed+"/"+this.hods+"; id_pyn = "+this.id_pyn+".");
+		go_v = this;
+		this.a_id_hods.forEach(function(item){
+			/*
+			var text  = document.createElementNS(svgns, "text");
+			//text.setAttribute('x', '10');
+			text.setAttributeNS(null,'x', go_mir.child_pyn[item.id].x*gi_sp);//+gi_sp/2);
+			text.setAttributeNS(null,'y', go_mir.child_pyn[item.id].y*gi_sp+gi_sp);///2);
+			text.setAttributeNS(null,'font-size', gi_sp/2);
+			text.setAttributeNS(null,'fill', '#fff');
+			text.textContent = item.hod;
+			svg.appendChild(text);//*/
+			//go_mir.child_pyn[item.id].graf.appendChild(text);
+			go_mir.child_pyn[item.id].graf.setAttributeNS(null, "fill", "#785");
+		});
+	};
+	this.vid_no = function(obj){
+		this.graf.setAttributeNS(null, "stroke", gt_ck);
+		var b_flag = false;
+		var i_xods = 0;
+		this.a_id_hods.forEach(function(item){
+			go_mir.child_pyn[item.id].graf.setAttributeNS(null, "fill", gt_cp);
+			if(item.id == obj.id){
+				b_flag = true;
+				i_xods = item.hod;
+			}
+		});
+		if(obj instanceof Pyn && obj.id != this.id_pyn && b_flag){
+			//alert(obj.id);
+			this.hods -= i_xods;
+			this.id_pyn = obj.id;
+			this.x_pyn = obj.x;
+			this.y_pyn = obj.y;
+			this.graf.setAttributeNS(null, "cx", this.ot+this.x_pyn*gi_sp);
+			this.graf.setAttributeNS(null, "cy", this.ot+this.y_pyn*gi_sp);
+			this.a_id_hods = f_hod(this.x_pyn,this.y_pyn,this.hods);
+			this.flag_hod = false;
+			this.vid();
+			return -1;
+		};
+	};
+	this.graf.onclick = function(){
+		this.obj.vid();
+	};
+	svg.appendChild(this.graf);
+}
+function get_id(x, y){
+	if(x<0 || x>=gi_xp || y<0 || y>=gi_yp)return -1;
+	return y*gi_xp+x;
+}
+function get_xy(id){
+	var x = id%gi_xp;
+	var y = Math.floor(id / gi_xp);
+	return {x:x, y:y};
+}
+function getRandomInRange(min, max){
+	if(arguments.length == 1 && typeof arguments[0] == "object" && arguments[0] instanceof Array)return Math.floor(Math.random() * (arguments[0][1] - arguments[0][0] + 1)) + arguments[0][0];
+	return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function get_circle(r,x,y,c){
+	var svgns = "http://www.w3.org/2000/svg";
+	var shape = document.createElementNS(svgns, "circle");
+	shape.setAttributeNS(null, "cx", x);
+	shape.setAttributeNS(null, "cy", y);
+	shape.setAttributeNS(null, "r",  r);
+	shape.setAttributeNS(null, "fill", c);
+	return shape;
+}
+
+function xod(){
+	for(var i = 0; i < ga_xod.length; i++) {
+		ga_xod[i].xod();
+	}
+}
+function f_hod(xc,yc,r){//Функция ходов прототип готова.
+	var i = 0;
+	var i_id = 0;
+	var arr_ids = [];
+	arr_ids[arr_ids.length] = {id:get_id(xc, yc),hod:0};
+	//go_mir.child_pyn[get_id(xc, yc)].graf.setAttributeNS(null, "fill", "#888");
+	i++;
+	while(i <= r){
+		//f_1(xc,yc,i);
+		i_id = get_id(xc+i, yc);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i};
+		i_id = get_id(xc-i, yc);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i};
+		i_id = get_id(xc, yc+i);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i};
+		i_id = get_id(xc, yc-i);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i};
+		
+		i++;
+	}
+	
+	var k = 1;
+	i = k;
+	r -= 1.5;
+	while(r >= 0){
+		//f_2(xc,yc,i,k);// i, k, Всегда равны.
+		i_id = get_id(xc+i, yc+k);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i*1.5};
+		i_id = get_id(xc+i, yc-k);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i*1.5};
+		i_id = get_id(xc-i, yc+k);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i*1.5};
+		i_id = get_id(xc-i, yc-k);
+		if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:i*1.5};
+		
+		i = 1;
+		while(r >=i){
+			//f_2(xc,yc,i+k,k);
+			i_id = get_id(xc+(i+k), yc+k);
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			i_id = get_id(xc+(i+k), yc-k);
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			i_id = get_id(xc-(i+k), yc+k);
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			i_id = get_id(xc-(i+k), yc-k);
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			//f_2(xc,yc,k,i+k);
+			i_id = get_id(xc+k, yc+(i+k));
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			i_id = get_id(xc+k, yc-(i+k));
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			i_id = get_id(xc-k, yc+(i+k));
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			i_id = get_id(xc-k, yc-(i+k));
+			if(i_id !== -1)arr_ids[arr_ids.length] = {id:i_id,hod:k*1.5+i};
+			i++;
+		}
+		r -= 1.5;
+		k++;
+		i = k;
+	}
+	return arr_ids;
+	//временно.
+	/*
+	arr_ids.forEach(function(item){
+		var text  = document.createElementNS(svgns, "text");
+		//text.setAttribute('x', '10');
+		text.setAttributeNS(null,'x', go_mir.child_pyn[item.id].x*gi_sp);//+gi_sp/2);
+		text.setAttributeNS(null,'y', go_mir.child_pyn[item.id].y*gi_sp+gi_sp);///2);
+		text.setAttributeNS(null,'font-size', gi_sp/2);
+		text.setAttributeNS(null,'fill', '#fff');
+		text.textContent = item.hod;
+		svg.appendChild(text);
+		//go_mir.child_pyn[item.id].graf.appendChild(text);
+		go_mir.child_pyn[item.id].graf.setAttributeNS(null, "fill", "#000");
+	});
+	info(arr_ids.length);//*/
+}
+//###############Ниже вспомогательные функции которых в самой программе не будет.########################
+var xxx = 1;
+function f_2(xc,yc,x,y){
+	go_mir.child_pyn[get_id(xc+x, yc+y)].graf.setAttributeNS(null, "fill", "#000");
+	go_mir.child_pyn[get_id(xc+x, yc-y)].graf.setAttributeNS(null, "fill", "#000");
+	go_mir.child_pyn[get_id(xc-x, yc+y)].graf.setAttributeNS(null, "fill", "#000");
+	go_mir.child_pyn[get_id(xc-x, yc-y)].graf.setAttributeNS(null, "fill", "#000");
+}
+function f_1(xc,yc,r){
+	go_mir.child_pyn[get_id(xc+r, yc)].graf.setAttributeNS(null, "fill", "#000");
+	go_mir.child_pyn[get_id(xc-r, yc)].graf.setAttributeNS(null, "fill", "#000");
+	go_mir.child_pyn[get_id(xc, yc+r)].graf.setAttributeNS(null, "fill", "#000");
+	go_mir.child_pyn[get_id(xc, yc-r)].graf.setAttributeNS(null, "fill", "#000");
+}
+function f_circle3(xc,yc,r){
+	var d = 0;//-xxx/2;//3*2-2*r;
+	var x = 0;
+	var y = r;
+	while(x <= y){
+		go_mir.child_pyn[get_id(x+xc, y+yc)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(x+xc, -y+yc)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(-x+xc, -y+yc)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(-x+xc, y+yc)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(y+xc, x+yc)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(y+xc, -x+yc)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(-y+xc, -x+yc)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(-y+xc, x+yc)].graf.setAttributeNS(null, "fill", "#000");
+		if(d<0){
+			d=d+4*x+6;
+		}else{
+			d=d+4*(x-y)+10;
+			y--;
+		}
+		
+		x++;
+	}
+	
+}
+function f_circle2(x0,y0,radius) {
+	var x = 0;
+	var y = radius;
+	var delta = 1 - 2 * radius;
+	var error = 0;
+	while(y >= 0) {
+		go_mir.child_pyn[get_id(x0 + x, y0 + y)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(x0 + x, y0 - y)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(x0 - x, y0 + y)].graf.setAttributeNS(null, "fill", "#000");
+		go_mir.child_pyn[get_id(x0 - x, y0 - y)].graf.setAttributeNS(null, "fill", "#000");
+		error = 2 * (delta + y) - 1;
+		if(delta < 0 && error <= 0) {
+			++x;
+			delta += 2 * x + 1;
+			continue;
+		}
+		error = 2 * (delta - x) - 1;
+		if(delta > 0 && error > 0) {
+			--y;
+			delta += 1 - 2 * y;
+			continue;
+		}
+		++x;
+		delta += 2 * (x - y);
+		--y;
+	}
+}
+function test2(){
+	var svgns = "http://www.w3.org/2000/svg";
+var shape = document.createElementNS(svgns, "circle");
+var ra = 15;
+shape.setAttributeNS(null, "cx", ra);
+shape.setAttributeNS(null, "cy", ra);
+shape.setAttributeNS(null, "r",  ra);
+shape.setAttributeNS(null, "fill", "green");
+svg.appendChild(shape);
+	
+}
+function test(){
+	//alert(getRandomInRange([5,5]));return;
+	var svgns = "http://www.w3.org/2000/svg";
+var shape = document.createElementNS(svgns, "circle");
+var x = getRandomInRange(gi_rg,gi_kw - gi_rg);
+var y = getRandomInRange(gi_rg,gi_kh - gi_rg);
+shape.setAttributeNS(null, "cx", x);
+shape.setAttributeNS(null, "cy", y);
+shape.setAttributeNS(null, "r",  gi_rg);
+shape.setAttributeNS(null, "fill", "green");
+shape.onclick = function(){alert("x = "+x+"; y = "+y)};
+svg.appendChild(shape);
+	
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").innerHTML=text;
+}
+</script>
+</head>
+<body>
+	<svg xmlns="http://www.w3.org/2000/svg" id="graf_geks"></svg>
+	<table>
+		<tr>
+			<td>
+				<svg xmlns="http://www.w3.org/2000/svg" id="grafika"></svg>
+			</td>
+			<td>
+				<div id="info"></div>
+			</td>
+		</tr>
+	</table>
+	<br>
+	<input type="button" value="Ход" onClick="xod()">
+	<br>
+	<input type="button" value="start" onClick="start()">
+	<br>
+	<input type="button" value="test" onClick="test()">
+	<br>
+	<input type="button" value="getRandomInRange" onClick="getRandomInRange(1,3)">
+	<br>
+	<span id="output"></span>
+	<br>
+	
+</body>
+</html>
