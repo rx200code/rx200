@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Фильтры.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body{
+	padding: 0px;
+	margin: 20px;
+}
+svg{
+	/**/
+	background-color: #ccc;
+	/**/
+}
+.av{
+	border-radius: 50%;
+}
+</style>
+
+<script type="text/javascript">
+
+</script>
+</head>
+<body>
+<svg style="display:none" xmlns="http://www.w3.org/2000/svg">
+<defs>
+<g id="test" fill="none" fill-rule="evenodd">
+	<path d="M20 20 h472 v150 h-472 z" stroke="#000" fill="#fff" stroke-width="10" fill-rule="nonzero"></path>
+	<path d="M120,270 a40,40 0 0,1 90,30 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<path d="M120,270 c200,-100 0,150 0,200 z" stroke="#000" fill="#fff" stroke-width="12" />
+	
+	<path d="M270,170 s90,-90 180,0 h0 s-90,90 -180,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="360" cy="170" r="18" stroke="#000" fill="#fff" stroke-width="20" />
+	
+	<path d="M270,170 c50,-100 160,10 180,0 h0 s-90,90 -180,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="340" cy="170" r="18" stroke="#000" fill="#fff" stroke-width="20" />
+	
+	<path d="M270,170 c30,-90 160,0 180,0 h0 c-20,0 -150,90 -180,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="330" cy="170" r="18" stroke="#000" fill="#fff" stroke-width="20" />
+	
+	<path d="M50,420 q20,50 412,-30" stroke="#000" stroke-width="12" />
+	
+	<rect x="20" y="40" width="472" height="200" rx="20"  stroke="#000" fill="#f7f700" stroke-width="12" />
+</g>
+<g id="icon_v1" fill="none" fill-rule="evenodd">
+	<rect x="20" y="40" width="472" height="150" rx="20"  stroke="#000" fill="#f7f700" stroke-width="12" />
+	<path d="M270,190 s90,-90 180,0 h0 s-90,90 -180,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="360" cy="190" r="18" stroke="#000" fill="#fff" stroke-width="20" />
+	<path d="M120,270 a47,47 0 0,1 90,30 q-10,40 -90,100 q-80,-60 -90,-100 a47,47 0 0,1 90,-30 z" stroke="#000" fill="#f00" stroke-width="12" />
+	<path d="M250,280 h80" stroke="#000" stroke-width="12" />
+	<path d="M270,350 q90,0 100,-20" stroke="#000" stroke-width="12" />
+	<path d="M50,440 q20,50 412,-30" stroke="#000" stroke-width="12" />
+</g>
+<g id="icon" fill="none" fill-rule="evenodd">
+	
+	
+	<path d="M20 100 c0,-90 472,-90 472,0 v120 a20,20 0 0,1 -20,20 h-432 a20,20 0 0,1 -20,-20 z" stroke="#000" fill="#f7f700" stroke-width="12" />
+	
+					  
+	<path d="M270,240 c30,-90 160,0 180,0 h0 c-20,0 -130,85 -180,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="330" cy="240" r="17" stroke="#000" fill="#fff" stroke-width="20" />
+	
+	<path d="M250,320 h80" stroke="#000" stroke-width="12" stroke-linecap="round" />
+	<path d="M270,370 q90,0 100,-20" stroke="#000" stroke-width="12" stroke-linecap="round" />
+	<path d="M210,430 q220,0 240,-70" stroke="#000" stroke-width="12" stroke-linecap="round" />
+	
+	<path d="M120,320 a47,47 0 0,1 90,30 q-10,40 -90,100 q-80,-60 -90,-100 a47,47 0 0,1 90,-30 z" stroke="#000" fill="#f00" stroke-width="12" />
+	
+</g>
+<g id="icon_v_min" fill="none" fill-rule="evenodd">
+	<rect x="20" y="20" width="260" height="150" rx="20"  stroke="#000" fill="#f7f700" stroke-width="12" />
+	<path d="M130,130 a47,47 0 0,1 90,30 q-10,40 -90,100 q-80,-60 -90,-100 a47,47 0 0,1 90,-30 z" stroke="#000" fill="#f00" stroke-width="12" />
+	<path d="M70,80 s100,-100 200,0 h0 s-100,100 -200,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="170" cy="80" r="21" stroke="#000" fill="#fff" stroke-width="22" />
+</g>
+<g id="icon_v_min16" fill="none" fill-rule="evenodd">
+	<path d="M10,100 s100,-100 200,0 h0 s-100,100 -200,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="110" cy="100" r="21" stroke="#000" fill="#fff" stroke-width="22" />
+</g>
+<g id="icon_v_min2" fill="none" fill-rule="evenodd">
+	<!----
+	<circle cx="165" cy="140" r="120" stroke="#000" fill="#f7f700" stroke-width="12" />
+	<circle cx="150" cy="150" r="120" stroke="#000" fill="#f7f700" stroke-width="12" />
+	<rect x="-20" y="80" width="340" height="120" stroke="#000" fill="#f7f700" stroke-width="12" />
+	<!---->
+	
+	<rect x="-20" y="80" width="340" height="140" stroke="#000" fill="#f7f700" stroke-width="12" />
+	<path d="M130,130 a47,47 0 0,1 90,30 q-10,40 -90,100 q-80,-60 -90,-100 a47,47 0 0,1 90,-30 z" stroke="#000" fill="#f00" stroke-width="12" />
+	<path d="M70,80 s100,-100 200,0 h0 s-100,100 -200,0 z" stroke="#000" fill="#fff" stroke-width="12" />
+	<circle cx="170" cy="80" r="21" stroke="#000" fill="#fff" stroke-width="22" />
+</g>
+<g id="icon_v_min3" fill="none" fill-rule="evenodd">
+	<!----
+	<rect x="-20" y="90" width="340" height="120" stroke="#000" fill="#f7f700" stroke-width="12" />
+	<!---->
+	<path d="M-20,90 h100 l70,70 l70,-70 h100 v120 h-340 z" stroke="#000" fill="#f7f700" stroke-width="0" />
+	<path d="M150,105 a47,47 0 0,1 90,30 q-10,40 -90,100 q-80,-60 -90,-100 a47,47 0 0,1 90,-30 z" stroke="#000" fill="#f00" stroke-width="0" />
+</g>
+<g id="big_img" fill="none" fill-rule="evenodd">
+	
+	<path d="M-20,390 h100 l70,70 l70,-70 h1100 v120 h-1340 z" stroke="#000" fill="#f7f700" stroke-width="0" />
+	<path d="M150,405 a47,47 0 0,1 90,30 q-10,40 -90,100 q-80,-60 -90,-100 a47,47 0 0,1 90,-30 z" stroke="#000" fill="#f00" stroke-width="0" />
+	
+</g>
+</defs>
+</svg>
+<h2>Большой сниппет</h2>
+<p>original 1120x630</p>
+<svg width="1120" height="630" viewBox="0 0 1120 630" xmlns='http://www.w3.org/2000/svg'>
+	<!----<rect x="0" y="0" width="100%" height="100%" fill="#acd"/><!---->
+	<use href="#big_img"/>
+	<text x="100" y="170" >Perfecto</text>
+	<text x="450" y="340" >Posta!</text>
+	
+	<style>
+		<![CDATA[
+			text{
+				fill: #c47;
+				font: 150px Verdana, Helvetica, Arial, sans-serif;
+				font-family: Segoe Print, cursive;
+			}
+		]]>
+	</style>
+	<!----
+	fill: #9933ff;
+	<!---->
+</svg>
+<p>v2 1120x630</p>
+<svg width="1120" height="630" viewBox="0 0 1120 630" xmlns='http://www.w3.org/2000/svg'>
+	<rect x="0" y="0" width="100%" height="100%" fill="#acd"/>
+	<use href="#big_img"/>
+	<text x="100" y="170" >Лучшие</text>
+	<text x="450" y="340" >Посты!</text>
+	
+	<style>
+		<![CDATA[
+			text{
+				fill: #c47;
+				font: 150px Verdana, Helvetica, Arial, sans-serif;
+				font-family: Segoe Print, cursive;
+			}
+		]]>
+	</style>
+	<!----
+	fill: #9933ff;
+	<!---->
+</svg>
+<h2>иконки</h2>
+<p>original 512</p>
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v1"/>
+</svg>
+<p>32x32 16x16</p>
+<svg width="32" height="32" viewBox="0 0 300 300" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v_min"/>
+</svg>
+<svg width="16" height="16" viewBox="0 0 220 220" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v_min16"/>
+</svg>
+<svg width="32" height="32" viewBox="0 0 220 220" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v_min16"/>
+</svg>
+<svg width="32" height="32" viewBox="0 0 300 300" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v_min3"/>
+</svg>
+<svg width="16" height="16" viewBox="0 0 300 300" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v_min3"/>
+</svg>
+<p>150x150</p>
+<svg width="150" height="150" viewBox="0 0 512 512" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v1"/>
+</svg>
+<svg class="av" width="150" height="150" viewBox="0 0 300 300" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v_min2"/>
+</svg>
+<svg class="av" width="150" height="150" viewBox="0 0 300 300" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v_min3"/>
+</svg>
+<svg class="av" width="150" height="150" viewBox="0 0 512 512" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v1"/>
+</svg>
+<p>278x278</p>
+<svg width="278" height="278" viewBox="0 0 512 512" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v1"/>
+</svg>
+<p>576x576</p>
+<svg width="576" height="576" viewBox="0 0 512 512" xmlns='http://www.w3.org/2000/svg'>
+	<use href="#icon_v1"/>
+</svg>
+</body>
+</html>
