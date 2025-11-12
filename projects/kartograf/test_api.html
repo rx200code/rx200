@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- 
+Создатель © feb7e9c4d5539ae0f1496cdb2aaee27c
+-->
+<title>🗺️ карты.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Добавляем библиотеки карт -->
+
+<!--<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>-->
+
+
+<style type="text/css">
+#svg{
+	/*background-color: #cef;/**/
+	/*pointerEvents: none;/**/
+	position: absolute;
+	top:0px;
+	left:0px;
+}
+#map,#menu{
+	position:absolute;
+	top:0px;
+}
+#map{
+	left:0px;
+	
+	/*margin:1px;*/
+	background-color:#ddd;
+	/**/
+}
+#menu{
+	right:0px;
+	
+	background-color:#ff5050;
+	/*opacity:0.7;
+	/**/
+}
+.b_menu{
+	background-color:#ddd;
+	
+	border-width: 0px;
+	margin:0px 1px 0px 0px;/**/
+	font-size:20px;
+	width:50px;
+	height:50px;
+}
+.b_menu[disabled]{
+	background-color:#ffe;
+}
+.b_menu:hover{
+	background-color:#ffe;
+}
+.div_menu{
+	display:none;
+	font-family:monospace;
+	font-size:15px;
+	background-color:#ffe;
+	width:400px;
+	height:100px;
+	margin:0px;
+	padding:0px;
+	overflow:auto;
+}
+.content_menu{
+	padding:10px 10px 0px;
+}
+.content_menu_fire{
+	padding:0px 10px 0px;
+	background-color:#ffe6d4;
+}
+input[type=text]{
+	border: 1px solid #ffe;
+	background-color:#ddd;
+	color:#000;
+}
+/*
+input[name=active_map],input[name=active_map_n]
+*/
+#menu_degrees select{
+	width:90px;
+	vertical-align:middle;
+	margin-right:2px;
+}
+#active_map input, #menu_fire input{
+	vertical-align:middle;
+	margin:1.5px 5.5px 4px 10px;
+}
+#menu_degrees input{
+	vertical-align:middle;
+	margin:1.5px 3px 5px 2px;
+}
+#menu_degrees input[type=color]{
+	vertical-align:middle;
+	margin:-10px 0px -5px -1px;
+}
+#active_map_n{
+	vertical-align:middle;
+	margin:8px 5.5px 4px 10px;
+}
+#range_map_n{
+	vertical-align:middle;
+	margin:4px 0px 0px 0px;
+}
+#span_map_n{
+	vertical-align:middle;
+	padding:5px 0px 0px 0px;
+	
+}
+input[type=text]:focus{
+	border: 1px solid #ff5050;
+}
+input[type=text]:hover{
+	border: 1px solid #ff5050;
+}
+.name_type_1{
+	font-weight:bold;
+	color:#7b3f00;
+}
+.name_type_2{
+	font-weight:bold;
+	color:#080;
+}
+.name_type_3{
+	font-weight:bold;
+	color:#b0c4de;
+}
+.name_type_4{
+	font-weight:bold;
+}
+.name_type_5{
+	color:#999;
+}
+.ol-attribution{
+	font-size:12px;
+}
+.ol-attribution A{
+	color:#33b5e5;
+}
+.ol-attribution A:visited{
+	color:#0078A8;
+}
+center{
+	font-size: 150%;
+}
+</style>
+<script src="js/g_tiles.js"></script><!-- Содержит массив данных карт-->
+<script src="test/map.js"></script>
+<script type="text/javascript">
+var obj_test = null;
+
+var id_creator = 'feb7e9c4d5539ae0f1496cdb2aaee27c';
+var disabled_b_menu = null;
+var display_div_menu = null;
+var map = null;
+var degrees = null;
+var map_id = 1;
+var width_map = 0;
+var height_map = 0;
+
+window.onload = function(){
+	
+	let width_menu = 400;
+	width_map = document.documentElement.clientWidth - width_menu;
+	height_map = document.documentElement.clientHeight;
+	
+	//alert(width);
+	document.getElementById("map").style.width = width_map+"px";
+	document.getElementById("map").style.height = height_map+"px";
+	document.getElementById("svg").style.width = width_map+"px";
+	document.getElementById("svg").style.height = height_map+"px";
+	document.getElementById("svg").style.pointerEvents = "none";
+	document.getElementById("menu").style.width = width_menu+"px";
+	document.getElementById("menu").style.height = height_map+"px";
+	
+	let h_div_menu = height_map - 50;
+	document.getElementById("menu_map").style.height = h_div_menu+"px";
+	document.getElementById("menu_map").style.display = "block";
+	document.getElementById("menu_fire").style.height = h_div_menu+"px";
+	document.getElementById("menu_degrees").style.height = h_div_menu+"px";
+	document.getElementById("menu_test").style.height = h_div_menu+"px";
+	display_div_menu = document.getElementById("menu_map");
+	disabled_b_menu = document.getElementById("menu").querySelector('button');
+	disabled_b_menu.disabled = true;
+	
+	map = new Map("map");
+	
+};
+
+function f_menu(elm, name){
+	disabled_b_menu.disabled = false;
+	disabled_b_menu = elm;
+	disabled_b_menu.disabled = true;
+	display_div_menu.style.display = "none";
+	display_div_menu = document.getElementById("menu_"+name);
+	display_div_menu.style.display = "block";
+};
+function test(){//JSON.stringify(
+	//alert("test");
+}
+</script>
+</head>
+<body>
+<div id="map" class="map">1</div>
+<svg id="svg" class="svg" xmlns="http://www.w3.org/2000/svg"></svg>
+<div id="menu">
+	<button class="b_menu" onClick="f_menu(this,'map')">🗺️</button><button class="b_menu" onClick="f_menu(this,'fire')">🔥</button><button class="b_menu" onClick="f_menu(this,'degrees')">🌐</button><button class="b_menu" onClick="f_menu(this,'test')">🧭</button>
+	<div class="div_menu" id="menu_map">
+		<!--<p><input type="radio" name="api_map" value="rad1" checked> Leaflet<input type="radio" name="api_map" value="rad2"> OpenLayers<input type="radio" name="api_map" value="rad3"> Google<input type="radio" name="api_map" value="rad4"> Яндекс</p>-->
+		<div class="content_menu">
+		<center>центр карты</center>
+		широта &nbsp;N: <input type="text" value="55.0265031" id="lat_center" size="18">
+		<br>
+		долгота E: <input type="text" value="82.9214626" id="lon_center" size="18">
+		<!--<input type="button" value="Перейти" onClick="f_map_center()">-->
+		<br>
+		zoom: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="13" id="zoom" size="18">
+		<hr>
+		<form id="active_map" onsubmit="return false;">
+		<center>карты</center>
+		</form>
+		<input id="active_map_n" type="checkbox"><span id="span_map_n">Добавить слой карт с прозрачностью</span><input id="range_map_n" type="range" min="0" max="1" step=".01" value=".5" oninput="" style="display:none;">
+		</div>
+	</div>
+	<div class="div_menu" id="menu_fire">
+		<div class="content_menu" id="div_ex_layer">
+		<center>Слои</center>
+		</div>
+		<div class="content_menu_fire" id="div_menu_fire">
+		<center>Слои термоточек</center>
+		<span>Данные с <a href="https://firms.modaps.eosdis.nasa.gov/web-services/" target="_blank">FIRMS</a></span>
+		<br>
+		<label><input type="radio" name="time_fire" value="24">24ч</label>
+		<br>
+		<label><input type="radio" name="time_fire" value="48">48ч</label>
+		<br>
+		<label><input type="radio" name="time_fire" value="72">72ч</label>
+		<br>
+		<label><input type="radio" name="time_fire" value="7">7 д</label>
+		<br>
+		<label><input type="checkbox" id="check_MODIS">MODIS & </label><label>VIIRS<input type="checkbox" id="check_VIIRS"></label>
+		</div>
+	</div>
+	<div class="div_menu" id="menu_degrees">
+		<div class="content_menu">
+			<center>Градусная разметка</center>
+			<label>Отображать на углах карты:<input id="markings_corners" type="checkbox"></label>
+			<br>Отображать в:
+			<select id="format_d">
+				<option disabled>формат</option>
+				<option>dd°mm'ss"</option>
+				<option>dd°mm.mm'</option>
+				<option>dd.ddddd°</option>
+				<option>dd.ddddddd°</option>
+				<option>dd.ddddddddd°</option>
+				<option>dd.ddddddddddd°</option>
+				<option>dd°mm'ss.sssss"</option>
+			</select>
+			<br>Отображать в:
+			<select>
+				<option disabled>система координат</option>
+				<option>WGS 84</option>
+				<option>Карвасарского</option>
+				<option>ПЗ 90</option>
+			</select>
+			<br>
+			Отображать широту:
+			<br>
+			<label>Φ:<input type="radio" name="lat_a" value="0" checked>геоцентрическую(стандартную)</label>
+			<br>
+			<label>B:<input type="radio" name="lat_a" value="0">геодезическую</label>
+			
+			
+			<hr>
+			<label>Отображать разметку 1:<input type="checkbox"></label> <input type="color" name="color_1" value="#000000">
+			<br>Отображать в:
+			<select disabled>
+				<option disabled>шаг</option>
+				<option>градусы</option>
+				<option>минуты</option>
+				<option>секунды</option>
+				<option>десятые °</option>
+				<option>сотые °</option>
+				<option>тысячные °</option>
+				<option>десятитысячные °</option>
+			</select><label> авто <input type="checkbox" checked></label>
+			<br>Отображать в:
+			<select>
+				<option disabled>система координат</option>
+				<option>WGS 84</option>
+				<option>Карвасарского</option>
+				<option>ПЗ 90</option>
+			</select>
+			<br>
+			Отображать широту:
+			<br>
+			<label>Φ:<input type="radio" name="lat_a_1" value="0" checked>геоцентрическую(стандартную)</label>
+			<br>
+			<label>B:<input type="radio" name="lat_a_1" value="0">геодезическую</label>
+			
+			
+			<hr>
+			<label>Отображать разметку 2:<input type="checkbox"></label> <input type="color" name="color_2" value="#ff5050">
+			<br>Отображать в:
+			<select disabled>
+				<option disabled>шаг</option>
+				<option>градусы</option>
+				<option>минуты</option>
+				<option>секунды</option>
+				<option>десятые °</option>
+				<option>сотые °</option>
+				<option>тысячные °</option>
+				<option>десятитысячные °</option>
+			</select><label> авто <input type="checkbox" checked></label>
+			<br>Отображать в:
+			<select>
+				<option disabled>система координат</option>
+				<option>WGS 84</option>
+				<option>Карвасарского</option>
+				<option>ПЗ 90</option>
+			</select>
+			<br>
+			Отображать широту:
+			<br>
+			<label>Φ:<input type="radio" name="lat_a_2" value="0" checked>геоцентрическую(стандартную)</label>
+			<br>
+			<label>B:<input type="radio" name="lat_a_2" value="0">геодезическую</label>
+			<hr>
+		</div>
+	</div>
+	<div class="div_menu" id="menu_test">
+		TESTS
+		<br>
+		<label>Включить тесты: <input type="checkbox" id="on_off_test"></label>
+		<br>
+		<span id="test_out"></span>
+	</div>
+</div>
+</body>
+</html>

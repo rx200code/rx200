@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<gpx
+xmlns="http://www.topografix.com/GPX/1/1"
+creator="feb7e9c4d5539ae0f1496cdb2aaee27c"
+version="1.1"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd">
+<metadata>
+<time>2022-04-07T19:36:31Z</time>
+<bounds minlat="55.090647" minlon="82.551208" maxlat="55.09983" maxlon="82.567222"/>
+</metadata>
+<trk>
+<name>line</name>
+<desc></desc>
+<trkseg>
+<trkpt lat="55.09983" lon="82.551556">
+<time>2022-04-07T19:36:31Z</time>
+</trkpt>
+<trkpt lat="55.09963" lon="82.567222">
+<time>2022-04-07T19:36:31Z</time>
+</trkpt>
+<trkpt lat="55.090647" lon="82.56687">
+<time>2022-04-07T19:36:31Z</time>
+</trkpt>
+<trkpt lat="55.090847" lon="82.551208">
+<time>2022-04-07T19:36:31Z</time>
+</trkpt>
+<trkpt lat="55.09983" lon="82.551556">
+<time>2022-04-07T19:36:31Z</time>
+</trkpt>
+</trkseg>
+</trk>
+</gpx>

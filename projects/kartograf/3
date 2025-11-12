@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Granule>
+<GranuleUR>2001-esi.xls</GranuleUR>
+<InsertTime>2017-08-31T00:00:00Z</InsertTime>
+<LastUpdate>2017-09-19T00:00:00Z</LastUpdate>
+<Collection>
+<ShortName>CIESIN_SEDAC_ESI_2001</ShortName>
+<VersionId>2001.00</VersionId>
+</Collection>
+<DataGranule>
+<SizeMBDataGranule>0.13</SizeMBDataGranule>
+<DayNightFlag>UNSPECIFIED</DayNightFlag>
+<ProductionDateTime>2001-01-01T00:00:00Z</ProductionDateTime>
+</DataGranule>
+<Temporal>
+<RangeDateTime> 
+<BeginningDateTime>1980-01-01T00:00:00Z</BeginningDateTime>
+<EndingDateTime>2000-01-01T00:00:00Z</EndingDateTime>
+</RangeDateTime> 
+</Temporal>
+<Spatial>
+<HorizontalSpatialDomain>
+<Geometry>
+<BoundingRectangle>
+<WestBoundingCoordinate>-180</WestBoundingCoordinate>
+<NorthBoundingCoordinate>90</NorthBoundingCoordinate>
+<EastBoundingCoordinate>180</EastBoundingCoordinate>
+<SouthBoundingCoordinate>-55</SouthBoundingCoordinate>
+</BoundingRectangle>
+</Geometry>
+</HorizontalSpatialDomain>
+</Spatial>
+<MeasuredParameters>
+<MeasuredParameter>
+<ParameterName>ENVIRONMENTAL SUSTAINABILITY INDEX</ParameterName>
+</MeasuredParameter>
+</MeasuredParameters>
+<Platforms>
+<Platform>
+    <ShortName>MODELS</ShortName>
+<Instruments>
+<Instrument>
+    <ShortName>Computer</ShortName>
+</Instrument>
+</Instruments>
+</Platform>
+</Platforms>
+<Campaigns>
+<Campaign>
+<ShortName>ESI</ShortName>
+</Campaign>
+</Campaigns>
+<Price>0</Price>
+<OnlineAccessURLs>
+<OnlineAccessURL>
+<URL>http://sedac.ciesin.columbia.edu/downloads/data/esi/esi-environmental-sustainability-index-2001/2001-esi.xls</URL>
+<URLDescription>2001 ESI Spreadsheet - ESI, component, indicator and variable scores for all countries in Excel format from the 2001 Environmental Sustainability Index (ESI) data set.</URLDescription>
+</OnlineAccessURL>
+</OnlineAccessURLs>
+<OnlineResources>
+<OnlineResource>
+<URL>https://doi.org/10.7927/H4X34VDM</URL>
+<Description>Data Set DOI URL and HOMEPAGE</Description>
+<Type>DATA SET LANDING PAGE</Type>
+</OnlineResource>
+</OnlineResources>
+<Orderable>false</Orderable>
+<DataFormat>Excel</DataFormat>
+</Granule>
