@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>tests _f</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+	svg{
+		background-color: #0f0; /* Цвет фона */
+	}
+</style>
+<script src="_f.js"></script>
+
+<script type="text/javascript">
+let createElementNS = (name, ...attr) => {
+	let elm = document.createElementNS("http://www.w3.org/2000/svg", name);
+	for(let arr_set of attr)elm.setAttributeNS(null, arr_set[0], arr_set[1]);
+	return elm;
+};
+let createElement = (name, ...attr) => {
+	let elm = document.createElement(name);
+	for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+	return elm;
+};
+function test_1_regular_polygon(){
+	let arr_pos = regular_polygon(8, 100);
+	let offset_x = 300;
+	let offset_y = 300;
+	let d = "";
+	for(let i = 0; i < arr_pos.length; i++)d += (i === 0 ? "M": "L") + (arr_pos[i].x + offset_x) + "," + (arr_pos[i].y + offset_y);
+	d += "z";
+	let line = createElementNS("path", ["fill", "none"], ["stroke-width", 1], ["stroke-opacity", 1], ["stroke", "#000"]);
+	document.getElementById("svg").appendChild(line);
+	line.setAttributeNS(null, "d", d);
+}
+window.onload = function(){
+	test_1_regular_polygon();
+};
+</script>
+</head>
+<body>
+<svg id="svg" width="700" height="700" viewBox="0 0 700 700" xmlns='http://www.w3.org/2000/svg'>
+<rect x="200" y="200" width="200" height="200" fill="none" stroke-width="1" stroke-opacity="1" stroke="#f00" />
+ <circle r="100" cx="300" cy="300" fill="none" stroke-width="1" stroke-opacity="1" stroke="#00f" />
+</svg>
+</body>
+</html>
