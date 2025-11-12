@@ -1,0 +1,4 @@
+для запуска .exe в виндовс требуются:
+libgcc_s_sjlj-1.dll
+libstdc++-6.dll
+libwinpthread-1.dll
