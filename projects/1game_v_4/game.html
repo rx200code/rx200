@@ -1,0 +1,50 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>игра</title>
+<link rel="stylesheet" href="file/style.css">
+<script src="file/class.js"></script>
+<script src="file/game.js"></script>
+
+<script defer src="test/test_mod.js"></script>
+
+<script type="text/javascript">
+//*
+class Effect{
+	constructor(){
+		this.type;
+		this.power;
+	}
+}
+class Thing{
+	constructor(){
+		this.price = new Resources([new Gold(), new Silver()]);
+		this.resources = new Resources([new Gold(), new Silver()]);
+		this.percent_create_resources = 1;
+		this.effects = [];
+		//this.technology;
+		
+	}
+	
+}
+class Topor extends Thing{
+	constructor(){
+		super();
+	}
+}
+class Shlem extends Thing{
+	constructor(){
+		super();
+	}
+}
+//tests
+let thing = new Thing();
+
+alert(thing);
+
+//*/
+</script>
+</head>
+<body>
+	
+</body>
+</html>
