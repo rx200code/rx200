@@ -1,0 +1,139 @@
+[
+	{
+		"id":0,
+		"name":"для тестов API VK",
+		"type":"test",
+		"URL":"https://vk.com/public222541136",
+		"id_vk":"222541136",
+		"owner_id":"-222541136",
+		"timeZoneOffset":25200000,
+		"rules":{
+			"species":"all",
+			"repost":[1, 1]
+		}
+	},
+	{
+		"id":1,
+		"name":"КОШКИ В ДАР (Новосибирск) от \"Потеряшка-НСК\"",
+		"type":"vk",
+		"URL":"https://vk.com/poterjashka_nsk",
+		"id_vk":"10054005",
+		"owner_id":"-10054005",
+		"rules":{
+			"species":"cat",
+			"repost":[1, 7],
+			"post":[2, 1],
+			"repost_page_author":1,
+			"if_kitten":[2, 7]
+		}
+	},
+	{
+		"id":2,
+		"name":"Собаки и кошки в добрые руки. Новосибирск",
+		"type":"vk",
+		"URL":"https://vk.com/animalsnsk",
+		"id_vk":"1183375",
+		"owner_id":"-1183375",
+		"rules":{
+			"species":"all",
+			"repost":[1, 3],
+			"post":[2, 1]
+		}
+	},
+	{
+		"id":3,
+		"name":"Грибы Новосибирска и области",
+		"type":"test",
+		"URL":"https://vk.com/gribi_novosibirska",
+		"id_vk":"184199928",
+		"owner_id":"-184199928",
+		"timeZoneOffset":25200000,
+		"rules":{
+			"species":"all",
+			"repost":[1, 1]
+		}
+	},
+	{
+		"id":4,
+		"name":"Животные в добрые руки ZОО 54 Новосибирск",
+		"type":"vk",
+		"URL":"https://vk.com/ishydom.zoonovosibirsk",
+		"id_vk":"40858532",
+		"owner_id":"-40858532",
+		"rules":{
+			"species":"all",
+			"repost":[1, 7],
+			"post":[2, 1],
+			"repost_page_author":1,
+			"if_emergency ":[1, 1]
+		}
+	},
+	{
+		"id":5,
+		"name":"Кошкин Дом | Животные | Новосибирск",
+		"type":"vk",
+		"URL":"https://vk.com/ko6kindom",
+		"id_vk":"50953320",
+		"owner_id":"-50953320",
+		"rules":{
+			"species":"all",
+			"repost":[1, 7],
+			"post":[3, 1],
+			"if_kitten":[1, 3]
+		}
+	},
+	{
+		"id":6,
+		"name":"ПРИСТРОЙСТВО животных в Новосибирске и НСО",
+		"type":"vk",
+		"URL":"https://vk.com/freedomanimals",
+		"id_vk":"38875583",
+		"owner_id":"-38875583",
+		"timeZoneOffset":25200000,
+		"rules":{
+			"species":"all",
+			"repost":[1, 4],
+			"repost_page_author":1
+		}
+	},
+	{
+		"id":7,
+		"name":"Отдам даром | животные в дар | Новосибирск",
+		"type":"vk",
+		"URL":"https://vk.com/otdam154",
+		"id_vk":"106887464",
+		"owner_id":"-106887464",
+		"timeZoneOffset":25200000,
+		"rules":{
+			"species":"all",
+			"repost":[1, 5]
+		}
+	},
+	{
+		"id":8,
+		"name":"Animal_nsk -помощь животным",
+		"type":"vk",
+		"URL":"https://vk.com/animal_54",
+		"id_vk":"184436148",
+		"owner_id":"-184436148",
+		"timeZoneOffset":25200000,
+		"rules":{
+			"species":"all",
+			"repost":[1, 14],
+			"repost_other_post":1
+		}
+	},
+	{
+		"id":9,
+		"name":"Общественное Движение \"ЗООСПАС 54\"",
+		"type":"vk",
+		"URL":"https://vk.com/zoospas_54",
+		"id_vk":"47397148",
+		"owner_id":"-47397148",
+		"timeZoneOffset":25200000,
+		"rules":{
+			"species":"all",
+			"repost":[1, 5]
+		}
+	}
+]
