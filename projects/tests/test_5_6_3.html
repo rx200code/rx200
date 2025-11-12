@@ -1,0 +1,63 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>test</title>
+<script type="text/javascript">
+function test(){//JSON.stringify(
+	//out(6/9*5/8*4/7*3/6*2/5);
+	//return;
+	/*
+	let hh = 5/9;
+	out(hh+"<br>"+
+		((hh * hh * hh * 1)+
+		(hh * (1 - hh) * (1 - hh) * 3)+
+		(hh * hh * (1 - hh) * 3)+
+		((1 - hh) * (1 - hh) * (1 - hh) * 1))+
+		"<br>"+(hh * hh * hh * 1)+"<br>"+
+		(hh * (1 - hh) * (1 - hh) * 3)+"<br>"+
+		(hh * hh * (1 - hh) * 3)+"<br>"+
+		((1 - hh) * (1 - hh) * (1 - hh) * 1)
+		
+	);
+	//out(((5/9) * (5/9) * (5/9))+"<br>"+((5/9) * (5/9) * (1 - 5/9))+"<br>"+((5/9) * (1 - 5/9) * (1 - 5/9))+"<br>"+((1- 5/9) * (1 - 5/9) * (1 - 5/9))+"<br>"+
+	//(((5/9) * (5/9) * (5/9))+((5/9) * (5/9) * (1 - 5/9))+((5/9) * (1 - 5/9) * (1 - 5/9))+((1- 5/9) * (1 - 5/9) * (1 - 5/9)))
+	//);
+	return;
+	*/
+	let count_0 = 0;
+	let count_1 = 0;
+	let count_2 = 0;
+	let count_3 = 0;
+	
+	let p = 10000000;
+	for(let i = 0; i < p; i++){
+		let jjj = 3;
+		for(let j = 0; j < 5; j++){
+			let r = Math.random() * (9 - j) + 1 | 0;
+			if(r <= jjj)jjj--;
+		}
+		if(jjj == 3)count_0++;
+		if(jjj == 2)count_1++;
+		if(jjj == 1)count_2++;
+		if(jjj == 0)count_3++;
+	}
+	let text = "";
+	text += "заселилось 0 процент = "+(6/9*5/8*4/7*3/6*2/5*100)+" % точный<br>";
+	text += "заселилось 0 процент = "+(count_0 / p * 100)+" %<br>";
+	text += "заселилось 1 процент = "+(count_1 / p * 100)+" %<br>";
+	text += "заселилось 2 процент = "+(count_2 / p * 100)+" %<br>";
+	text += "заселилось 3 процент = "+(count_3 / p * 100)+" %<br>";
+	
+	out(text);
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+</script>
+</head>
+<body>
+<input type="button" value="test" onClick="test()">
+<br>
+<span id="output"></span>
+<br>
+</body>
+</html>

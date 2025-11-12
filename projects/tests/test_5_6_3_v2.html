@@ -1,0 +1,41 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>test</title>
+<script type="text/javascript">
+function test(){//JSON.stringify(
+	//let count = 0;
+	let arr_c = [0,0,0,0,0,0,0,0,0,0,0];
+	let p = 10000000;
+	for(let i = 0; i < p; i++){
+		//let jjj = 3;
+		//for(let j = 0; j < 5; j++){
+			let r = Math.random() * (9) + 1 | 0;
+			arr_c[r]++;
+			//if(r <= jjj)jjj--;
+		//}
+		//if(jjj == 1)count++;
+	}
+	//alert("из "+p+" результатов "+count+", процентов "+(count / p * 100)+"%");
+	
+	
+	let text = "";
+	let c = 0;
+	for(let i = 0; i < arr_c.length; i++){
+		text += (arr_c[i] / p * 100)+" %<br>";
+		c += arr_c[i];
+	}
+	text += c;
+	out(text);
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+</script>
+</head>
+<body>
+<input type="button" value="test" onClick="test()">
+<br>
+<span id="output"></span>
+<br>
+</body>
+</html>
