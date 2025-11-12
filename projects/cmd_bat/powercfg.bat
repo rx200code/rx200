@@ -1,0 +1,2 @@
+powercfg help
+pause
