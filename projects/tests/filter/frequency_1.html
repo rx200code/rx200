@@ -1,0 +1,660 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Фильтры SVG</title>
+</head>
+<body>
+<table><tr><td>
+<svg xmlns="http://www.w3.org/2000/svg" id="svg_svg" width="1000" height="800" style="background-color: #444;">
+	<defs>
+		<g id="model_2">
+			<image
+				id="svg_image"
+				href="https://artchive.ru/res/media/img/sx200/work/864/378925.jpg"
+				height="200"
+				width="200"
+			/>
+		</g>
+		<g id="model">
+			<path
+				d="M0,0 h100 v100 h-100 z"
+				fill="#f00"
+				fill-opacity="0.5"
+				stroke="#000"
+				stroke-width="5"
+			/>
+			
+			<text
+				x="0"
+				y="0"
+				dx="50px"
+				dy="50px"
+				text-anchor="middle"
+				dominant-baseline="middle"
+				font-size="70px"
+				fill="black"
+			>Rx</text>
+			
+			<path
+				d="M100,0 h100 v100 h-100 z"
+				fill="#0f0"
+			/>
+			
+			<path
+				d="M0,100 h100 v100 h-100 z"
+				fill="#00f"
+			/>
+			
+			<path
+				d="M100,100 h100 v100 h-100 z"
+				fill="#f00"
+			/>
+		</g>
+	
+	</defs>
+	<path
+		d="M50,190 h900 M50,590 h900"
+		stroke="#000"
+		stroke-width="5"
+	/>
+	
+	<use
+		href="#model"
+		x="100"
+		y="100"
+	/>
+	<use
+		href="#model"
+		x="400"
+		y="100"
+	/>
+	<use
+		href="#model"
+		x="700"
+		y="100"
+	/>
+	
+	<use
+		href="#model_2"
+		x="100"
+		y="500"
+	/>
+	<use
+		href="#model_2"
+		x="400"
+		y="500"
+	/>
+	<use
+		href="#model_2"
+		x="700"
+		y="500"
+	/>
+</svg>
+</td>
+<td valign="top" align="right" width="100%">
+x:<input type="text" size="2" id="grid_x" value="-11"></br>
+y:<input type="text" size="2" id="grid_y" value="-0.4"></br>
+w:<input type="text" size="2" id="grid_w" value="22"></br>
+h:<input type="text" size="2" id="grid_h" value="1.5"></br>
+<input id="input_range_h" type="range" min="0" max="15" step="0.5" value="1.5" style="display: inline; padding: 0; width: 150px; margin-left: -140px; transform-origin: right  bottom; transform: rotate(-90deg);">
+</td>
+<td valign="top" align="right" width="100%">
+<svg id="graph" xmlns="http://www.w3.org/2000/svg"></svg>
+</br>
+y = <input type="text" size="100" id="math_f" value="Math.cos(7 * x) + Math.sin(x)">  <input type="button" id="button_math_f" value="Нарисовать график">
+</br>
+<input id="input_radius_range" type="range" min="0" max="100" step="1" value="10">Радиус: <input type="text" size="2" id="radius" value="10"> и сетка: <input id="grid_on_off" type="checkbox" checked></td>
+
+</td></tr></table>
+	<br>
+	<span id="output"></span>
+	<br>
+<script type="text/javascript">
+	//var x = -39;
+	//alert(1/(1*Math.sqrt(2*Math.PI))*Math.exp(-1*Math.pow(x, 2)/(2*Math.pow(1, 2))));
+	//alert(0.0078125 + 0.0078125 + 0.015625 + 0.03125 + 0.0625 + 0.125 + 0.25 + 0.5);
+	//alert(256 * (.0078125/2));
+	//alert(Math.pow(2.5,2.5));
+	var svgns = "http://www.w3.org/2000/svg";
+	var Global_Object = function(){
+		this.graph = document.getElementById("graph");
+		this.graph_color = "#002a00";
+		this.graph_width = 800;
+		this.graph_height = 400;
+		this.graph_ratio_h_w = this.graph_height / this.graph_width;//0.5
+		
+		this.graph.style['background-color'] = this.graph_color;
+		this.graph.setAttributeNS(null, "width", 800);
+		this.graph.setAttributeNS(null, "height", 400);
+		//this.graph.setAttributeNS(null, "viewBox", "-"+(this.graph_width / 2)+" -"+(this.graph_height / 2)+" "+this.graph_width+" "+this.graph_height);
+		//this.graph.setAttributeNS(null, "preserveAspectRatio", "xMidYMid meet");
+		
+		this.radius_input = document.getElementById("radius");
+		this.radius_input_range = document.getElementById("input_radius_range");
+		this.input_range_h = document.getElementById("input_range_h");
+		Object.defineProperty(this, "radius", {
+			get: function(){
+				this.radius_input.value = this.radius_input.value.replace(/\D/, ".");
+				return isNaN(this.radius_input.value) ? 0 : +this.radius_input.value;},
+			set: function(value){
+				this.radius_input.value = isNaN(value) ? '0' : value;
+				this.radius_input_range.value = this.radius_input.value;}
+		});
+		
+		
+		//Элемент для отображения сетки.
+		this.grid = document.createElementNS(svgns, "path");
+		this.grid.setAttributeNS(null, "fill", "none");
+		this.grid.setAttributeNS(null, "stroke", "#888");
+		this.grid.setAttributeNS(null, "stroke-width", 2);
+		this.grid.setAttributeNS(null, "pointer-events", "none");
+		this.graph.appendChild(this.grid);
+		//Размер шага но осям "x" и "y".
+		this.step_x = this.graph_width;
+		this.step_y = this.graph_height;
+		//начало координат(0,0) пересечение осей "x" и "y".
+		this.axis_x = 0;
+		this.axis_y = 0;
+		//Метод рисует сетку в системе координат графика кривой, x, y - начало координат, width, height - ширина и высота. Есои начала координат(0,0) в области видимости, то по ним будут нарисованы оси "x" и "y".
+		this.f_grid = function(x, width, y, height){
+			x = x || this.x_default;
+			y = y || this.y_default;
+			width = width || this.w_default;
+			height = height || this.h_default;
+			let d_path = "M0,0 v"+this.graph_height+" h"+this.graph_width+" ";//d_path - содержит данные линии которой рисуется сетка. 
+			//Устанавливаем размер шага но осям "x" и "y".
+			this.step_x = this.graph_width / width;
+			this.step_y = this.graph_height / height;
+			//Устанавливаем начало координат(0,0) пересечение осей "x" и "y".
+			this.axis_x = this.step_x * -x;
+			this.axis_y = this.graph_height + (this.step_y * y);
+			//Дробные части координат, начала графика.
+			let remainder_x =  Number("0."+(String(x).split('.')[1] || 0));
+			let remainder_y =  Number("0."+(String(y).split('.')[1] || 0));
+			//Если "x" больше нуля, то инвертируем дробную часть, относительно единицы. Чтоб правильно нарисовать сетку, так как если начало в отрицательных координатах то смещение на дробную часть, если в положительных то смещение с дробной части.
+			// -0.2 смещение 0.2 |--.----------|----------.--| +0.2 смещение 0.8 |--------.
+			if(x > 0){
+				remainder_x = 1 - remainder_x;
+			}else if(x < 0 && width + x > 0){//Если "x" отрицательный, и ширина больше абсолютного значения "x" то ось "x" находится в зони видемости. Рисуем ось.
+				d_path += "M"+this.axis_x+" 0 v"+this.graph_height+" ";
+			}
+			//Если "y" больше нуля, то инвертируем дробную часть, относительно единицы.
+			if(y > 0){
+				remainder_y = 1 - remainder_y;
+			}else if(y < 0 && height + y > 0){//Если "y" отрицательный, и высота больше абсолютного значения "y" то ось "y" находится в зони видемости. Рисуем ось.
+				d_path += "M0 "+this.axis_y+" h"+this.graph_width+" ";
+			}
+			//Рисуем, отметены внизу и на оси "x" если она в зоне видимости.
+			for(let i = remainder_x; i <= width; i++){
+				d_path += "M"+(this.step_x * i )+" "+(this.graph_height - 7)+" v7 ";
+				if(this.axis_y > 0 && this.axis_y < this.graph_height)d_path += "M"+(this.step_x * i )+" "+(this.axis_y - 5)+" v10 ";
+			}
+			//Рисуем, отметены с лева и на оси "y" если она в зоне видимости.
+			for(let i = remainder_y; i <= height; i++){
+				d_path += "M0 "+(this.graph_height - (this.step_y * i))+" h7 ";
+				if(this.axis_x > 0 && this.axis_x < this.graph_width)d_path += "M"+(this.axis_x - 5)+" "+(this.graph_height - (this.step_y * i))+" h10 ";
+			}
+			//Отображаем сетку.
+			this.grid.setAttributeNS(null, "d", d_path);
+		}
+		
+		this.x_input = document.getElementById("grid_x");
+		Object.defineProperty(this, "x_default", {
+			get: function(){
+				this.x_input.value = this.x_input.value.replace(/[^\-\d]/, ".");
+				return isNaN(this.x_input.value) ? 0 : +this.x_input.value;},
+			set: function(value){this.x_input.value = isNaN(value) ? '0' : value;}
+		});
+		this.y_input = document.getElementById("grid_y");
+		Object.defineProperty(this, "y_default", {
+			get: function(){
+				this.y_input.value = this.y_input.value.replace(/[^\-\d]/, ".");
+				return isNaN(this.y_input.value) ? 0 : +this.y_input.value;},
+			set: function(value){this.y_input.value = isNaN(value) ? '0' : value;}
+		});
+		this.w_input = document.getElementById("grid_w");
+		Object.defineProperty(this, "w_default", {
+			get: function(){
+				//Math.abs(
+				this.w_input.value = this.w_input.value.replace(/\D/, ".");
+				return isNaN(this.w_input.value) ? 0 : +this.w_input.value;},
+			set: function(value){this.w_input.value = isNaN(value) ? '0' : value;}
+		});
+		this.h_input = document.getElementById("grid_h");
+		Object.defineProperty(this, "h_default", {
+			get: function(){
+				//Math.abs(
+				this.h_input.value = this.h_input.value.replace(/\D/, ".");
+				return isNaN(this.h_input.value) ? 0 : +this.h_input.value;},
+			set: function(value){
+				this.h_input.value = isNaN(value) ? '0' : value;
+				this.input_range_h.value = this.h_input.value;
+			}
+		});
+		
+		//########################
+		
+		this.math_f = document.getElementById("math_f");
+		this.button_math_f = document.getElementById("button_math_f");
+		
+		this.curve_s = document.createElementNS(svgns, "path");
+		this.curve_s.setAttributeNS(null, "fill", "none");
+		this.curve_s.setAttributeNS(null, "stroke", "#b45400");
+		this.curve_s.setAttributeNS(null, "stroke-width", 1);
+		this.curve_s.setAttributeNS(null, "stroke-opacity", ".2");
+		this.curve_s.setAttributeNS(null, "pointer-events", "none");
+		this.graph.appendChild(this.curve_s);
+		
+		this.curve = document.createElementNS(svgns, "path");
+		this.curve.setAttributeNS(null, "fill", "none");
+		this.curve.setAttributeNS(null, "stroke", "#800");
+		this.curve.setAttributeNS(null, "stroke-width", 2);
+		this.curve.setAttributeNS(null, "pointer-events", "none");
+		this.graph.appendChild(this.curve);
+		
+		this.f_curve = function(){
+			let d_curve = "";
+			let d_curve_s = "";
+			let flag_m = true;
+			//#########параметры функции гауса (1 / (b * Math.sqrt(2 * Math.PI))) * Math.exp(-1 * (Math.pow((x - a), 2)/(2*Math.pow(b, 2))))
+			//#########параметры функции гауса 1/(1*Math.sqrt(2*Math.PI))*Math.exp(-1*Math.pow(x, 2)/(2*Math.pow(1, 2)))
+			let a = 0;//
+			let b = Math.sqrt(0.2);//this.radius / 3;//0.5;//Math.sqrt(5);
+			let tt = 0.84089642;
+			//#########
+			for(let i = 0; i <= this.graph_width; i++){
+				let x = this.x_default + i / this.step_x;
+				let y = eval(this.math_f.value);
+				if(isNaN(y)){
+					if(!flag_m){
+						//Найти максимальное значение y
+						//Math.sqrt(9-x*x)
+					}
+					flag_m = true;
+					continue;
+				}
+				let y_d = this.axis_y - y * this.step_y;
+				//console.log("i = "+i+"; x = "+x+"; y = "+y+"; y_d = "+y_d+"; this.axis_y = "+this.axis_y+";");
+				if(y_d < -1000){
+					y_d = -1000;
+				}else if(y_d > this.graph_height + 1000){
+					y_d = this.graph_height + 1000;
+				}
+				//*
+				if(flag_m){
+					//Найти минимальное значение y
+					
+					d_curve += " M"+i+","+y_d.toExponential();
+					flag_m = false;
+				}else{
+					d_curve += " L"+i+","+y_d.toExponential(4);
+				}//*/
+				d_curve_s += " M"+i+","+y_d+" V"+this.axis_y;
+			}
+			this.curve.setAttributeNS(null, "d", d_curve);
+			this.curve_s.setAttributeNS(null, "d", d_curve_s);
+		}.bind(this);
+		this.button_math_f.onclick = this.f_curve;
+		
+		//########################
+		this.f_input_grid = function(){
+			this.f_grid();
+			this.f_radius();
+			this.f_curve();
+		}.bind(this);
+		this.x_input.oninput = this.f_input_grid;
+		this.y_input.oninput = this.f_input_grid;
+		this.w_input.oninput = this.f_input_grid;
+		this.h_input.oninput = function(){
+			this.f_grid();
+			this.f_radius();
+			this.f_curve();
+			this.input_range_h.value = this.h_default;
+		}.bind(this);
+		this.input_range_h.oninput = function(){
+			this.h_input.value = this.input_range_h.value;
+			this.f_grid();
+			this.f_radius();
+			this.f_curve();
+		}.bind(this);
+		
+		this.grid_on_off = document.getElementById("grid_on_off");
+		this.grid_on_off.onchange = function(){
+			if(!this.grid_on_off.checked)return;//Если сетку запрещено менять то не меняем.
+			this.x_default = -(this.radius + 1);
+			this.w_default = (this.radius * 2 + 2);
+			this.y_default = -0.4;
+			this.h_default = 1.5;
+			this.f_grid();
+			this.f_radius();
+			this.f_curve();
+		}.bind(this);
+		this.f_grid_x_w = function(x, width){
+			if(!this.grid_on_off.checked)return;//Если сетку запрещено менять то не меняем.
+			this.x_default = x;
+			this.w_default = width;
+			this.f_grid();
+			this.f_curve();
+		}
+		//Элемент для отображения радиуса.
+		this.radius_path = document.createElementNS(svgns, "path");
+		this.radius_path.setAttributeNS(null, "fill", "none");
+		this.radius_path.setAttributeNS(null, "stroke", "#aa0");
+		this.radius_path.setAttributeNS(null, "stroke-width", 3);
+		this.radius_path.setAttributeNS(null, "pointer-events", "none");
+		this.graph.appendChild(this.radius_path);
+		//Рисует радиус.
+		this.f_radius = function(){
+			let radius = this.radius * this.step_x;
+			let d_path = "M"+(this.axis_x - radius)+" "+(this.axis_y)+" h"+(radius * 2);
+			this.radius_path.setAttributeNS(null, "d", d_path);
+		}
+		this.radius_input.oninput = function(){
+			this.radius_input_range.value = ~~this.radius_input.value;
+			this.f_grid_x_w(-(this.radius + 1), (this.radius * 2 + 2));//Идет первой так как устанавливает разные общие параметры.
+			this.f_radius();
+		}.bind(this);
+		this.radius_input_range.oninput = function(){
+			this.radius_input.value = this.radius_input_range.value;
+			this.f_grid_x_w(-(this.radius + 1), (this.radius * 2 + 2));//Идет первой так как устанавливает разные общие параметры.
+			this.f_radius();
+		}.bind(this);
+		
+		this.f_input_grid();
+		//Методы движения мышью.
+		this.graph.oncontextmenu = function(){//Не реагирует стандартно на правый клик мышке в игре.
+			return false;
+		}
+		this.flag_move_field = false;
+		this.flag_move_grid = false;
+		this.offset_to_x = 0;
+		this.offset_to_y = 0;
+		this.offset_grid_to_x = 0;
+		this.offset_grid_to_y = 0;
+		this.distance_to_x = 0;
+		this.distance_to_y = 0;
+		this.mouse_to_x;
+		this.mouse_to_y;
+		this.scale = 1;
+		this.graph.onmousedown = function(event){
+			if(event.which == 3){
+				this.flag_move_field = true;
+				this.mouse_to_x = event.clientX;
+				this.mouse_to_y = event.clientY;
+			}
+			if(event.which == 1){
+				this.flag_move_grid = true;
+				this.mouse_to_x = event.clientX;
+				this.mouse_to_y = event.clientY;
+				this.offset_grid_to_x = this.x_default;
+				this.offset_grid_to_y = this.y_default;
+			}
+		}.bind(this);
+		this.graph.onmouseup = function(event){
+			if(event.which == 3){
+				this.flag_move_field = false;
+				this.offset_to_x = this.distance_to_x;
+				this.offset_to_y = this.distance_to_y;
+			}
+			if(event.which == 2){
+				this.scale = 1;
+				this.center();
+			}
+			if(event.which == 1){
+				this.flag_move_grid = false;
+				
+			}
+			return false;
+		}.bind(this);
+		
+		
+		
+		
+		this.graph.onmouseout = function(event){
+			this.flag_move_field = false;
+			this.flag_move_grid = false;
+			
+		}.bind(this);
+		this.graph.onmousemove = function(event){
+			if(this.flag_move_field){
+				let x = this.offset_to_x + (event.clientX - this.mouse_to_x);
+				let y = this.offset_to_y + (event.clientY - this.mouse_to_y);
+				this.graph.setAttribute("transform", "translate("+x+ "," +y+ ") scale("+this.scale+")");
+				this.distance_to_x = x;
+				this.distance_to_y = y;
+			}
+			if(this.flag_move_grid){
+				//let x = this.offset_grid_to_x + (event.clientX - this.mouse_to_x);
+				//let y = this.offset_grid_to_y + (event.clientY - this.mouse_to_y);
+				
+				
+				this.x_default = this.offset_grid_to_x - (((event.clientX - this.mouse_to_x) / this.scale) / this.step_x);
+				this.y_default = this.offset_grid_to_y + (((event.clientY - this.mouse_to_y) / this.scale) / this.step_y);
+				this.f_grid();
+				this.f_radius();
+				this.f_curve();
+			}
+		}.bind(this);
+		//*###############
+		this.x_offset_wheel = this.graph.getBoundingClientRect().left + 400;
+		this.y_offset_wheel = this.graph.getBoundingClientRect().top + 200;
+		this.f_scale_field = function(event){//Событие прокрутки колесика мышки, на игровой карте при котором приближаем или удаляем игровую карту относительно позиции курсора мыши.
+			///Устанавливаем размер дельты 3 как в браузере Mozilla Firefox.
+			let deltaY = 3 * Math.sign(event.deltaY);//Для совместимости браузеров, от дельты берем только знак. Так как в разных браузерах разное значение дельты.
+			//Положение курсора относительно основного окна.
+			let offsetX = event.clientX - this.x_offset_wheel;
+			let offsetY = event.clientY - this.y_offset_wheel;
+			//Расстояние между картой и курсором.
+			let distance_x = offsetX - this.offset_to_x;
+			let distance_y = offsetY - this.offset_to_y;
+			//Расстояние между картой и курсором, в изначальном масштабе 1 к 1.
+			let primary_distance_x = distance_x / this.scale;
+			let primary_distance_y = distance_y / this.scale;
+			//Устанавливаем новый коэффициент масштаба.
+			this.scale += deltaY / 100 * this.scale;//Старый масштаб плюс количество прокрутки колесика мыши. Делим на 100 чтоб плавно масштабировалось. И умножаем на текущий масштаб чтоб равномерно увеличиволось и уменьшалось. Так как, например, при сильно увеличенном масштабе, ещё увеличение на тоже значение мало заметно.
+			if(this.scale > 3)this.scale = 3;//Устанавливаем максимальный коэффициент масштаба.
+			if(this.scale < 0.3)this.scale = 0.3;//Устанавливаем минимальный коэффициент масштаба.
+			//Расстояние между картой и курсором, в новом масштабе.
+			let new_distance_x = primary_distance_x * this.scale;
+			let new_distance_y = primary_distance_y * this.scale;
+			//Расстояние на которое следует сместить игровую карту относительно текущей позиции.
+			let shift_map_x = new_distance_x - distance_x;
+			let shift_map_y = new_distance_y - distance_y;
+			//Новые координаты карты, после масштабирования.
+			this.offset_to_x -= shift_map_x;
+			this.offset_to_y -= shift_map_y;
+			//Масштабируем на коэффициент масштаба и одновременно смещаем на новые координаты игровую карту, в матрице трансформации.
+			this.graph.setAttribute("transform", "matrix("+this.scale+" 0 0 "+this.scale+" "+this.offset_to_x+" "+this.offset_to_y+")");
+			//Делаем так чтоб браузер не реагировал стандартно на прокрутку колесика мыши пытаясь сместить страницу.
+			event.preventDefault();
+			return false;
+		}.bind(this);
+		this.f_scale_grid = function(event){
+			///Устанавливаем размер дельты 3 как в браузере Mozilla Firefox.
+			let deltaY = 1 - 0.1 * Math.sign(event.deltaY);//Для совместимости браузеров, от дельты берем только знак. Так как в разных браузерах разное значение дельты.
+			//Положение курсора относительно основного окна.
+			let cursor_offsetX = event.clientX - this.graph.getBoundingClientRect().left;//Позиция курсора относительно поля.
+			let cursor_offsetY = this.graph.getBoundingClientRect().bottom - event.clientY;
+			
+			let width_field = this.graph_width * this.scale;//ширина 800 поля, в котором масштабируется.
+			let height_field = this.graph_height * this.scale;
+			
+			let factor_offsetX = cursor_offsetX / width_field;//множитель
+			let factor_offsetY = cursor_offsetY / height_field;
+			
+			let cursor_offset_x = this.w_default * factor_offsetX;//положение курсора относительно внутринних координат поля.
+			let cursor_offset_y = this.h_default * factor_offsetY;
+			
+			let offset_x = cursor_offset_x - (cursor_offset_x * deltaY);//Смещение
+			let offset_y = cursor_offset_y - (cursor_offset_y * deltaY);
+			
+			this.x_default += offset_x;
+			this.w_default *= deltaY;
+			this.y_default += offset_y;
+			this.h_default *= deltaY;
+			
+			this.f_grid();
+			this.f_radius();
+			this.f_curve();
+			event.preventDefault();
+			return false;
+		}.bind(this);
+		this.graph.addEventListener("wheel", function(event){
+			if(this.flag_move_field){
+				this.f_scale_field(event);
+			}else{
+				this.f_scale_grid(event);
+			}
+		}.bind(this));//*/
+		
+		/*
+		this.x_offset_wheel = this.graph.getBoundingClientRect().left + 400;
+		this.y_offset_wheel = this.graph.getBoundingClientRect().top + 200;
+		this.graph.addEventListener("wheel", function(event){//Событие прокрутки колесика мышки, на игровой карте при котором приближаем или удаляем игровую карту относительно позиции курсора мыши.
+			///Устанавливаем размер дельты 3 как в браузере Mozilla Firefox.
+			let deltaY = 3 * Math.sign(event.deltaY);//Для совместимости браузеров, от дельты берем только знак. Так как в разных браузерах разное значение дельты.
+			//Положение курсора относительно основного окна.
+			let offsetX = event.clientX - this.x_offset_wheel;
+			let offsetY = event.clientY - this.y_offset_wheel;
+			//Расстояние между картой и курсором.
+			let distance_x = offsetX - this.offset_to_x;
+			let distance_y = offsetY - this.offset_to_y;
+			//Расстояние между картой и курсором, в изначальном масштабе 1 к 1.
+			let primary_distance_x = distance_x / this.scale;
+			let primary_distance_y = distance_y / this.scale;
+			//Устанавливаем новый коэффициент масштаба.
+			this.scale += deltaY / 100 * this.scale;//Старый масштаб плюс количество прокрутки колесика мыши. Делим на 100 чтоб плавно масштабировалось. И умножаем на текущий масштаб чтоб равномерно увеличиволось и уменьшалось. Так как, например, при сильно увеличенном масштабе, ещё увеличение на тоже значение мало заметно.
+			if(this.scale > 3)this.scale = 3;//Устанавливаем максимальный коэффициент масштаба.
+			if(this.scale < 0.3)this.scale = 0.3;//Устанавливаем минимальный коэффициент масштаба.
+			//Расстояние между картой и курсором, в новом масштабе.
+			let new_distance_x = primary_distance_x * this.scale;
+			let new_distance_y = primary_distance_y * this.scale;
+			//Расстояние на которое следует сместить игровую карту относительно текущей позиции.
+			let shift_map_x = new_distance_x - distance_x;
+			let shift_map_y = new_distance_y - distance_y;
+			//Новые координаты карты, после масштабирования.
+			this.offset_to_x -= shift_map_x;
+			this.offset_to_y -= shift_map_y;
+			//Масштабируем на коэффициент масштаба и одновременно смещаем на новые координаты игровую карту, в матрице трансформации.
+			this.graph.setAttribute("transform", "matrix("+this.scale+" 0 0 "+this.scale+" "+this.offset_to_x+" "+this.offset_to_y+")");
+			//Делаем так чтоб браузер не реагировал стандартно на прокрутку колесика мыши пытаясь сместить страницу.
+			event.preventDefault();
+			return false;
+		}.bind(this));//*/
+		this.center = function(){
+			let x = 0;
+			let y = 0;
+			this.offset_to_x = 0;
+			this.offset_to_y = 0;
+			this.graph.setAttribute("transform", "translate("+x+ "," +y+ ") scale("+this.scale+")");
+			
+			this.distance_to_x = x;
+			this.distance_to_y = y;
+		}.bind(this);
+	}
+	var go = new Global_Object();
+	
+	function out(text){
+		document.getElementById("output").innerHTML=text;
+	}
+</script>
+<div>
+	<script type="text/javascript">
+		var file = null;
+		function f_seve_img(){
+			let a = document.createElement("a"),
+					url = URL.createObjectURL(file);
+			a.href = url;
+			a.download = "fff";
+			document.body.appendChild(a);
+			a.click();
+			setTimeout(function() {
+				document.body.removeChild(a);
+				window.URL.revokeObjectURL(url);  
+			}, 0);
+		}
+		function f_load_img(files){
+			file = files[0];
+			let reader = new FileReader();
+			reader.onload = function(e){
+				//alert(e.target.result);
+				let svg_image = document.getElementById("svg_image");
+				svg_image.setAttributeNS(null, "href", e.target.result);
+			}
+			reader.readAsDataURL(file);
+		}
+		function f_test(){
+			let svg_image = document.getElementById("svg_svg");
+			let svg_xml = (new XMLSerializer()).serializeToString(svg_image);
+			
+			console.log(svg_xml);
+			
+			let myCanvas = document.getElementById("my_canvas");
+			var canvas = myCanvas.getContext('2d');
+			let img = new Image;
+			//file = img;
+			img.onload = function(){
+				canvas.drawImage(img,-100,-500);
+				//alert(canvas);
+				let canvasdata = myCanvas.toDataURL('image/jpeg');
+				let a = document.createElement("a");
+				a.href = canvasdata;
+				a.download = "fff";
+				document.body.appendChild(a);
+				a.click();
+				setTimeout(function(){
+					document.body.removeChild(a);
+					window.URL.revokeObjectURL(canvasdata);  
+				}, 0);
+				
+				
+			};
+			img.src = "data:image/svg+xml;base64,"+btoa(svg_xml);
+		}
+	</script>
+	<input type="file" onchange="f_load_img(this.files)"><input type="button" value="Сохранить" onclick="f_seve_img()"><input type="button" value="тест" onclick="f_test()">
+	<br>
+	 <canvas id="my_canvas" width="200" height="200">Этот элемент не поддерживается</canvas>
+</div>
+<div>
+	<script type="text/javascript">
+		var text_c_test = "#000";
+		function f_m_color(value, id_elm){
+			if(id_elm){
+				if(value.length < 2) value = "0"+value;
+				document.getElementById(id_elm).value = value;
+				var h_c_1 = (document.getElementById("color_1").value*1).toString(16);
+				if(h_c_1.length < 2) h_c_1 = "0"+h_c_1;
+				var h_c_2 = (document.getElementById("color_2").value*1).toString(16);
+				if(h_c_2.length < 2) h_c_2 = "0"+h_c_2;
+				var h_c_3 = (document.getElementById("color_3").value*1).toString(16);
+				if(h_c_3.length < 2) h_c_3 = "0"+h_c_3;
+				var h_c_out = h_c_1+h_c_2+h_c_3;
+				document.getElementById("color_rgp").value = h_c_out;
+			}else{
+				document.getElementById("c_1").value = (value[0] ? value[0] : "0")+(value[1] ? value[1] : "0");
+				document.getElementById("color_1").value = parseInt(document.getElementById("c_1").value, 16);
+				document.getElementById("c_2").value = (value[2] ? value[2] : "0")+(value[3] ? value[3] : "0");
+				document.getElementById("color_2").value = parseInt(document.getElementById("c_2").value, 16);
+				document.getElementById("c_3").value = (value[4] ? value[4] : "0")+(value[5] ? value[5] : "0");
+				document.getElementById("color_3").value = parseInt(document.getElementById("c_3").value, 16);
+				var h_c_out = document.getElementById("c_1").value+document.getElementById("c_2").value+document.getElementById("c_3").value;
+			}
+			document.getElementById("out_c").style.backgroundColor = "#"+h_c_out;
+			text_c_test = "#"+h_c_out;
+			out(h_c_out);
+			go.curve_s.setAttributeNS(null, "stroke", text_c_test);
+			//info(h_c_out);
+		}
+	</script>
+	<h3>Для работы с цветом.</h3>
+	<input type="range" min="0" max="255" step="1" value="127" id="color_1" oninput="f_m_color((this.value*1).toString(16), 'c_1')"><input type="text" size="2" id="c_1" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value , 16), 'color_1')"><br>
+	<input type="range" min="0" max="255" step="1" value="127" id="color_2" oninput="f_m_color((this.value*1).toString(16), 'c_2')"><input type="text" size="2" id="c_2" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value, 16), 'color_2')"><br>
+	<input type="range" min="0" max="255" step="1" value="127" id="color_3" oninput="f_m_color((this.value*1).toString(16), 'c_3')"><input type="text" size="2" id="c_3" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value, 16), 'color_3')"><br>
+	<input type="text" size="6" id="color_rgp" value="7f7f7f" oninput="f_m_color(this.value)">
+	<span id="out_c">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+	<script type="text/javascript">
+		document.getElementById("out_c").style.backgroundColor = "#"+document.getElementById("color_rgp").value;
+	</script>
+<div>
+</body>
+</html>

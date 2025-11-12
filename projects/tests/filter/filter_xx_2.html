@@ -1,0 +1,255 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Фильтры SVG</title>
+</head>
+<body>
+<table><tr><td>
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="4800" style="background-color: #fff;">
+	<style>
+	</style>
+	<defs>
+		<g id="model_2">
+			<image
+				href="https://artchive.ru/res/media/img/sx200/work/864/378925.jpg"
+				height="200"
+				width="200"
+			/>
+		</g>
+		<g id="model_3">
+			<image
+				href="https://ic.pics.livejournal.com/zhur74/17299481/92601/92601_original.jpg"
+				height="900"
+				width="900"
+			/>
+		</g>
+		<g id="model">
+			<path
+				d="M0,0 h100 v100 h-100 z"
+				fill="#f00"
+				fill-opacity="0.5"
+				stroke="#000"
+				stroke-width="5"
+			/>
+			
+			<text
+				x="0"
+				y="0"
+				dx="50px"
+				dy="50px"
+				text-anchor="middle"
+				dominant-baseline="middle"
+				font-size="70px"
+				fill="black"
+			>Rx</text>
+			
+			<path
+				d="M100,0 h100 v100 h-100 z"
+				fill="#0f0"
+			/>
+			
+			<path
+				d="M0,100 h100 v100 h-100 z"
+				fill="#00f"
+			/>
+			
+			<path
+				d="M100,100 h100 v100 h-100 z"
+				fill="#f00"
+			/>
+		</g>
+		<!----
+		<filter
+			id="GaussianBlur"
+		>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="2"
+			/>
+		</filter>
+		<!---->
+		<!----
+		<filter
+			id="HighPass"
+		>
+			<feConvolveMatrix
+				in="SourceGraphic"
+				order="5"
+				kernelMatrix="
+					0 1 1 1 0
+					1 2 2 2 1
+					1 2 1 2 1
+					1 2 2 2 1
+					0 1 1 1 0
+				"
+			/>
+		</filter>
+		<!---->
+		<filter
+			id="GaussianBlur"
+			color-interpolation-filters="sRGB"
+		>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="10"
+				result="gaussian_blur_10"
+			/>
+			
+		</filter>
+		<filter
+			id="HighPass"
+			color-interpolation-filters="sRGB"
+		>
+			
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="10"
+				result="gaussian_blur_10"
+			/>
+			<feComponentTransfer
+				in="gaussian_blur_10"
+				result="invert_g_b_10"
+			>
+				<feFuncR type="table" tableValues="1 0"/>
+				<feFuncG type="table" tableValues="1 0"/>
+				<feFuncB type="table" tableValues="1 0"/>
+			</feComponentTransfer>
+			<feComposite
+				in="invert_g_b_10"
+				in2="SourceGraphic"
+				result="comp"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="-0.5"
+			/>
+			
+		</filter>
+		<filter
+			id="sum_gb_hp"
+			color-interpolation-filters="sRGB"
+		>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="10"
+				result="gaussian_blur_10"
+			/>
+			<feComponentTransfer
+				in="gaussian_blur_10"
+				result="invert_g_b_10"
+			>
+				<feFuncR type="table" tableValues="1 0"/>
+				<feFuncG type="table" tableValues="1 0"/>
+				<feFuncB type="table" tableValues="1 0"/>
+			</feComponentTransfer>
+			<feComposite
+				in="invert_g_b_10"
+				in2="SourceGraphic"
+				result="high_pass"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="-0.5"
+			/>
+			
+			<feComposite
+				in="gaussian_blur_10"
+				in2="high_pass"
+				result="comp"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="-.5"
+			/>
+			
+		</filter>
+	</defs>
+	
+	<path
+		d="M50,190 h1500 M50,590 h1500"
+		stroke="#000"
+		stroke-width="5"
+	/>
+	
+	<use
+		href="#model"
+		x="100"
+		y="100"
+	/>
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		filter="url(#GaussianBlur)"
+	/>
+	<use
+		href="#model"
+		x="900"
+		y="100"
+		filter="url(#HighPass)"
+	/>
+	<use
+		href="#model"
+		x="1300"
+		y="100"
+		filter="url(#sum_gb_hp)"
+	/>
+	
+	<use
+		href="#model_2"
+		x="100"
+		y="500"
+	/>
+	<use
+		href="#model_2"
+		x="500"
+		y="500"
+		filter="url(#GaussianBlur)"
+	/>
+	<use
+		href="#model_2"
+		x="900"
+		y="500"
+		filter="url(#HighPass)"
+	/>
+	<use
+		href="#model_2"
+		x="1300"
+		y="500"
+		filter="url(#sum_gb_hp)"
+	/>
+	
+	<use
+		href="#model_3"
+		x="100"
+		y="900"
+	/>
+	<use
+		href="#model_3"
+		x="100"
+		y="1900"
+		filter="url(#GaussianBlur)"
+	/>
+	<use
+		href="#model_3"
+		x="100"
+		y="2900"
+		filter="url(#HighPass)"
+	/>
+	<use
+		href="#model_3"
+		x="100"
+		y="3900"
+		filter="url(#sum_gb_hp)"
+	/>
+</svg>
+</td>
+<td>
+
+</td></tr>
+</table>
+
+</body>
+</html>

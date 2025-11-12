@@ -1,0 +1,132 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Фильтры SVG</title>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="800" height="400" style="background-color: #fed;">
+	<defs>
+		<g id="model">
+			<path
+				d="M0,0 h100 v100 h-100 z"
+				fill="#f00"
+				fill-opacity="0.5"
+				stroke="#000"
+				stroke-width="2"
+			/>
+			
+			<text
+				x="0"
+				y="0"
+				dx="50px"
+				dy="50px"
+				text-anchor="middle"
+				dominant-baseline="middle"
+				font-size="70px"
+				fill="black"
+			>Rx</text>
+			
+			<path
+				d="M100,0 h100 v100 h-100 z"
+				fill="#0f0"
+			/>
+			
+			<path
+				d="M0,100 h100 v100 h-100 z"
+				fill="#00f"
+			/>
+			
+			<path
+				d="M100,100 h100 v100 h-100 z"
+				fill="#f00"
+			/>
+		</g>
+		<filter
+			id="feColorMatrix"
+			x="0%"
+			y="0%"
+			width="100%"
+			height="100%"
+		>
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 0 0.5"
+			/>
+		</filter>
+		<filter
+			id="feColorMatrix_2"
+			x="0%"
+			y="0%"
+			width="100%"
+			height="100%"
+		>
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 0 0.5"
+				x="50"
+				y="50"
+				width="100"
+				height="100"
+				result="matrixl_2"
+			/>
+			
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 1 0"
+				result="matrixl_1"
+			/>
+			
+			<feComposite
+				in="SourceGraphic"
+				in2="matrixl_2"
+				operator="xor"
+				result="comp"
+			/>
+		</filter>
+		<mask id="mask_1">
+			<rect x="0" y="0" width="200" height="200" fill="white"/>
+			<rect x="50" y="50" width="100" height="100" fill="black"/>
+		</mask>
+		<mask id="mask_2">
+			<rect x="0" y="0" width="200" height="200" fill="black"/>
+			<rect x="50" y="50" width="100" height="100" fill="white"/>
+		</mask>
+	</defs>
+	
+	<use
+		href="#model"
+		x="100"
+		y="100"
+		mask="url(#mask_1)"
+	/>
+	<use
+		href="#model"
+		x="100"
+		y="100"
+		mask="url(#mask_2)"
+		filter="url(#feColorMatrix)"
+	/>
+	
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		filter="url(#feColorMatrix_2)"
+	/>
+</svg>
+</body>
+</html>
