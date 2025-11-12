@@ -1,0 +1,406 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>игра</title>
+<style>
+body{
+	background-color: #cef;
+	/* border: 1px solid black; /* Параметры рамки */
+}
+use{
+	border: 1px solid black; /* Параметры рамки */
+}
+</style>
+</head>
+<body>
+<svg width="200" height="200" viewBox="0 0 220 220"
+     xmlns="http://www.w3.org/2000/svg">
+  <filter id="displacementFilter">
+    <feTurbulence type="turbulence" baseFrequency="0.05"
+        numOctaves="1" result="turbulence"/>
+    <feDisplacementMap in2="turbulence" in="SourceGraphic"
+        scale="50" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+
+  <circle cx="100" cy="100" r="100"
+      style="filter: url(#displacementFilter)"/>
+</svg><br>
+<svg width="1000" height="1000" style="background-color: #fed;" xmlns="http://www.w3.org/2000/svg">
+	<path d="M0,0 V1000 M100,0 V1000 M200,0 V1000 M300,0 V1000 M400,0 V1000 M500,0 V1000 M600,0 V1000 M700,0 V1000 M800,0 V1000 M900,0 V1000 M1000,0 V1000
+	M0,0 H1000 M0,100 H1000 M0,200 H1000 M0,300 H1000 M0,400 H1000 M0,500 H1000 M0,600 H1000 M0,700 H1000 M0,800 H1000 M0,900 H1000 M0,1000 H1000"
+	fill="none" stroke="#888" stroke-width="1" stroke-dasharray="4"/>
+	
+	<path d="M300,0 V1000 M500,0 V1000 M700,0 V1000 M0,300 H1000 M0,500 H1000 M0,700 H1000"
+	fill="none" stroke="#000" stroke-width="1" stroke-dasharray="4"/>
+	
+	<path d="M100,0 V1000 M900,0 V1000 M0,0 V1000 M1000,0 V1000 M0,100 H1000 M0,900 H1000 M0,0 H1000 M0,1000 H1000"
+	fill="none" stroke="#000" stroke-width="1" />
+	<g transform="translate(100,100)">
+		<path d="
+			M200,50
+			q-50,50 -100,50
+			q20,50 0,100
+			q20,50 0,100
+			q50,0 100,10
+			z
+			"
+		fill="#990"
+		stroke="#000"
+		stroke-width="0"/>
+		<path d="
+			M200,50
+			q50,50 100,50
+			q-20,50 0,100
+			q-20,50 0,100
+			q-50,0 -100,10
+			z
+			"
+		fill="#770"
+		stroke="#000"
+		stroke-width="0"/>
+		<path d="
+			M200,50 v-40
+			m-100,90 l-70,-50
+			m70,150 h-90
+			m90,100 l-70,50
+			m270,-50 l70,50
+			m-70,-150 h90
+			m-90,-100 l70,-50
+			
+			"
+		fill="#none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="3"/>
+		<path d="
+			M130,330 l50,20
+			m-10,-20 l-40,25
+			m30,10 l-10,-40
+			"
+		fill="#none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="7"/>
+		<path d="
+			M270,330 l-20,50
+			"
+		fill="#none"
+		stroke="#753"
+		stroke-width="30"/>
+		
+	
+	</g>
+	
+	
+	
+	<!--q120,-40 240,0--><!--"evenodd"-->
+	<!--
+	<path d="
+		M380,120
+		q-50,10 -60,60
+		l100,40
+		z
+		m-60,60
+		q-40,120 0,240
+		l100,-40
+		q20,-80 0,-160
+		z
+		m0,240
+		q10,50 60,60
+		l40,-100
+		z
+		m60,60
+		l50,-10
+		q70,40 140,0
+		l50,10
+		l-40,-100
+		q-80,-20 -160,0
+		z
+		m240,0
+		q50,-10 60,-60
+		l-100,-40
+		z
+		m60,-60
+		q40,-120 0,-240
+		l-100,40
+		q-20,80 0,160
+		z
+		m0,-240
+		q-10,-50 -60,-60
+		l-40,100
+		z
+		m-60,-60
+		q-120,-40 -240,0
+		l40,100
+		q80,20 160,0
+		z
+		m-200,100
+		q20,80 0,160
+		q80,-20 160,0
+		q-20,-80 0,-160
+		q-80,20 -160,0
+		z
+		l160,160
+		m0,-160
+		l-160,160
+		m80,-80
+		v70
+		m-50,20
+		l-20,80
+		
+		l70,10
+		l70,-10
+		
+		l-20,-80
+		l-50,5
+		z
+		m50,90
+		v-85
+		"
+	fill="#a99"
+	fill-rule="nonzero"
+	stroke="#000"
+	stroke-width="1"/>-->
+	<!--
+	<path d="
+		M240,110
+		q-25,2 -30,30
+		l50,20
+		z
+		m-30,30
+		q-20,60 0,120
+		l50,-20
+		q10,-40 0,-80
+		z
+		m0,120
+		q5,25 30,30
+		l20,-50
+		z
+		m30,30
+		l25,-5
+		q35,20 70,0
+		l25,5
+		l-20,-50
+		q-40,-10 -80,0
+		z
+		m120,0
+		q25,-5 30,-30
+		l-50,-20
+		z
+		m30,-30
+		q20,-60 0,-120
+		l-50,20
+		q-10,40 0,80
+		z
+		m0,-120
+		q-5,-25 -30,-30
+		l-20,50
+		z
+		m-30,-30
+		q-60,-20 -120,0
+		l20,50
+		q40,10 80,0
+		z
+		m-100,50
+		q10,40 0,80
+		q40,-10 80,0
+		q-10,-40 0,-80
+		q-40,10 -80,0
+		z
+		l80,80
+		m0,-80
+		l-80,80
+		m40,-40
+		v35
+		m-25,10
+		l-10,40
+		
+		l35,5
+		l35,-5
+		
+		l-10,-40
+		l-25,2.5
+		z
+		m25,45
+		v-42.5
+		
+		m-50,102.5
+           a 50 40 0 1 1 100 0
+		   a 50 40 0 1 1 -100 0
+		"
+	fill="#fed"
+	fill-rule="nonzero"
+	stroke="#000"
+	stroke-width="1"/>-->
+	
+</svg><br>
+<svg width="700" height="550" style="background-color: #fed;" xmlns="http://www.w3.org/2000/svg">
+<clipPath id="t">
+	<path d="M30,15 h30 v15 z v15 h-30 z h-30 v-15 z v-15 h30 z"/>
+</clipPath>
+<symbol width="1200" height="600" id="flag_en" preserveAspectRatio="none" viewBox="0 0 60 30" >
+
+<!--<path d="M0,0 v30 h60 v-30 z" fill="#00247d"/>-->
+<rect fill="#00247d" width="60" height="30"/>
+<path d="M0,0 L60,30 M60,0 L0,30" stroke="#fff" stroke-width="6"/>
+<path d="M0,0 L60,30 M60,0 L0,30" clip-path="url(#t)" stroke="#cf142b" stroke-width="4"/>
+<path d="M30,0 v30 M0,15 h60" stroke="#fff" stroke-width="10"/>
+<path d="M30,0 v30 M0,15 h60" stroke="#cf142b" stroke-width="6"/>
+</symbol>
+
+<use xlink:href="#flag_en" x="100"  y="100" width="400" height="200" />
+
+<!--<path d="M100 100 v400 h300" stroke="black" fill="transparent"/>-->
+
+
+<!--
+<symbol width="900" height="600" id="flag_en2" preserveAspectRatio="none" viewBox="0 0 90 60" >
+
+<path d="M0,0 h90 v60 h-90 z" fill="#fff"/>
+<path d="M0,7.21 V20 h19.185 z M90,7.21 V20 h-19.185 z M0,52.79 V40 h19.185 z M90,52.79 V40 h-19.185 z" fill="#00247d"/>
+<path d="M10.82,0 H35 v16.12 z M10.82,60 H35 v-16.12 z M79.18,0 H55 v16.12 z M79.18,60 H55 v-16.12 z" fill="#00247d"/>
+<path d="M0,24 h39 v-24 h12 v24 h39 v12 h-39 v24 h-12 v-24 h-39 z" fill="#cf142b"/>
+</symbol>
+<use xlink:href="#flag_en2" x="100"  y="100" width="300" height="200" style="opacity:.3"/>-->
+
+
+<symbol width="30" height="20" id="flag_en3" stroke="none" preserveAspectRatio="xMinYMin meet" viewBox="0 0 90 60" >
+<path d="M0,0 h90 v60 H0 z" fill="#00247d" />
+<path d="M0,0 h10.82 L45,22.79 L79.18,0 H90 v7.21 L55.82,30 L90,52.79 V60 h-10.82 L45,37.21 L10.82,60 H0 v-7.21 L34.18,30 L0,7.21 z" fill="#fff"/>
+<path d="M45,30 h-7.21 L0,4.81 V0 z v-4.81 L82.79,0 H90 z h7.21 L90,55.19 V60 z v4.81 L7.21,60 H0 z" fill="#cf142b"/>
+<path d="M0,20 h90 v20 H0 z M35,0 h20 v60 H35 z" fill="#fff"/>
+<path d="M0,24 h90 v12 H0 z M39,0 h12 v60 H39 z" fill="#cf142b"/>
+</symbol>
+<g fill="white" stroke="green" stroke-width="1">
+<use xlink:href="#flag_en3" x="100"  y="300" width="300" height="200" />
+</g>
+
+</svg><br>
+<svg width="700" height="500" style="border: 1px solid black" xmlns="http://www.w3.org/2000/svg">
+<symbol id="flag_ru" width="30" height="20" preserveAspectRatio="xMinYMin meet" viewBox="0 0 9 6">	
+	<path d="M0,0 h9 v2 H0 z" fill="#fff"/>
+	<path d="M0,2 h9 v2 H0 z" fill="#0039a6"/>
+	<path d="M0,4 h9 v2 H0 z" fill="#d52b1e"/>
+</symbol>
+<use xlink:href="#flag_ru" x="100"  y="100" width="300" height="200" />
+
+</svg><br>
+<svg width="700" height="500" xmlns="http://www.w3.org/2000/svg">
+<defs> 
+    <linearGradient id="gradient_pp">
+		<stop offset="0%" stop-color="#000"/>
+		<stop offset="20%" stop-color="#00f"/>
+		<stop offset="50%" stop-color="#813"/>
+		<stop offset="85%" stop-color="#008"/>
+		<stop offset="100%" stop-color="#000"/>
+		
+    </linearGradient>
+	<linearGradient id="gradient_pp2">
+		<stop offset="0%" stop-color="#003"/>
+		<stop offset="38%" stop-color="#523"/>
+		<stop offset="100%" stop-color="#000"/>
+		
+    </linearGradient>
+</defs>
+	<path d="M30 400 q 200 0 300 -300 q 100 300 300 300"  fill="url(#gradient_pp)"/>
+	<path d="M200 400 q 90 0 135 -200 q 70 200 220 200" fill="url(#gradient_pp2)"/>
+</svg><br>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+<defs> 
+    <radialGradient id="gradient_forest"> 
+		<stop offset="0%" stop-color="#fff"/>
+		<stop offset="30%" stop-color="#050"/> 
+		<stop offset="95%" stop-color="#cef"/> 
+    </radialGradient>
+</defs> 
+	<circle cx="122" cy="110" r="17" fill="url(#gradient_forest)"/>
+	<circle cx="100" cy="100" r="20" fill="url(#gradient_forest)"/>
+	<circle cx="120" cy="80" r="25" fill="url(#gradient_forest)"/>
+</svg><br>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+	<path d="M100 200
+           A 100 50 0 1 1 300 200
+           " stroke="black" fill="green" stroke-width="2" fill-opacity="0.5"/>
+	<path d="M100 200 v-50" stroke="red" stroke-width="2" fill="transparent"/>
+	<path d="M100 200 h50" stroke="red" stroke-width="2" fill="transparent"/>
+	<path d="M125 200 v-25" stroke="red" stroke-width="2" fill="transparent"/>
+	<ellipse cx="100" cy="50" rx="50" ry="50" />
+</svg><br>
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg">
+<defs> 
+    <linearGradient id="gradient_mount" x2="0" y2="1"> 
+		<stop offset="0%" stop-color="#fff"/>
+		<stop offset="30%" stop-color="#00f"/> 
+		<stop offset="95%" stop-color="#cef"/> 
+    </linearGradient>
+</defs> 
+  <path d="M10 110 C 70 10, 70 10, 210 110" stroke="black" fill="transparent"/>
+  <path d="M10 110 h200" stroke="green" fill="transparent"/>
+  <path d="M10 110 L70 10 L210 110" stroke="red" fill="transparent"/>
+  <path d="M10 110 Q 70 10 210 110" stroke="blue" fill="transparent"/>
+  <path d="M30 200 q 50 0 80 -50 q30 50 80 50" stroke="black" fill="url(#gradient_mount)"/>
+  <!--<path d="M30 200 Q 80 200 110 150 Q140 200 190 200" stroke="black" fill="url(#gradient_mount)"/>-->
+  
+  
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="100" height="300" viewBox="0 0 100 300">
+
+  <text x="62.5" y="25" inline-size="200"
+	style="font: 25px IPAMincho; inline-size: 200px; writing-mode: vertical-rl;">
+    テキストは１０文字後に折り返されます。</text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="auto" viewBox="0 0 300 100">
+
+  <text x="50" y="30" text-rendering="auto" style="font: 20px sans-serif; inline-size: 200px; text-anchor: middle">
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="optimizeSpeed" viewBox="0 0 300 100">
+
+  <text x="50" y="30" text-rendering="optimizeSpeed" style="font: 20px sans-serif; inline-size: 200px; text-anchor: middle">
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="optimizeLegibility" viewBox="0 0 300 100">
+
+  <text x="50" y="30" text-rendering="optimizeLegibility" style="font: 20px sans-serif; inline-size: 200px; text-anchor: middle">
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="300" height="100" text-rendering="geometricPrecision" viewBox="0 0 300 100">
+	
+  <text x="50" y="30" text-rendering="geometricPrecision" style="fill: red; font: 20px sans-serif; inline-size: 200px; text-anchor: middle"><title style="fill: red; stroke: blue;">даааа!</title>
+    This text wraps at 200 pixels. This text wraps at 201 pixels. This text wraps at 202 pixels. This text wraps at 203 pixels. This text wraps at 204 pixels. This text wraps at 205 pixels.
+  </text>
+
+</svg><br>
+<svg width="10cm" height="3cm" viewBox="0 0 1000 300"
+     xmlns="http://www.w3.org/2000/svg" version="1.1">
+
+  <text x="250" y="180"
+        font-family="Verdana" font-size="64" fill="blue" >
+    Hello, out there!
+  </text>
+
+</svg><br>
+<svg width="100" height="100" xmlns="http://www.w3.org/2000/svg">
+  
+  <path d="M10 20 v-10 h10 m10 0 h10 v10 m0 10 v10 h-10 m-10 0 h-10 v-10" fill="red" stroke="#000" stroke-width="1"/>
+
+</svg><br>
+
+
+
+
+
+</body>
+</html>
