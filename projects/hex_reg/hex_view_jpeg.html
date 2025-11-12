@@ -1,0 +1,134 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>hex_view</title>
+<link rel="stylesheet" href="css/hex_view_jpeg.css">
+<script type="text/javascript">
+function test(){//JSON.stringify();
+	let text_xx = "";
+	let a = 1;
+	text_xx += "a = 1 <br>";
+	let sin_a = Math.sin(a);
+	text_xx += "sin a = "+sin_a+" <br>";
+	let cos_a = Math.cos(a);
+	text_xx += "cos a = "+cos_a+" <br>";
+	let sin_cos = sin_a / cos_a;
+	text_xx += "sin / cos = "+sin_cos+" <br>";
+	let cos_sin = cos_a / sin_a;
+	text_xx += "cos / sin = "+cos_sin+" <br>";
+	let asin_a = Math.asin(a);
+	text_xx += "asin a = "+asin_a+" <br>";
+	let asin_sin_a = Math.asin(sin_a);
+	text_xx += "asin(sin a) = "+asin_sin_a+" <br>";
+	
+	out("<br>"+text_xx);
+	return;
+	let arr_1 = [[320, 0, 300, 0, 0, 0, 0, 0],
+				[0, 120, 280, 0, 0, 0, 0, 0],
+				[0, -130, -160, 0, 0, 0, 0, 0],
+				[140, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0]];
+	
+	let arr_2 = [[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0],
+				[0, 0, 0, 0, 0, 0, 0, 0]];
+	let text = "";
+	let text_2 = "";
+	text += "<br>"+JSON.stringify(arr_1);
+	let sqrt_1 = 1 / Math.sqrt(2);
+	for(let y = 0; y < 8; y++){
+		for(let x = 0; x < 8; x++){
+			let sum = 0;
+			for(let u = 0; u < 8; u++){
+				let cu = u ? 1: sqrt_1;
+				for(let v = 0; v < 8; v++){
+					let cv = v ? 1: sqrt_1;
+					sum += cu * cv * arr_1[u][v] * Math.cos((2 * x + 1) * u * Math.PI / 16) * Math.cos((2 * y + 1) * v * Math.PI / 16);
+					//sum += cu * cv * Math.cos((2 * x + 1) * u * Math.PI / 16) * Math.cos((2 * y + 1) * v * Math.PI / 16);
+				}
+			}
+			//arr_2[y][x] = (sum * 0.25) ^ 0;
+			arr_2[x][y] = (sum * 0.25) ^ 0;
+			//arr_2[x][y] = sum * 0.25;
+		}
+	}
+	text += "<br>"+JSON.stringify(arr_2[0]);
+	//out("<br>"+arr_2.join('<br>'));
+	//out(JSON.stringify(arr_1)+"<br><br>"+JSON.stringify(arr_2));
+	
+	//TEST идентичен коду выше.
+	let sqrt_2 = Math.sqrt(0.125);
+	let sqrt_3 = Math.sqrt(0.25);
+	for(let y = 0; y < 8; y++){
+		for(let x = 0; x < 8; x++){
+			let sum = 0;
+			for(let u = 0; u < 8; u++){
+				let cu = u ? sqrt_3: sqrt_2;
+				for(let v = 0; v < 8; v++){
+					let cv = v ? sqrt_3: sqrt_2;
+					sum += cu * cv * arr_1[u][v] * Math.cos((2 * x + 1) * u * Math.PI / 16) * Math.cos((2 * y + 1) * v * Math.PI / 16);
+					//sum += cu * cv * Math.cos((2 * x + 1) * u * Math.PI / 16) * Math.cos((2 * y + 1) * v * Math.PI / 16);
+				}
+			}
+			//arr_2[y][x] = (sum * 0.25) ^ 0;
+			arr_2[x][y] = sum;// ^ 0;
+			//arr_2[x][y] = sum * 0.25;
+		}
+	}
+	text += "<br>"+JSON.stringify(arr_2[0]);
+	
+	for(let u = 0; u < 8; u++){
+		let cu = u ? sqrt_3: sqrt_2;
+		for(let v = 0; v < 8; v++){
+			let cv = v ? sqrt_3: sqrt_2;
+			let sum = 0;
+			for(let y = 0; y < 8; y++){
+				for(let x = 0; x < 8; x++){
+					sum += arr_2[y][x] * Math.cos((2 * x + 1) * u * Math.PI / 16) * Math.cos((2 * y + 1) * v * Math.PI / 16);
+					//sum += cu * cv * Math.cos((2 * x + 1) * u * Math.PI / 16) * Math.cos((2 * y + 1) * v * Math.PI / 16);
+				}
+			}
+			//arr_2[y][x] = (sum * 0.25) ^ 0;
+			arr_1[v][u] = (cv * cu * sum);// ^ 0;
+			//arr_2[x][y] = sum * 0.25;
+		}
+	}
+	text_2 += "<br>"+JSON.stringify(arr_1[0]);
+	
+	out(text+"<br>"+text_2);
+	//out("<br>"+arr_2.join('<br>'));
+	//out(JSON.stringify(arr_1)+"<br><br>"+JSON.stringify(arr_2));
+}
+function out(text){
+	document.getElementById("output").innerHTML = text;
+}
+</script>
+</head>
+<body>
+	<input type="button" value="Загрузить" onClick="f_load()"><input type="button" value="ТЕСТ" onClick="test()"><span id="span_log"></span><span id="output"></span>
+	<br>
+	<span id="span_0"></span>
+	<br>
+	<span id="span_1"></span>
+	<br>
+	<span id="span_2"></span>
+	<span id="error_2"></span>
+	<span id="span_3"></span>
+	<br>
+	<span id="span_4"></span>
+	<br>
+	<span id="span_5"></span>
+	<br>
+	<span id="span_6"></span>
+	<br>
+	<span id="span_7"></span>
+	<script src="js/hex_view_jpeg.js"></script>
+</body>
+</html>
