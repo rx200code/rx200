@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>color BIOS</title>
+<style type="text/css">
+select{
+	width: 150px;
+}
+</style>
+<script type="text/javascript">
+var colors = [
+	{n:"black", c:"#000000", b:0b0000, d:0},
+	{n:"blue", c:"#0000AA", b:0b0001, d:1},
+	{n:"green", c:"#00AA00", b:0b0010, d:2},
+	{n:"cyan", c:"#00AAAA", b:0b0011, d:3},
+	{n:"red", c:"#AA0000", b:0b0100, d:4},
+	{n:"magenta", c:"#AA00AA", b:0b0101, d:5},
+	{n:"brown", c:"#AA5500", b:0b0110, d:6},
+	{n:"light-gray", c:"#AAAAAA", b:0b0111, d:7},
+	{n:"dark-gray", c:"#555555", b:0b1000, d:8},
+	{n:"light-blue", c:"#5555FF", b:0b1001, d:9},
+	{n:"light-green", c:"#55FF55", b:0b1010, d:10},
+	{n:"light-cyan", c:"#55FFFF", b:0b1011, d:11},
+	{n:"light-red", c:"#FF5555", b:0b1100, d:12},
+	{n:"light-magenta", c:"#FF55FF", b:0b1101, d:13},
+	{n:"yellow", c:"#FFFF55", b:0b1110, d:14},
+	{n:"white", c:"#FFFFFF", b:0b1111, d:15}
+];
+window.onload = function(){
+	create_selected(e => document.body.style.background = colors[e.target.value].c, 3);
+	create_selected(e => document.body.style.color = colors[e.target.value].c, 15);
+	create_selected(
+		e => document.getElementById("body_selected").style.background = colors[e.target.value].c,
+		8
+	);
+	create_selected(
+		e => document.getElementById("body_selected").style.color = colors[e.target.value].c,
+		15
+	);
+	
+	document.body.appendChild(document.createElement("br"));
+	
+	create_selected(
+		e => document.getElementById("menu").style.background = colors[e.target.value].c,
+		11
+	);
+	create_selected(
+		e => document.getElementById("menu").style.color = colors[e.target.value].c,
+		1
+	);
+	create_selected(
+		e => document.getElementById("menu_selected").style.background = colors[e.target.value].c,
+		1
+	);
+	create_selected(
+		e => document.getElementById("menu_selected").style.color = colors[e.target.value].c,
+		15
+	);
+};
+
+function create_selected(f, n){
+	let select_color = document.createElement("select");
+	select_color.onchange = f;
+	colors.forEach(elm_obj => {
+		let elm_select = document.createElement("option");
+		elm_select.textContent = elm_obj.n;
+		elm_select.value = elm_obj.b;
+		select_color.appendChild(elm_select);
+	});
+	select_color.value = n;
+	document.body.appendChild(select_color);
+	f({target:{value:n}});
+}
+
+</script>
+</head>
+<body>
+	text<br>
+	4-bit color BIOS<br>
+	<div id="menu">
+		1. menu Debian GNU
+		<div id="menu_selected">2. Linux Arch</div>
+		3. Windows 7<br>
+		4. reboot system BIOS.
+	</div>
+	{n:"black", c:"#000000", b:0b0000, d:0},<br>
+	{n:"blue", c:"#0000AA", b:0b0001, d:1},<br>
+	{n:"green", c:"#00AA00", b:0b0010, d:2},<br>
+	{n:"cyan", c:"#00AAAA", b:0b0011, d:3},<br>
+	{n:"red", c:"#AA0000", b:0b0100, d:4},<br>
+	<div id="body_selected">{n:"magenta", c:"#AA00AA", b:0b0101, d:5},</div>
+	{n:"brown", c:"#AA5500", b:0b0110, d:6},<br>
+	{n:"light-gray", c:"#AAAAAA", b:0b0111, d:7},<br>
+	{n:"dark-gray", c:"#555555", b:0b1000, d:8},<br>
+	{n:"light-blue", c:"#5555FF", b:0b1001, d:9},<br>
+	{n:"light-green", c:"#55FF55", b:0b1010, d:10},<br>
+	{n:"light-cyan", c:"#55FFFF", b:0b1011, d:11},<br>
+	{n:"light-red", c:"#FF5555", b:0b1100, d:12},<br>
+	{n:"light-magenta", c:"#FF55FF", b:0b1101, d:13},<br>
+	{n:"yellow", c:"#FFFF55", b:0b1110, d:14},<br>
+	{n:"white", c:"#FFFFFF", b:0b1111, d:15}<br><br>
+</body>
+</html>
