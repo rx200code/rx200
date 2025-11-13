@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>данные публикаций</title>
+<script type="text/javascript">
+/*
+1710099896759 wall.repost: wall-106887464_300877
+1710099897289 likes.add: wall-106887464_300875
+1710099914138 wall.repost: wall-106887464_300875
+1710099920022 likes.add: wall-184436148_89357
+1710099920024 wall.repost: not wall-184436148_89357
+1710099920608 likes.add: wall-184436148_89346
+1710099920611 wall.repost: not wall-184436148_89346
+1710099921455 wall.repost: other wall-184436148_89356
+1710099922192 wall.repost: other wall-184436148_89345
+
+//*/
+//window.onload = async function(){}
+
+function log_to_view(){
+	let reg = /^\d+ wall\.repost: (?:not )?wall(.+)$/gm;
+	let counter = 0;
+	let text = "<b>Найдено:</b>";
+	//let text_urls = "";
+	let arr = [];
+	//let set = new Set();
+	//let text = document.getElementById("log_text").value.match(reg);
+	while ((arr_temp = reg.exec(document.getElementById("log_text").value)) !== null) {
+		counter++;
+		//text += "<br><b>" + counter + "</b> " + arr_temp[1];
+		let url = "https://vk.com/wall" + arr_temp[1];
+		text += "<br><b>" + counter + "</b> <a target=\"_blank\" href=\"" + url + "\">" + url + "</a>";
+		//text_urls += url +"<br>";
+		//set.add(url);
+		arr.push(arr_temp[1]);
+	}
+	out(text);
+	//info(text_urls);
+	//info(set.size);
+	arr = arr.sort();
+	info(JSON.stringify(arr, null, "	"));
+}
+function data_to_view(){
+	let arr = JSON.parse(document.getElementById("log_text").value);
+	arr = arr.sort();
+	info(JSON.stringify(arr, null, "	"));
+	let text = "<b>Найдено:</b>";
+	arr.forEach(function(item, i){
+		text += "<br><b>" + (i + 1) + "</b> <a target=\"_blank\" href=\"https://vk.com/wall" + item + "\">https://vk.com/wall" + item + "</a>";
+	});
+	out(text);
+	
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").value=text;
+}
+</script>
+</head>
+<body>
+	<input type="button" value="конвертировать" onclick="log_to_view()"><input type="button" value="data конвертировать" onclick="data_to_view()">
+	<br>
+	<textarea id="log_text" cols="200" spellcheck="false"></textarea>
+	<hr>
+	<textarea id="info" cols="200" rows="50"></textarea>
+	<hr>
+	<span id="output"></span>
+	<hr>
+</body>
+</html>
