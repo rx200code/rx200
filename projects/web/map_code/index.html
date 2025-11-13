@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>map</title>
+		<link rel="icon" type="image/x-icon" href="url" />
+		<link rel="stylesheet" href="url">
+		<style>
+			#map{
+				width: 1000px;
+				height: 500px;
+			}
+		</style>
+		<script src="./lib.js"></script>
+		<script>
+			window.onload = () => {
+				init_map(document.getElementById("map"));
+			};
+			function test(){
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" />
+		<br>
+		<div id="map">map</div>
+		<br>
+		<span id="out">out</span>
+	</body>
+</html>
