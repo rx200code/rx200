@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>test</title>
+		<style>
+			
+		</style>
+		<script>
+			/**
+			// array заполнить объекты
+			{
+				name:"",
+				url:"",
+				position:int,
+				rating:int,
+				reports:int,
+			}
+			/**/
+			window.onload = () => {
+				
+			};
+			
+			function test(){
+				let text = "";
+				for(let elem of arr_testers)elem.ratio = elem.reports ? elem.rating / elem.reports: elem.rating * 1000;
+				//arr_testers.sort((a, b) => a.rating - b.rating);
+				//arr_testers.sort((a, b) => a.ratio - b.ratio);
+				arr_testers.sort((a, b) => b.ratio - a.ratio);
+				arr_testers.length = 100;
+				text += JSON.stringify(arr_testers, null, "\t");
+				alert(text);
+				out(JSON.stringify(arr_testers, null, "<br>"));
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" />
+		<br>
+		<span id="out">out</span>
+		<br>
+	</body>
+<script>
+var arr_testers = [
+	{
+		"name": "xxx",
+		"url": "https://vk.com/bugs?act=reporter&id=123",
+		"position": 1,
+		"rating": 123,
+		"reports": 123
+	},
+	{
+		"name": "xxx",
+		"url": "https://vk.com/bugs?act=reporter&id=234",
+		"position": 2,
+		"rating": 234,
+		"reports": 234
+	}
+];
+</script>
+</html>

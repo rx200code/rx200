@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>test</title>
+		<style>
+			
+		</style>
+		<script>
+			window.onload = () => {
+				
+			};
+			
+			function test(){
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" />
+		<br>
+		<span id="out">out</span>
+		<br>
+	</body>
+</html>
+<script>
+/**
+// array заполнить объекты
+{
+	name:"",
+	url:"",
+	position:int,
+	rating:int,
+	reports:int,
+}
+1 <div class="BtMembersTop__row ">
+1.1 <div class="BtMembersTop__position">
+1.2 <div class="BtMembersTop__personal">
+1.2,1 <div class="BtMembersTop__memberName">
+1.2.1.1 <a href=
+// href исправить добавив https://vk.com/ получая https://vk.com/bugs?act=reporter&id=454412638
+
+1.3 <div class="BtMembersTop__counts">
+1.3.1 <div class="BtMembersTop__countsRating"> // удаляем пробелы и в число.
+/// дулим на ////
+1.3.2 <div class="BtMembersTop__countsReports"> // удаляем пробелы и в число.
+/**/
+</script>
+
+<script>
+let arr_testers = [];
+let elements = document.querySelectorAll(".BtMembersTop__row");// получаем участников
+alert(elements.length);
+for(let elem of elements){
+	let position = elem.querySelector(".BtMembersTop__position").innerHTML.replaceAll(" ", "") * 1;
+	let elm_a = elem.querySelector(".BtMembersTop__memberName > a");
+	let name = elm_a.innerHTML;
+	let url = "https://vk.com" + elm_a.getAttribute("href");
+	let rating = elem.querySelector(".BtMembersTop__countsRating").innerHTML.replaceAll(" ", "") * 1;
+	let reports = elem.querySelector(".BtMembersTop__countsReports").innerHTML.replaceAll(" ", "") * 1;
+	arr_testers.push({
+		name: name,
+		url: url,
+		position: position,
+		rating: rating,
+		reports: reports,
+	});
+}
+let text = JSON.stringify(arr_testers, null, "\t");
+alert(text);
+var textarea = document.createElement('textarea')
+textarea.value = text;
+document.body.appendChild(textarea)
+textarea.select();
+
+
+
+</script>
