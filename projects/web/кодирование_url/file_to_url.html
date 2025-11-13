@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=Windows-1251">
+<title>преобразование файла в ссылку</title>
+<script type="text/javascript">
+window.onload = function(){
+	let link = document.getElementById("out_file");
+	link.download = 'file.html';
+
+	let blob = new Blob(['<h1>Privet<h1>'], {type: 'text/html'});
+	
+	let reader = new FileReader();
+	reader.addEventListener(
+    "load",
+    () => {
+      // Конвертация изображения в base64-строку
+      link.href = reader.result;
+    },
+    false,
+  );
+	reader.readAsDataURL(blob); // конвертирует Blob в base64 и вызывает onload
+	//alert(reader.result);
+	//link.href = reader.result; // url с данными
+}
+</script>
+</head>
+<body>
+	
+	<p><a id="out_file" href="" target="_blank">файл</a></p><br>
+	<p><a href="blob:null/ff01ea00-3782-41be-ab86-3715a465205a" target="_blank">файл2</a></p>
+	<hr>
+	
+</body>
+</html>
