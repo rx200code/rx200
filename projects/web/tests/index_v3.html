@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>template HTML5</title>
+		<link rel="icon" type="image/x-icon" href="url" />
+		<link rel="stylesheet" href="url">
+		<style>
+			#win{
+				overflow: hidden;
+				position: relative;
+				padding: 0;
+				margin: 0;
+				background-color: #888;
+				border: solid 2px #000;
+				width: 1000px;
+				height: 500px;
+			}
+			#win > div{
+				position: absolute;
+				/**
+				top: 40px;
+				left: 40px;
+				/**/
+				padding: 0;
+				margin: 0;
+				background-color: #fff;
+				outline: solid 1px #00f;
+				width: 32px;
+				height: 32px;
+				font-size: 10px;
+			}
+			#win > span{
+				position: absolute;
+				top: 100px;
+				left: 100px;
+				padding: 0;
+				margin: 0;
+				background-color: #0000;
+				outline: solid 3px #0a0;
+				width: 300px;
+				height: 200px;
+				
+			}
+		</style>
+		<script src="url"></script>
+		<script>
+			const rad_90 = Math.PI / 2;
+			const rad_360 = Math.PI * 2;
+			let d_360 = d => (d %= 360) < 0 ? d + 360: d;
+			let r_360 = r => (r %= rad_360) < 0 ? r + rad_360: r;
+			let r_1 = Math.PI / 180;
+			let toRad = deg => deg * r_1;
+			let toDeg = rad => rad / r_1;
+			let createElementNS = (name, ...attr) => {
+				let elm = document.createElementNS("http://www.w3.org/2000/svg", name);
+				for(let arr_set of attr)elm.setAttributeNS(null, arr_set[0], arr_set[1]);
+				return elm;
+			};
+			let createElement = (name, ...attr) => {
+				let elm = document.createElement(name);
+				for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+				return elm;
+			};
+			let m_down = (e, f, f2) => {
+				e.preventDefault();
+				let onMouseUp = e => {
+					if(f2 !== undefined)f2(e);
+					document.removeEventListener('mouseup', onMouseUp);
+					document.removeEventListener('mousemove', f);
+				};
+				document.addEventListener('mousemove', f);
+				document.addEventListener('mouseup', onMouseUp);
+			};
+			let create_input_a = (f, a = 0) => {
+				let w = 40;
+				let w_2 = w / 2;
+				let r = w_2 - 2;
+				let elm = createElementNS("svg", ["style", "margin: -9px 0px 0px 0px; width: "+(w * 2)+"px; height: "+w+"px; float: right;"]);
+				elm.appendChild(createElementNS("circle", ["cx", w_2], ["cy", w_2], ["r", r], ["fill", "none"], ["stroke", "#000"], ["pointer-events", "none"]));
+				let arrow = createElementNS("path", ["d", "M"+w_2+","+w_2+"v-"+r], ["fill", "none"], ["stroke", "#555"], ["pointer-events", "none"]);
+				elm.appendChild(arrow);
+				let arrow_r = createElementNS("path", ["fill", "none"], ["stroke", "#ff5050"], ["pointer-events", "none"]);
+				elm.appendChild(arrow_r);
+				let w_x, w_y;
+				let text = createElementNS("text", ["x", w + 2], ["y", w_2 + 3], ["font-size", 14], ["pointer-events", "none"]);
+				text.textContent = "0";
+				elm.appendChild(text);
+				elm.onmousemove = e => {
+					let a = Math.atan2(e.offsetX - w_2, w_2 - e.offsetY);
+					text.textContent = Math.round(toDeg(a));
+					arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				elm.onmouseleave = e => {
+					arrow_r.setAttributeNS(null, "d", "");
+					text.textContent = Math.round(toDeg(a));
+				};
+				elm.onmousedown = e => {
+					w_x = w_2 - e.offsetX + e.pageX;w_y = w_2 - e.offsetY + e.pageY;
+					m_down(e, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+						f(a);
+					}, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "");
+						arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));f(a);
+					});
+				};
+				elm.f_a = _a => {
+					a = _a;
+					text.textContent = Math.round(toDeg(a));
+					arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				return elm;
+			};
+			let create_input_a_c = (f, f_d, a = 0) => {
+				let w = 50;
+				let w_2 = w / 2;
+				let r = w_2 - 2;
+				let elm = createElementNS("svg", ["style", "margin: -9px 0px 0px 0px; width: "+(w * 2)+"px; height: "+w+"px; float: right;"]);
+				elm.appendChild(createElementNS("circle", ["cx", w_2], ["cy", w_2], ["r", r], ["fill", "none"], ["stroke", "#000"], ["pointer-events", "none"]));
+				let arrow_m = createElementNS("path", ["d", "M"+w_2+","+w_2+"v-"+r], ["fill", "none"], ["stroke", "#888"], ["pointer-events", "none"]);
+				elm.appendChild(arrow_m);
+				let arrow = createElementNS("path", ["d", "M"+w_2+","+w_2+"v-"+r], ["fill", "none"], ["stroke", "#000"], ["pointer-events", "none"]);
+				elm.appendChild(arrow);
+				let arrow_r = createElementNS("path", ["fill", "none"], ["stroke", "#ff5050"], ["pointer-events", "none"]);
+				elm.appendChild(arrow_r);
+				let compass_needle_n = createElementNS("path", ["fill", "#09f"], ["pointer-events", "none"]);
+				elm.appendChild(compass_needle_n);
+				let compass_needle_s = createElementNS("path", ["fill", "#ff5050"], ["pointer-events", "none"]);
+				elm.appendChild(compass_needle_s);let height_needle = w / 3;
+				let width_needle = height_needle / 3;
+				elm.f_c = a => {
+					let a_cos = Math.cos(a);
+					let a_sin = Math.sin(a);
+					compass_needle_n.setAttributeNS(null, "d", "M"+(w_2 + a_cos * width_needle)+","+(w_2 + a_sin * width_needle)+"L"+(w_2 + a_sin * height_needle)+","+(w_2 - a_cos * height_needle)+"L"+(w_2 - a_cos * width_needle)+","+(w_2 - a_sin * width_needle)+"z");
+					compass_needle_s.setAttributeNS(null, "d", "M"+(w_2 + a_cos * width_needle)+","+(w_2 + a_sin * width_needle)+"L"+(w_2 - a_cos * width_needle)+","+(w_2 - a_sin * width_needle)+"L"+(w_2 - a_sin * height_needle)+","+(w_2 + a_cos * height_needle)+"z");
+				};
+				elm.f_m = a => {arrow_m.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));};
+				let w_x, w_y;
+				let text = createElementNS("text", ["x", w + 2], ["y", w_2 + 3], ["font-size", 14], ["pointer-events", "none"]);
+				text.textContent = "0";
+				elm.appendChild(text);
+				elm.onmousemove = e => {
+					let a = Math.atan2(e.offsetX - w_2, w_2 - e.offsetY);
+					text.textContent = Math.round(toDeg(a));
+					arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				elm.onmouseleave = e => {
+					arrow_r.setAttributeNS(null, "d", "");
+					text.textContent = Math.round(toDeg(a));
+				};
+				elm.onmousedown = e => {
+					w_x = w_2 - e.offsetX + e.pageX;w_y = w_2 - e.offsetY + e.pageY;f_d();
+					m_down(e, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));f(a);
+					}, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "");
+						arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+						f(a);
+					});
+				};
+				elm.f_a = _a => {
+					a = _a;
+					text.textContent = Math.round(toDeg(a));
+					arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				return elm;
+			};
+
+			// code
+			const win_w = 1000;
+			const win_h = 500;
+			var win = createElement("div", ["id", "win"]);
+			const tile_size = 32;
+			const count_tiles = (win_w / tile_size | 0) * (win_h / tile_size | 0);
+			var tiles = [];
+			let elm_tpo = 0;
+			let elm_left = 0;
+			for(let i = 0; i < count_tiles; i++){
+				tiles[i] = createElement("div", ["style", "top: " + elm_tpo + "px; left: " + elm_left + "px;"]);
+				tiles[i].innerHTML = i % (win_w / tile_size | 0) + "<br>" + (i / (win_w / tile_size | 0) | 0);
+				win.appendChild(tiles[i]);
+				elm_left += tile_size;
+				if(elm_left + tile_size > win_w){
+					elm_left = 0;
+					elm_tpo += tile_size;
+				}
+			}
+
+			function tileColor(arr){
+				for(let i = 0; i < tiles.length; i++)tiles[i].style.backgroundColor = "#fff";
+				for(let i = 0; i < arr.length; i++)tiles[arr[i][0] + arr[i][1] * (win_w / tile_size | 0)].style.backgroundColor = "#aaa";
+			}
+
+			var win_out_w = 300;
+			var win_out_h = 200;
+			var win_out_x = 100;
+			var win_out_y = 100;
+			var win_out = createElement("span", ["style", "width: " + win_out_w + "px; height: " + win_out_h + "px;left: " + win_out_x + "px; top: " + win_out_y + "px;"]);
+			win.appendChild(win_out);
+			
+			var point_size = 3;// border width
+			var point = createElement("span", ["style", "outline: solid " + point_size + "px #a00;width: 0px; height: 0px;left: " + win_out_x + "px; top: " + win_out_y + "px;"]);
+			win.appendChild(point);
+			//point.innerHTML = "x y";
+
+			var center_x = win_out_x + win_out_w / 2 | 0;
+			var center_y = win_out_y + win_out_h / 2 | 0;
+			var point_radius = (win_out_w ** 2 + win_out_h ** 2) ** .5 / 2;
+			var point_a = Math.PI / 2 - Math.atan(win_out_h / win_out_w);
+
+			function tileArrXYA(a){
+				// let x, y, a;
+				// var tile_size = 32, win_out_w = 300, win_out_h = 200;
+				let t_test = "";
+
+				// the task is to find all the tiles
+				let size_left_border, size_right_border;
+				let a_relative;
+				let arr_tile = [];// надо заполнить.
+				// определяем верхний угол.
+				//*
+				let point_sin_a, point_cos_a;
+				let x, y;
+				if(a >= 0){
+					if(a <= Math.PI / 2){
+						a_relative = a;
+						size_left_border = win_out_h;
+						size_right_border = win_out_w;
+						point_sin_a = Math.sin(a - point_a);
+						point_cos_a = Math.cos(a - point_a);
+						x = (center_x + point_radius * point_sin_a);
+						y = (center_y - point_radius * point_cos_a);
+					}else{
+						a_relative = a - Math.PI / 2;
+						size_left_border = win_out_w;
+						size_right_border = win_out_h;
+						point_sin_a = Math.sin(a + point_a);
+						point_cos_a = Math.cos(a + point_a);
+						x = (center_x - point_radius * point_sin_a);
+						y = (center_y + point_radius * point_cos_a);
+					}
+				}else{
+					if(a >= -Math.PI / 2){
+						a_relative = a + Math.PI / 2;
+						size_left_border = win_out_w;
+						size_right_border = win_out_h;
+						point_sin_a = Math.sin(a + point_a);
+						point_cos_a = Math.cos(a + point_a);
+						x = (center_x + point_radius * point_sin_a);
+						y = (center_y - point_radius * point_cos_a);
+					}else{
+						a_relative = a + Math.PI;
+						size_left_border = win_out_h;
+						size_right_border = win_out_w;
+						point_sin_a = Math.sin(a - point_a);
+						point_cos_a = Math.cos(a - point_a);
+						x = (center_x - point_radius * point_sin_a);
+						y = (center_y + point_radius * point_cos_a);
+					}
+				}
+
+
+				
+				//*/
+				// определяем left right в ряде
+				let sin_a = Math.sin(a_relative);
+				let cos_a = Math.cos(a_relative);
+				let tan_a = Math.tan(a_relative);
+				let shift_y_tile = tile_size - y % tile_size;
+				let shift_x_tile = x % tile_size;
+
+				let max_left_shift_w = size_left_border * sin_a;
+				let max_left_shift_h = size_left_border * cos_a;
+				let max_right_shift_w = size_right_border * cos_a;
+				let max_right_shift_h = size_right_border * sin_a;
+
+				let max_h = max_left_shift_h + max_right_shift_h;
+				let tile_y = y / tile_size | 0;
+				let tile_bottom = Math.ceil((max_h - shift_y_tile) / tile_size) + tile_y;
+				
+				//let tile_x = x / tile_size | 0;
+				let x_min = x - max_left_shift_w;
+				let x_max = x + max_right_shift_w;
+				let l = tile_size * tan_a;
+				let l_1 = shift_y_tile * tan_a;
+				let r_2 = tan_a === 0 ? Infinity: (tile_size - (y + max_left_shift_h) % tile_size) / tan_a;
+
+				let r = tan_a === 0 ? Infinity: tile_size / tan_a;
+				let r_1 = tan_a === 0 ? Infinity: shift_y_tile / tan_a;
+				let l_2 = (tile_size - (y + max_right_shift_h) % tile_size) * tan_a;
+
+				let l_pos = x - l_1;
+				let r_pos = x + r_1;
+
+				
+				let l_shift = -l;
+				let r_shift = r;
+				let flag_l = false;
+				let flag_r = false;
+				if(l_pos < x_min){
+					l_pos = x_min;
+					l_shift = r_2;
+					flag_l = true;
+				}
+				if(r_pos > x_max){
+					r_pos = x_max;
+					r_shift = -l_2;
+					flag_r = true;
+				}
+
+				if(l_pos < x_min)l_pos = x_min;
+				if(r_pos > x_max)r_pos = x_max;
+				// определяем количество плиток с лева и права.
+				let left_tile_xx = l_pos / tile_size | 0;
+				let right_tiles_xx = r_pos / tile_size | 0;
+				//let right_tiles_xx = Math.ceil(r_pos / tile_size);
+
+				//t_test += "|" + x + "|" + max_right_shift_w;
+
+				for(let t_x = left_tile_xx; t_x <= right_tiles_xx; t_x++)arr_tile.push([t_x, tile_y]);
+
+				
+
+				for(let t_y = tile_y + 1; t_y <= tile_bottom; t_y++){
+					
+					l_pos += l_shift;
+					r_pos += r_shift;
+					
+					if(flag_l){
+						l_shift = r;
+						flag_l = false;
+					}
+					if(flag_r){
+						r_shift = -l;
+						flag_r = false;
+					}
+
+					if(l_pos < x_min){
+						l_pos = x_min;
+						l_shift = r_2;
+						flag_l = true;
+					}
+					if(r_pos > x_max){
+						r_pos = x_max;
+						r_shift = -l_2;
+						flag_r = true;
+					}
+
+					// определяем количество плиток с лева и права.
+					
+					
+					let left_tile = l_pos / tile_size | 0;
+
+					let right_tiles = r_pos / tile_size | 0;
+					//let right_tiles = Math.ceil(r_pos / tile_size);
+					//t_test += "|" + r_pos;
+
+					for(let t_x = left_tile; t_x <= right_tiles; t_x++)arr_tile.push([t_x, t_y]);
+
+				}
+
+				info(
+					//" | max_right_shift_w:" + (max_right_shift_w) +
+					//" | max_right_shift_h:" + (max_right_shift_h) +
+					//" | max_left_shift_w:" + (max_left_shift_w) +
+					//" | max_left_shift_h:" + (max_left_shift_h) +
+					" | t_test:" + (t_test) +
+					" | tile_bottom:" + (tile_bottom)
+				);
+
+				//arr_tile.push([tile_x, tile_y]);
+				//// определяем первую и последнюю плитку верхнего ряда.
+
+
+				/*
+				let share_tile_x = sin_a >= 0 ? tile_size - y % tile_size: y % tile_size;
+				
+				let share_tile_y = x % tile_size;
+				if(sin_a !== 0)info(
+					" | x:" + (share_tile_x / sin_a) + 
+					" | share:" + (share_tile_x) +
+					" | distance_w:" + (win_out_w * cos_a) +
+					" | distance_h:" + (win_out_h * sin_a)
+				);
+				else info("infinity");
+
+				let test_d = Math.abs(share_tile_x / sin_a);
+				let test_d_w = Math.abs(win_out_w);
+				if(test_d > test_d_w)test_d = test_d_w;
+				let count_x = Math.ceil((share_tile_y + test_d) / tile_size);
+				//*/
+				/*
+				for(let i = 0; i < count_x; i++){
+					arr_tile.push([tile_x, tile_y]);
+					tile_x++;
+				}
+				//*/
+				
+				tileColor(arr_tile);
+			}
+
+			window.onload = () => {
+
+				document.body.appendChild(create_input_a((a) => {
+
+
+					out(a + " | sin: " + Math.sin(a) + " | cos: " + Math.cos(a));
+					let point_sin_a = Math.sin(a - point_a);
+					let point_cos_a = Math.cos(a - point_a);
+					win_out.style.transform = "rotate(" + a + "rad)";
+					let left = ((center_x + point_radius * point_sin_a) | 0);
+					let top = ((center_y - point_radius * point_cos_a) | 0);
+					point.style.left = left + "px";
+					point.style.top = top + "px";
+
+					//let x = (left / tile_size | 0);
+					//let y = (top / tile_size | 0);
+					//point.innerHTML = x + " " + y;
+
+					tileArrXYA(a);
+				}));
+				
+				document.body.appendChild(win);
+			}
+			
+
+			function test(){
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" /> <span id="info">info</span>
+		<br>
+		<span id="out">0 | sin: 0 | cos: 1</span>
+	</body>
+</html>
