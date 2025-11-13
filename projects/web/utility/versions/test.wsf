@@ -1,0 +1,37 @@
+<?xml version="1.0" ?>
+<job id="Example">
+<script language="VBScript">
+Function InputName ' Описываем функцию на языке VBScript
+' Вводим имя в диалоговом окне
+InputName = InputBox("Введите Ваше имя:", "Окно ввода VBScript", string(500,"Z"))
+End Function
+</script>
+<script language="JScript">
+var WshShell = WScript.CreateObject("WScript.Shell");
+if(WScript.FullName.lastIndexOf("cscript.exe") == -1){
+	WshShell.Run("cscript " + WScript.ScriptName);
+	WScript.Quit(0);
+}
+
+
+
+var URL;
+URL = InputName(); //Вызываем функцию InputName
+//Выводим значение переменной s на экран
+WScript.Echo(URL.length);
+WScript.Echo(URL);
+WScript.Echo("====================");
+var i = URL.indexOf('error=');
+if(i != -1)WScript.Echo("ERROR: " +  URL.slice(i + 1));
+else {
+	var key = URL.slice(URL.indexOf('access_token=') + 13);
+	var time_hours = URL.slice(URL.indexOf('expires_in=') + 11);
+	WScript.Echo("Ключ: " + key);
+	WScript.Echo("На время: " + time_hours + " часов.");
+}
+
+WScript.StdIn.ReadLine();
+WScript.Quit(0);
+
+</script>
+</job>
