@@ -1,0 +1,233 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>редактор курсора.</title>
+<script type="text/javascript">
+var text_c_test = "#000";
+function f_m_color(value, id_elm){
+	if(id_elm){
+		if(value.length < 2) value = "0"+value;
+		document.getElementById(id_elm).value = value;
+		var h_c_1 = (document.getElementById("color_1").value*1).toString(16);
+		if(h_c_1.length < 2) h_c_1 = "0"+h_c_1;
+		var h_c_2 = (document.getElementById("color_2").value*1).toString(16);
+		if(h_c_2.length < 2) h_c_2 = "0"+h_c_2;
+		var h_c_3 = (document.getElementById("color_3").value*1).toString(16);
+		if(h_c_3.length < 2) h_c_3 = "0"+h_c_3;
+		var h_c_out = h_c_1+h_c_2+h_c_3;
+		document.getElementById("color_rgp").value = h_c_out;
+	}else{
+		document.getElementById("c_1").value = (value[0] ? value[0] : "0")+(value[1] ? value[1] : "0");
+		document.getElementById("color_1").value = parseInt(document.getElementById("c_1").value, 16);
+		document.getElementById("c_2").value = (value[2] ? value[2] : "0")+(value[3] ? value[3] : "0");
+		document.getElementById("color_2").value = parseInt(document.getElementById("c_2").value, 16);
+		document.getElementById("c_3").value = (value[4] ? value[4] : "0")+(value[5] ? value[5] : "0");
+		document.getElementById("color_3").value = parseInt(document.getElementById("c_3").value, 16);
+		var h_c_out = document.getElementById("c_1").value+document.getElementById("c_2").value+document.getElementById("c_3").value;
+	}
+	document.getElementById("out_c").style.backgroundColor = "#"+h_c_out;
+	text_c_test = "#"+h_c_out;
+	out(h_c_out);
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").innerHTML=text;
+}
+var head = "0000";
+function test1(){
+	var br = "<br>";
+	head = br+"0000";
+	head += br;
+	head +="000"+document.getElementById("type").options[document.getElementById("type").selectedIndex].value;
+	head += br;
+	head +="000"+document.getElementById("count").value;
+	head += br;
+	head += (document.getElementById("width").value*1).toString(16);
+	head += (document.getElementById("height").value*1).toString(16);
+	head += br;
+	head +="0"+document.getElementById("colors").value;
+	head +="00"
+	head += br;
+	head +="000"+document.getElementById("planes").value;
+	head += br;
+	head +="000"+document.getElementById("bpp").value;
+	head += br;
+	
+	
+	info("Заголовок 22 байта: "+head);
+	out(document.getElementById("count").value);
+}
+function test2(){
+	/*
+	Тип массива 	Размер элемента и описание
+	Int8Array 		8-bit signed integer
+	Uint8Array 		8-bit unsigned integer
+	Int16Array 		16-bit signed integer
+	Uint16Array 	16-bit unsigned integer
+	Int32Array 		32-bit signed integer
+	Uint32Array 	32-bit unsigned integer
+	Float32Array 	32-bit IEEE754 floating point number
+	Float64Array 	64-bit IEEE754 floating point number*/
+	var buffer = new ArrayBuffer(256);
+	var uint8s = new Uint8Array(buffer);
+	
+	uint8s[1] = 0xFF;
+	uint8s[2] = 0xF2;
+	uint8s[3] = 0xF3;
+	uint8s[4] = 0xF4;
+	
+	var uint32s = new Uint32Array(buffer);
+	
+	uint32s[3] = 0x12345678;
+	uint8s[32] = 0xF4;
+	
+	var buffer2 = new ArrayBuffer(2);
+	var uint8s2 = new Uint8Array(buffer2);
+	uint8s2[1] = 0xF1;
+	uint8s2[0] = 0xF0;
+	
+	var buffer3 = add_ArrayBuffer(buffer, buffer2);
+	
+	download(buffer3, "image.bmp", "image/bmp")
+	
+}
+function test(){
+	var buffer = new ArrayBuffer(78);
+	//BITMAPFILEHEADER — 14-байтная структура
+	var uint16 = new Uint16Array(buffer);
+	var uint8 = new Uint8Array(buffer);
+	var uint8 = new Uint8Array(buffer);
+	uint16[0] = 0x4D42;//BM//bfType//Отметка для отличия формата от других (сигнатура формата). Может содержать единственное значение 4D42
+	uint16[1] = 0x4E;//bfSize//Размер файла в байтах. 
+	uint16[2] = 0x0;//bfSize
+	uint16[3] = 0x0;//bfReserved1//Зарезервированы и должны содержать ноль. 
+	uint16[4] = 0x0;//bfReserved2
+	uint16[5] = 0x36;//bfOffBits//Положение пиксельных данных относительно начала данной структуры (в байтах). 
+	uint16[6] = 0x0;//bfOffBits
+	//BITMAPINFO в файле идёт сразу за BITMAPFILEHEADER в данном случае 40 байт. каждая по 4 байта кроме biPlanes и biBitCount.
+	uint16[7] = 0x28;//biSize//Размер данной структуры в байтах, указывающий также на версию структуры 
+	uint16[9] = 0x3;//biWidth//Ширина растра в пикселях. Указывается целым числом со знаком. Ноль и отрицательные не документированы. 
+	uint16[11] = 0x2;//biHeight//Целое число со знаком, содержащее два параметра: высота растра в пикселях (абсолютное значение числа) и порядок следования строк в двумерных массивах (знак числа). Нулевое значение не документировано. 
+	uint16[13] = 0x1;//biPlanes//В BMP допустимо только значение 1. Это поле используется в значках и курсорах Windows.
+	uint16[14] = 0x18;//biBitCount//Количество бит на пиксель
+	uint16[15] = 0x0;//biCompression//Указывает на способ хранения пикселей
+	uint16[17] = 0x18;//biSizeImage//Размер пиксельных данных в байтах. Может быть обнулено если хранение осуществляется двумерным массивом. 
+	//uint16[19] = 0xEC4;//biXPelsPerMeter//Количество пикселей на метр по горизонтали и вертикали 
+	//uint16[21] = 0xEC4;//biYPelsPerMeter//
+	uint16[23] = 0x0;//biClrUsed//Размер таблицы цветов в ячейках. 
+	uint16[25] = 0x0;//biClrImportant//Количество ячеек от начала таблицы цветов до последней используемой
+	uint8[54] = 0xFF;
+	uint8[57] = 0xFF;
+	uint8[60] = 0xFF;
+	uint8[67] = 0xFF;
+	uint8[70] = 0xFF;
+	uint8[73] = 0xFF;
+	
+	download(buffer, "image.bmp", "image/bmp")
+}
+function add_ArrayBuffer(buffer1, buffer2){
+	var buffer = new ArrayBuffer(buffer1.byteLength + buffer2.byteLength);
+	var uint8s = new Uint8Array(buffer);
+	var uint8s1 = new Uint8Array(buffer1);
+	var uint8s2 = new Uint8Array(buffer2);
+	var i = 0;
+	while(i < buffer1.byteLength){
+		uint8s[i] = uint8s1[i];
+		i++;
+	}
+	while(i < buffer.byteLength){
+		uint8s[i] = uint8s2[i - buffer1.byteLength];
+		i++;
+	}
+	return buffer;
+}
+function download(data, filename, type){
+    var file = new Blob([data], {type: type});
+    if (window.navigator.msSaveOrOpenBlob) // IE10+
+        window.navigator.msSaveOrOpenBlob(file, filename);
+    else { // Others
+        var a = document.createElement("a"),
+                url = URL.createObjectURL(file);
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        setTimeout(function() {
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);  
+        }, 0); 
+    }
+}
+</script>
+</head>
+<body>
+	<table>
+		<tr>
+			<td>
+				<svg xmlns="http://www.w3.org/2000/svg" id="svg"></svg>
+			</td>
+			<td>
+				<!-- Временно -->
+				<h1>Заголовок(6 байт)</h1>
+				<b>Зарезервировано. Всегда 0. reserved(Смещение 0 Размер 2 в байтах): </b><br>
+				00<br>
+				<b>тип файла type(Смещение 2 Размер 2): </b><br>
+				<select id="type">
+					<option label=".CUR" value="2" selected>.CUR</option>
+					<option label=".ICO" value="1" disabled>.ICO не работает</option>
+				</select>
+				<br>
+				<b>количество картинок count(Смещение 4 Размер 2): </b><br>
+				<input type="number" id="count" min="1" max="256" step="1" value="1">
+				<h1>Каталог информации об изображениях(16 байт)</h1>
+				<b>ширина изображения(если указано 0 то 256) width(Смещение 0 Размер 1): </b><br>
+				<input type="number" id="width" min="0" max="255" step="1" value="20">
+				<br>
+				<b>высота изображения(если указано 0 то 256) height(Смещение 1 Размер 1): </b><br>
+				<input type="number" id="height" min="0" max="255" step="1" value="20">
+				<br>
+				<b>Указывает количество цветов в палитре изображения. Для полноцветных значков должно быть 0. colors(Смещение 2 Размер 1): </b><br>
+				<input type="number" id="colors" min="0" max="255" step="1" value="0" disabled>
+				<br>
+				<b>Зарезервировано. Должно быть 0. reserved(Смещение 3 Размер 1): </b><br>
+				0<br>
+				<b>В .CUR определяет горизонтальную координату «горячей точки» в пикселях относительно левого края изображения. planes(Смещение 4 Размер 2): </b><br>
+				<input type="number" id="planes" min="0" max="255" step="1" value="0">
+				<br>
+				<b>В .CUR определяет вертикальную координату «горячей точки» в пикселях относительно верхнего края изображения. bpp(Смещение 6 Размер 2): </b><br>
+				<input type="number" id="bpp" min="0" max="255" step="1" value="0">
+				<br>
+				<b>Указывает размер растра в байтах. size(Смещение 8 Размер 4): </b><br>
+				<input type="number" id="size" min="0" max="255" step="1" value="0">
+				<br>
+				<b>Указывает абсолютное смещение растра в файле. offset(Смещение 12 Размер 4): </b><br>
+				<input type="number" id="bpp" min="0" max="255" step="1" value="0">
+				<hr>
+				<div>
+					<input type="button" value="прописать в ручную" onClick="f_head()"><input type="text" id="head_text" maxlength="44" size="50" value="00000000000000000000000000000000000000000000">
+					<br>
+					<input type="button" value="test" onClick="test()">
+					<br>
+				</div>
+				<div>
+					<h3>Для работы с цветом.</h3>
+					<input type="range" min="0" max="255" step="1" value="127" id="color_1" oninput="f_m_color((this.value*1).toString(16), 'c_1')"><input type="text" size="2" id="c_1" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value , 16), 'color_1')"><br>
+					<input type="range" min="0" max="255" step="1" value="127" id="color_2" oninput="f_m_color((this.value*1).toString(16), 'c_2')"><input type="text" size="2" id="c_2" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value, 16), 'color_2')"><br>
+					<input type="range" min="0" max="255" step="1" value="127" id="color_3" oninput="f_m_color((this.value*1).toString(16), 'c_3')"><input type="text" size="2" id="c_3" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value, 16), 'color_3')"><br>
+					<input type="text" size="6" id="color_rgp" value="7f7f7f" oninput="f_m_color(this.value)">
+					<span id="out_c">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<script type="text/javascript">
+					document.getElementById("out_c").style.backgroundColor = "#"+document.getElementById("color_rgp").value;
+					</script>
+				<div>
+				<div id="info"></div>
+				<!-- Временно end -->
+			</td>
+		</tr>
+	</table>
+	<br>
+	<span id="output"></span>
+	<br>
+</body>
+</html>

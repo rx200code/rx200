@@ -1,0 +1,302 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Бесконечная зима</title>
+<style>
+#info{
+	border: 1px solid black; /* Параметры рамки */
+	/*height: 800px; /* Высота блока */
+	width: 800px; /* Ширина блока */
+	/*float: right; /* Обтекание */
+	/*display: inline-block;/* Способ показа элемента */
+}
+#grafika{
+	/*cursor: none;/* Курсор мыши */
+	/*background-color: #000; /* Цвет фона svg элемента */
+	/*display: inline;/* Способ показа элемента */
+	/*float: left; /* Обтекание */
+	/*border: 1px solid black;/**/
+	/*height: 800px; /* Высота блока */
+	/*width: 1000px; /* Ширина блока */
+	/*background-color: #000; /*#fc0;/* Цвет фона */
+}
+BODY{
+	/*background-color: #000; /*#fc0;/* Цвет фона */
+	/*color: #fff; /*Цвет текста*/
+}
+</style>
+<script src="file/g_var.js"></script><!--Подключаем глобальные переменные.-->
+<script src="file/start.js"></script><!--Старт игры, определение графических слоев, вывод стартового окна игры и т. д.-->
+<script src="file/go_text.js"></script><!--Глобальный объект содержащий все тексты игры.-->
+<script src="file/go_colors.js"></script><!--Подключаем объект глобальных переменных, цветов.-->
+<script src="file/go_sizes.js"></script><!--Подключаем объект глобальных переменных, размеров.-->
+<script src="file/go_sound.js"></script><!--Подключаем объект звуков, музыки.-->
+<script src="file/f_.js"></script><!--Подключаем функции общего назначения.-->
+<script src="file/go_graf.js"></script><!--Содержит графические объекты, должен быть последним.-->
+<script src="file/manager_data.js"></script><!--Менеджер хранения данных на стороне клиента.-->
+<script src="file/Manager_setting.js"></script><!--Менеджер настроек.-->
+<script src="file/Cursor.js"></script><!--Создает курсор мыши.-->
+<script src="file/Button.js"></script><!--Обект создает кнопки.-->
+<script src="file/Main_menu.js"></script><!--Создает главное меню.-->
+<script src="file/Game_interface.js"></script><!--Создает пользовательский интерфейс игры.-->
+<script src="file/Menu.js"></script><!--Меню-->
+<script src="file/World.js"></script><!--Создает основную карту игры.-->
+<script src="file/Sector.js"></script><!--Создает сектора на карте игры.-->
+<script src="file/Player.js"></script><!--Создает играков игры.-->
+<script src="file/City.js"></script><!--Создает города.-->
+<script src="file/City_menu.js"></script>
+<script src="file/Buildings.js"></script>
+<script src="file/Field.js"></script>
+<script type="text/javascript">
+
+function test(){//JSON.stringify(//Object.getOwnPropertyNames(obj)
+	//document.getElementById("start").onclick() 
+	//go_player.add_gold(23);
+	//out(cell);
+	//out(crypto.randomBytes(20).toString('hex'));
+	console.log(go_field.graf.getScreenCTM());
+	return;
+	//go_world.players[0].add_gold(10);
+	go_player.add_gold(5);
+	out(go_world.parent);
+	return;
+	let d_f = "";//"M2,10 H8 L17,1 V29 L8,20 H2 z";
+	
+	let _ot = 0;
+	let _do = 10;
+	let _i = 100;
+	
+	for(let i = _ot; i <= _do; i += 1/_i){
+		// y = cos(​7*​x)+​sin(​x)
+		if(i == 0){
+			d_f = "M0,"+(((Math.cos(7*i) + Math.sin(i))*_i) + 300)+" ";
+		}else{
+			d_f += "L"+(i*_i)+","+(((Math.cos(7*(i)) + Math.sin((i)))*_i) + 300)+" ";
+		}
+	}
+	out("M0,"+(Math.cos(7*2) + Math.sin(2))+" "+d_f);
+	let picture_volume = document.createElementNS(svgns, "path");
+	picture_volume.setAttributeNS(null, "d", d_f);
+	picture_volume.setAttributeNS(null, "fill", "none");
+	picture_volume.setAttributeNS(null, "stroke", "#f00");
+	picture_volume.setAttributeNS(null, "stroke-width", 1);
+	svg.appendChild(picture_volume);
+	
+	let pp = document.createElementNS(svgns, "path");
+	pp.setAttributeNS(null, "d", "M100,0 v1000 M0,300 h1000");
+	pp.setAttributeNS(null, "fill", "none");
+	pp.setAttributeNS(null, "stroke", go_colors.b_frame);
+	pp.setAttributeNS(null, "stroke-width", 1);
+	svg.appendChild(pp);
+	
+	return;
+	
+	out(Math.pow(50, 0.25));
+	
+	return;
+	//go_sound.audio_tag.src = 'music/From_Russia_With_Love.mp3';
+	
+	out(go_sound.audio_tag.src);
+	return;
+	go_sound.audioCtx.resume();
+	//source.start();
+	
+	go_sound.gainNode.gain.value = 0.1;
+	go_sound.audio.connect(go_sound.gainNode);
+	go_sound.gainNode.connect(go_sound.audioCtx.destination);
+	
+	if(go_sound.audioCtx.state == 'running'){
+		//out("rr");
+		var audio_tag = new Audio();
+		audio_tag.src = 'music/From_Russia_With_Love.mp3';
+		go_sound.audio_tag = audio_tag;
+		go_sound.audio = go_sound.audioCtx.createMediaElementSource(go_sound.audio_tag);
+		go_sound.audio.connect(go_sound.gainNode);
+		
+		//audio_tag.volume = 0.1;
+		audio_tag.autoplay = true;
+		
+		out(audio_tag.src);
+		
+	}
+	
+	//out(go_sound.audioCtx.state);
+	//go_sound.audio_tag.src = 'music/From_Russia_With_Love.mp3';
+	//go_sound.audio_tag.autoplay = true;
+	//go_sound.audioCtx.resume();
+	//out(go_sound.audioCtx.state);
+	
+	//var go_audio_music = new Audio('music/From_Russia_With_Love.mp3'); // Создаём новый элемент Audio
+	//go_audio_music = new Audio('music/From_Russia_With_Love.mp3');
+	//go_audio_music.src = 'music/From_Russia_With_Love.mp3';
+	//go_audio_music.src = 'C:/pro/my_project/endless_winter_v_1/music/From_Russia_With_Love.mp3';
+	//go_sound.audio_tag.src = 'music/From_Russia_With_Love.mp3';
+	/*
+	go_sound.audio_tag.volume = 0.1;
+	go_sound.audio_tag.muted = false;
+	go_sound.audio_tag.loop = true;
+	go_sound.audio_tag.preload = "auto";
+	go_sound.audio_tag.autoplay = true;
+	out(go_sound.audio_tag.src);
+	//*/
+	return;
+	// Заполняет буфер белыми шумами;
+	// просто случайные значения от -1.0 до 1.0
+	for (var channel = 0; channel < go_sound.channels; channel++) {
+		// Получаем массив данных канала
+		var nowBuffering = go_sound.myArrayBuffer.getChannelData(channel);
+		for (var i = 0; i < go_sound.frameCount; i++){
+			// Math.random() находится в [0; 1.0]
+			// аудио должно быть в интервале [-1.0; 1.0]
+			nowBuffering[i] = Math.random() * 2 - 1;
+		}
+	}
+	
+	// Получает AudioBufferSourceNode.
+	// AudioNode для проигрывания из AudioBuffer
+	var source = go_sound.audioCtx.createBufferSource();
+	
+	// устанавливает буфер в AudioBufferSourceNode
+	source.buffer = go_sound.myArrayBuffer;
+	
+	// присоединяет AudioBufferSourceNode к
+	// destination, чтобы мы могли слышать звук
+	source.connect(go_sound.audioCtx.destination);
+	
+	// Начать воспроизведение с источника
+	source.start();
+	
+	return;
+	go_sound.gainNode.start();
+	//go_sound.gainNode.start();
+	out(go_sound.gainNode.gain.value);
+	return;
+	//var go_audio_music = new Audio('music/From_Russia_With_Love.mp3'); // Создаём новый элемент Audio
+	//go_audio_music = new Audio('music/From_Russia_With_Love.mp3');
+	go_audio_music.src = 'music/From_Russia_With_Love.mp3';
+	//go_audio_music.src = 'C:/pro/my_project/endless_winter_v_1/music/From_Russia_With_Love.mp3';
+	go_audio_music.volume = 0.1;
+	go_audio_music.muted = false;
+	go_audio_music.loop = true;
+	go_audio_music.autoplay = true;
+	out(go_audio_music.src);
+	//audio.autoplay = false;
+	return;
+	manager_data.clear();
+	return;
+	let offsetX = 10;
+	out(offsetX);
+	return;
+	var fontSize = 0;
+	var captionSize = 0;
+	var window_width = 1000;
+	switch(true){//window.screen.width
+	case window_width >= 1200:
+		fontSize = 30;
+		captionSize = 10;;
+		break;
+	case window_width >= 992:
+		fontSize = 25;
+		captionSize = 8;
+		break;
+	case window_width >= 768:
+		fontSize = 17;
+		captionSize = 5;
+		break;
+	default:
+		fontSize = 30;
+		captionSize = 10;
+	}
+	alert(fontSize+" "+captionSize);
+	
+return;
+	manager_data.clear();
+	out(manager_data.length+" "+window.navigator.language.substr(0, 2).toLowerCase());
+	return;
+	if(go_main_menu.svg_layer.contains(go_main_menu.graf)){
+		go_main_menu.off();
+	}else{
+		go_main_menu.on();
+	}
+	//go_main_menu.off();
+	
+	//info(go_button2.full_screen.title+" "+go_button.full_screen.title);
+	//info(go_sizes.g_actual_w+" "+go_sizes.g_actual_h);
+	out(go_text.game_name);
+}
+var text_c_test = "#000";
+function f_m_color(value, id_elm){
+	if(id_elm){
+		if(value.length < 2) value = "0"+value;
+		document.getElementById(id_elm).value = value;
+		var h_c_1 = (document.getElementById("color_1").value*1).toString(16);
+		if(h_c_1.length < 2) h_c_1 = "0"+h_c_1;
+		var h_c_2 = (document.getElementById("color_2").value*1).toString(16);
+		if(h_c_2.length < 2) h_c_2 = "0"+h_c_2;
+		var h_c_3 = (document.getElementById("color_3").value*1).toString(16);
+		if(h_c_3.length < 2) h_c_3 = "0"+h_c_3;
+		var h_c_out = h_c_1+h_c_2+h_c_3;
+		document.getElementById("color_rgp").value = h_c_out;
+	}else{
+		document.getElementById("c_1").value = (value[0] ? value[0] : "0")+(value[1] ? value[1] : "0");
+		document.getElementById("color_1").value = parseInt(document.getElementById("c_1").value, 16);
+		document.getElementById("c_2").value = (value[2] ? value[2] : "0")+(value[3] ? value[3] : "0");
+		document.getElementById("color_2").value = parseInt(document.getElementById("c_2").value, 16);
+		document.getElementById("c_3").value = (value[4] ? value[4] : "0")+(value[5] ? value[5] : "0");
+		document.getElementById("color_3").value = parseInt(document.getElementById("c_3").value, 16);
+		var h_c_out = document.getElementById("c_1").value+document.getElementById("c_2").value+document.getElementById("c_3").value;
+	}
+	document.getElementById("out_c").style.backgroundColor = "#"+h_c_out;
+	text_c_test = "#"+h_c_out;
+	out(h_c_out);
+	svg.style['background-color'] = text_c_test;
+	//info(h_c_out);
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").innerHTML=text;
+}
+</script>
+</head>
+<body>
+	<table>
+		<tr>
+			<td>
+				<svg xmlns="http://www.w3.org/2000/svg" id="grafika"></svg>
+			</td>
+			<td>
+				<div>
+					<input type="button" value="Переключение играков" onClick="f_next_player()">
+					<br>
+					<input type="button" value="Снять туман" onClick="f_fog_off()">
+					<br>
+					<input type="button" value="Ход" onClick="out(1)">
+					<br>
+					<input type="button" id="start" value="start" onClick="out('12')">
+					<br>
+					<input type="button" id="test" value="test" onClick="test()">
+					<br>
+					<input type="button" value="getRandomInRange" onClick="getRandomInRange(1,3)">
+				</div>
+				<div>
+					<h3>Для работы с цветом.</h3>
+					<input type="range" min="0" max="255" step="1" value="127" id="color_1" oninput="f_m_color((this.value*1).toString(16), 'c_1')"><input type="text" size="2" id="c_1" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value , 16), 'color_1')"><br>
+					<input type="range" min="0" max="255" step="1" value="127" id="color_2" oninput="f_m_color((this.value*1).toString(16), 'c_2')"><input type="text" size="2" id="c_2" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value, 16), 'color_2')"><br>
+					<input type="range" min="0" max="255" step="1" value="127" id="color_3" oninput="f_m_color((this.value*1).toString(16), 'c_3')"><input type="text" size="2" id="c_3" value="7f" oninput="f_m_color(parseInt(this.value == '' ? '0' : this.value, 16), 'color_3')"><br>
+					<input type="text" size="6" id="color_rgp" value="7f7f7f" oninput="f_m_color(this.value)">
+					<span id="out_c">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+					<script type="text/javascript">
+					document.getElementById("out_c").style.backgroundColor = "#"+document.getElementById("color_rgp").value;
+					</script>
+				<div>
+				<div id="info"></div>
+			</td>
+		</tr>
+	</table>
+	<br>
+	<span id="output"></span>
+	<br>
+	
+</body>
+</html>

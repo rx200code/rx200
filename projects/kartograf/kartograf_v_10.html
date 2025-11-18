@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- 
+Создатель © feb7e9c4d5539ae0f1496cdb2aaee27c
+-->
+<title>🗺️ карты.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Добавляем библиотеки карт -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/css/ol.css" type="text/css">
+<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.5.0/build/ol.js"></script>
+<!--<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.5.3/jspdf.min.js"></script>
+
+<style type="text/css">
+#svg{
+	/*background-color: #cef;/**/
+	/*pointerEvents: none;/**/
+	position: absolute;
+	top:0px;
+	left:0px;
+}
+#map,#menu{
+	position:absolute;
+	top:0px;
+}
+#map{
+	left:0px;
+	
+	/*margin:1px;*/
+	background-color:#ddd;
+	/**/
+}
+#menu{
+	right:0px;
+	
+	background-color:#ff5050;
+	/*opacity:0.7;
+	/**/
+}
+.b_menu{
+	background-color:#ddd;
+	
+	border-width: 0px;
+	margin:0px 1px 0px 0px;/**/
+	font-size:20px;
+	width:50px;
+	height:50px;
+}
+.b_menu[disabled]{
+	background-color:#ffe;
+	color:#000;
+}
+.b_menu:hover{
+	background-color:#ffe;
+}
+.div_menu{
+	display:none;
+	font-family:monospace;
+	font-size:15px;
+	background-color:#ffe;
+	width:400px;
+	height:100px;
+	margin:0px;
+	padding:0px;
+	overflow:auto;
+}
+.content_menu{
+	position:relative;
+	padding:10px 10px 0px;
+}
+.content_menu_fire{
+	padding:0px 10px 0px;
+	background-color:#ffe6d4;
+}
+.input_coor{
+	border: 1px solid #ffe;
+	background-color:#ddd;
+	color:#000;
+}
+.input_coor:focus{
+	border: 1px solid #ff5050;
+}
+.input_coor:hover{
+	border: 1px solid #ff5050;
+}
+/*
+input[name=active_map],input[name=active_map_n]
+*/
+#menu_degrees select{
+	width:90px;
+	vertical-align:middle;
+	/*margin-right:2px;*/
+	padding: 0px;
+	margin:-5px 2px -5px 2px;
+}
+#active_map input, #menu_fire input{
+	vertical-align:middle;
+	margin:1.5px 5.5px 4px 10px;
+}
+#menu_degrees input{
+	vertical-align:middle;
+	margin:1.5px 3px 5px 2px;
+}
+#menu_degrees input[type=checkbox], #menu_load input[type=checkbox]{
+	vertical-align:middle;
+	margin:0px 3px 0px 2px;
+}
+#menu_degrees input[type=color]{
+	vertical-align:middle;
+	margin:-10px 0px -5px -1px;
+}
+#menu_degrees input[type=text]{
+	vertical-align:middle;
+	margin:-10px 0px -12px -1px;
+}
+#menu_degrees input[type=range]{
+	vertical-align:middle;
+	margin:-10px 0px -7px 5px;
+}
+#save_z input[type=range]{
+	vertical-align:middle;
+	margin:0px 5px;
+}
+#active_map_n{
+	vertical-align:middle;
+	margin:8px 5.5px 4px 10px;
+}
+#range_map_n{
+	vertical-align:middle;
+	margin:4px 0px 0px 0px;
+}
+#span_map_n{
+	vertical-align:middle;
+	padding:5px 0px 0px 0px;
+}
+#span_angle, .span_angle{
+	position: absolute;
+	margin:1px 0px 0px 8px;
+}
+.name_type_1{
+	font-weight:bold;
+	color:#7b3f00;
+}
+.name_type_2{
+	font-weight:bold;
+	color:#080;
+}
+.name_type_3{
+	font-weight:bold;
+	color:#b0c4de;
+}
+.name_type_4{
+	font-weight:bold;
+}
+.name_type_5{
+	color:#999;
+}
+.ol-attribution{
+	font-size:12px;
+}
+.ol-attribution A{
+	color:#33b5e5;
+}
+.ol-attribution A:visited{
+	color:#0078A8;
+}
+center{
+	font-size: 150%;
+}
+#search, #search_2, #copy{
+	cursor:pointer;
+}
+.button{
+	cursor:pointer;
+	border: 1px double #888;
+	padding: 0px 5px;
+	margin: 0px 11px;
+}
+.button:hover{
+	border-color:#ff5050;
+	padding: 0px 4px 0px 6px;
+}
+.plus{
+	cursor: pointer;
+}
+.plus:before{
+	content: "+";
+	vertical-align: -3px;
+	font-size: 27px;
+	font-weight: 900;
+	color: #808080;
+}
+.plus[checked=true]:before{
+	content: "−";
+}
+.plus:hover:before{
+	text-shadow: 1px 1px 0px #555;
+}
+.plus:hover{
+	border: 1px double #ff5050;
+}
+.frame_a{
+	padding:0px;
+	width:350px;/*380px*/
+}
+.r_color{
+	/*padding:0px;*/
+	width:50px;
+}
+.t_data{
+	float:left;
+	height:50px;
+}
+/* Вывод информационного окна*/
+.info_out_b{
+	position: absolute;
+	background-color:#000;
+	opacity:0.5;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+}
+.info_out_t{
+	position: absolute;
+	background-color:#ffe;
+	opacity:1;
+	padding: 10px;
+	overflow:auto;
+	top:5%;
+	left:10%;
+	width:80%;
+	height:90%;
+}
+#tr_list{
+	/*position: absolute;*/
+	border: 1px solid #888;
+	overflow-y: scroll;
+	width: 383px;
+	height: 500px;
+}
+.track{
+	border: 1px solid #888;
+	overflow: hidden;
+	width: 353px;
+	height: 40px;
+}
+.b_symbol{
+	cursor:pointer;
+	padding: 0px 1px;
+	margin: 0px;
+}
+.b_symbol:hover{
+	padding: 0px 0px 0px 2px;
+}
+.b_tr_s{
+	cursor:pointer;
+	float: right;
+	padding: 0px 1px 0px 1px;
+	margin: -1px 0px 0px;
+}
+.b_tr_s:hover{
+	padding: 0px 0px 0px 2px;
+}
+.b_2{
+	cursor:pointer;
+	float: right;
+	border: 1px double #888;
+	padding: 0px 4px;
+	margin: 0px;
+}
+.b_2:hover{
+	border-color:#ff5050;
+	padding: 0px 3px 0px 5px;
+}
+#tr_control{
+	margin-left: 2px;
+	width: 353px;
+}
+#tr_color{
+	position: absolute;
+	visibility: hidden;
+	width: 0px;
+	height: 0px;
+	padding: 0px;
+	margin: 0px;
+}
+.tr_table th{
+	min-width: 50px;
+	padding: 0px 13px;
+}
+.tr_table td{
+	text-align: right;
+	padding: 0px 13px;
+	border-left: 1px solid #ff5050;
+}
+
+.tr_table th:first-child{
+	text-align: left;
+}
+.tr_table tr:first-child th{
+	padding-bottom: 3px;
+	/*border-bottom: 1px solid #ff5050;*/
+}
+.tr_table tr:last-child th{
+	padding-top: 2px;
+	/*border-top: 1px solid #ff5050;*/
+	padding-right: 14px;
+	text-align: right;
+}
+#map_list{
+	/*position: absolute;*/
+	border: 1px solid #888;
+	overflow-y: scroll;
+	width: 383px;
+	height: 300px;
+}
+</style>
+<!-- TEST -->
+<!--<script src="js/proj4.js"></script>-->
+<!-- END TEST -->
+<script src="js/g_tiles.js"></script><!-- Содержит массив данных карт-->
+<script src="js/sc.js"></script><!-- Содержит проекции и функции к ним-->
+<script src="js/f.js"></script>
+<script src="js/map.js"></script>
+<script src="js/m_tracks.js"></script>
+<script src="js/degrees.js"></script>
+<script src="js/m_load.js"></script>
+<!-- TESTs -->
+<!--<script src="js/test.js"></script>-->
+<script type="text/javascript">
+var obj_test = null;
+
+var id_creator = 'feb7e9c4d5539ae0f1496cdb2aaee27c';
+var disabled_b_menu = null;
+var display_div_menu = null;
+var map = null;
+var m_tracks = null;
+var m_load = null;
+var degrees = null;
+var map_id = 1;
+var width_map = 0;
+var height_map = 0;
+
+window.onload = function(){
+	f_load_view();
+	let width_menu = 400;
+	width_map = document.documentElement.clientWidth - width_menu;
+	height_map = document.documentElement.clientHeight;
+	
+	
+	//alert(width);
+	document.getElementById("map").style.width = width_map+"px";
+	document.getElementById("map").style.height = height_map+"px";
+	document.getElementById("svg").style.width = width_map+"px";
+	document.getElementById("svg").style.height = height_map+"px";
+	document.getElementById("svg").style.pointerEvents = "none";
+	document.getElementById("menu").style.width = width_menu+"px";
+	document.getElementById("menu").style.height = height_map+"px";
+	
+	let h_div_menu = height_map - 50;
+	document.getElementById("menu_map").style.height = h_div_menu+"px";
+	document.getElementById("menu_map").style.display = "block";
+	document.getElementById("menu_fire").style.height = h_div_menu+"px";
+	document.getElementById("menu_degrees").style.height = h_div_menu+"px";
+	document.getElementById("menu_tracks").style.height = h_div_menu+"px";
+	document.getElementById("menu_load").style.height = h_div_menu+"px";
+	display_div_menu = document.getElementById("menu_map");
+	disabled_b_menu = document.getElementById("menu").querySelector('button');
+	disabled_b_menu.disabled = true;
+	
+	
+	map = new Map();
+	m_tracks = new Manager_tracks();
+	m_load = new M_load();
+	degrees = new Degrees();
+	
+	/*
+	map = new ol.Map({
+		target:'map',
+		layers:[
+			new ol.layer.Tile({
+				source: new ol.source.OSM()
+			})
+		],
+		view: new ol.View({
+			center: ol.proj.fromLonLat([82.9214626, 55.0265031]),
+			zoom: 13
+		})
+	});//*/
+	//obj_test = new Test();
+	//f_menu(this,'tracks');
+	f_menu(this,'load');
+};
+window.onunload = function(){
+	f_seve_view();
+};
+var flag_local = false;
+function f_seve_view(){
+	if(flag_local){
+		localStorage.setItem(id_creator, JSON.stringify({
+			lat:isNaN(document.getElementById("lat_center").value) ? '55': document.getElementById("lat_center").value,
+			lon:isNaN(document.getElementById("lon_center").value) ? '83': document.getElementById("lon_center").value,
+			zoom:isNaN(document.getElementById("zoom").value) ? '17': document.getElementById("zoom").value,
+			map_id:map_id
+		}));
+	}
+};
+function f_load_view(){
+	if(f_is_localStorage()){
+		flag_local = true;
+		let data_string = localStorage.getItem(id_creator);
+		if(data_string != null){
+			let date_view = JSON.parse(data_string);
+			document.getElementById("lat_center").value = date_view.lat;
+			document.getElementById("lon_center").value = date_view.lon;
+			document.getElementById("zoom").value = date_view.zoom;
+			if(date_view.map_id != undefined)map_id = date_view.map_id;
+		}
+	}
+};
+function f_is_localStorage(){//проверяет доступно ли хранилище данных.
+	try{
+		let storage = window['localStorage'];
+		let x = '__storage_test__';
+		storage.setItem(x, x);
+		storage.removeItem(x);
+		return true;
+	}
+	catch(e){
+		return false;
+	}
+}
+function f_menu(elm, name){
+	disabled_b_menu.disabled = false;
+	disabled_b_menu = elm;
+	disabled_b_menu.disabled = true;
+	display_div_menu.style.display = "none";
+	display_div_menu = document.getElementById("menu_"+name);
+	display_div_menu.style.display = "block";
+};
+function test(){//JSON.stringify(
+	//alert("test");
+}
+</script>
+</head>
+<body>
+<div id="map" class="map"></div>
+<svg id="svg" class="svg" xmlns="http://www.w3.org/2000/svg">
+<defs>
+	<filter x="0" y="0" width="1" height="0.9" id="bord_t"><feFlood flood-color="#fff" flood-opacity=".75" in="FillPaint" result="b"/><feBlend mode="normal" in2="b" in="SourceGraphic"/></filter>
+	<filter x="0" y="0" width="1" height="0.9" id="bord_t_2"><feFlood flood-color="#fff" flood-opacity="1" in="FillPaint" result="b"/><feBlend mode="normal" in2="b" in="SourceGraphic"/></filter>
+</defs>
+</svg>
+<div id="menu">
+	<button class="b_menu" onClick="f_menu(this,'map')">🗺️</button><button class="b_menu" onClick="f_menu(this,'fire')">🔥</button><button class="b_menu" onClick="f_menu(this,'degrees')">🌐</button><button class="b_menu" onClick="f_menu(this,'tracks')">🧭</button><button class="b_menu" onClick="f_menu(this,'load')">🗺</button>
+	<div class="div_menu" id="menu_map">
+		<!--<p><input type="radio" name="api_map" value="rad1" checked> Leaflet<input type="radio" name="api_map" value="rad2"> OpenLayers<input type="radio" name="api_map" value="rad3"> Google<input type="radio" name="api_map" value="rad4"> Яндекс</p>-->
+		<div class="content_menu">
+		<center>центр карты</center>
+		широта &nbsp;N: <input class="input_coor" type="text" value="55.0265031" id="lat_center" size="18"><span class="b_symbol" id="copy" title="Скопировать в буфер обмена">📝</span> <span id="copy_out"></span>
+		<br>
+		долгота E: <input class="input_coor" type="text" value="82.9214626" id="lon_center" size="18"><span class="b_symbol" id="search" title="Искать в google">🔎</span>
+		<!--<input type="button" value="Перейти" onClick="f_map_center()">-->
+		<br>
+		zoom: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input class="input_coor" type="text" value="13" id="zoom" size="18"><span class="b_symbol" id="search_2" title="Искать в yandex">🔎</span>
+		<hr>
+		<form id="active_map" onsubmit="return false;">
+		<center>карты</center>
+		</form>
+		<input id="active_map_n" type="checkbox"><span id="span_map_n">Добавить слой карт с прозрачностью</span><input id="range_map_n" type="range" min="0" max="1" step=".01" value=".5" oninput="" style="display:none;">
+		</div>
+	</div>
+	<div class="div_menu" id="menu_fire">
+		<div class="content_menu" id="div_ex_layer">
+		<center>Слои</center>
+		</div>
+		<div class="content_menu_fire" id="div_menu_fire">
+		<center>Слои термоточек</center>
+		<span>Данные с <a href="https://firms.modaps.eosdis.nasa.gov/web-services/" target="_blank">FIRMS</a></span>
+		<br>
+		<label><input type="radio" name="time_fire" value="24">24ч</label>
+		<br>
+		<label><input type="radio" name="time_fire" value="48">48ч</label>
+		<br>
+		<label><input type="radio" name="time_fire" value="72">72ч</label>
+		<br>
+		<label><input type="radio" name="time_fire" value="7">7 д</label>
+		<br>
+		<label><input type="checkbox" id="check_MODIS">MODIS & </label><label>VIIRS<input type="checkbox" id="check_VIIRS"></label>
+		</div>
+	</div>
+	<div class="div_menu" id="menu_degrees">
+		<div class="content_menu" id="content_degrees">
+			<center>Разметка</center>
+			<label>Отображать на углах карты:<input id="markings_corners" type="checkbox"></label>
+			<br>Отображать в:
+			<select id="format_d">
+				<option disabled>формат</option>
+				<option>dd°mm'ss"</option>
+				<option>dd°mm.mm'</option>
+				<option>dd.ddddd°</option>
+				<option>dd.ddddddd°</option>
+				<option>dd.ddddddddd°</option>
+				<option>dd.ddddddddddd°</option>
+				<option>dd°mm'ss.sssss"</option>
+				<option>rad</option>
+				<option>km(километры)</option>
+				<option>m(метры)</option>
+				<option>m.cm(метры.сантиметры)</option>
+				<option>ft(футы, геодезические)</option>
+				<option>ft(футы, международный)</option>
+				<option>yd(ярды)</option>
+				<option>mile(мили)</option>
+				<option>gm(географическая мили)</option>
+				<option>nm(морские мили)</option>
+			</select><label> Центер <b style="color:#00f;">•</b> <input id="p_center" type="checkbox"></label>
+			<br>Отображать в:
+			<select id="sys_c">
+				<option disabled>система координат/проекция</option>
+			</select>
+			<input id="text_angle" type="text" value="0" size="5"><span id="span_angle"></span>
+			<br>
+			<hr>
+		</div>
+	</div>
+	<div class="div_menu" id="menu_tracks">
+		<div class="content_menu" id="content_tracks">
+			<center>Треки</center>
+			<span class="button" id="tr_load">Загрузить</span><span class="button" id="info_load">Информация загрузки <span id="info_load_sing">●</span></span>
+			<br>
+			<br>
+			Сортировать:
+			<select id="tr_sort">
+				<option disabled>сортировать</option>
+				<option>ᐁ по имени</option>
+				<option>ᐃ по имени</option>
+				<option>ᐁ по точкам</option>
+				<option>ᐃ по точкам</option>
+				<option>ᐁ по дистанции</option>
+				<option>ᐃ по дистанции</option>
+				<option>ᐁ по дате</option>
+				<option>ᐃ по дате</option>
+				<option>ᐁ по цвету</option>
+				<option>ᐃ по цвету</option>
+				<option style="background-color:#eff;">ᐁ выделенное </option>
+				<option style="background-color:#ffe;">ᐃ выделенное </option>
+			</select>
+			<br>
+			<div id="tr_control">
+				<input type="checkbox" id="tr_all_a" checked="true">
+				<label>p<input type="checkbox" id="tr_all_p" checked="true"></label>
+				<label>r<input type="checkbox" id="tr_all_r" checked="true"></label>
+				<label>t<input type="checkbox" id="tr_all_t" checked="true"></label>
+				<label>n<input type="checkbox" id="tr_all_n"></label>
+				
+				<span class="b_tr_s" id="tr_del">❌</span>
+				<span class="b_tr_s" id="tr_save">💾</span>
+				<span class="b_tr_s" id="tr_info_a">📝</span>
+				<span class="b_2" id="tr_all_c">●</span>
+				<span class="b_2" style="margin-right: 2px;" id="all_color"> &nbsp;</span>
+				<span class="b_2" style="background-color:#eff; margin-right: 15px;" id="all_foc">Все</span>
+				<span class="b_tr_s" style="margin-right: 2px;" id="conv_foc">⮃</span>
+				<input type="color" id="tr_color" >
+			</div>
+			<div id="tr_list"></div>
+			
+			<br>
+			
+			
+		</div>
+	</div>
+	<div class="div_menu" id="menu_load">
+		<div class="content_menu" id="content_load">
+			<center>Загрузка карт</center>
+			<span class="button" id="map_load">Загрузить</span>.kmz<br><br>
+			<div id="map_list"></div><br>
+			<span class="button" id="map_save">Сохранить</span> <label>Выбрать область:<input id="save_check" type="checkbox"></label><br><br>
+			Формат:
+			<select id="save_format">
+				<option disabled>Формат</option>
+				<option>kmz</option>
+				<option>pdf</option>
+				<option>jpeg</option>
+				<option>png</option>
+				<option>gif</option>
+				<option>bmp</option>
+			</select>
+			<br>
+			Левый верхний угол рамки N, E:
+			<input id="input_t_l" class="frame_a" type="text">
+			Правый нижний угол рамки N, E:
+			<input id="input_b_r" class="frame_a" type="text"><br><br>
+			<span id="save_z"></span>
+			
+			
+			
+			<br><br><br><br><br><br><br><br><br><br><br><br>
+			<span class="button" id="load_test">test</span><br>
+			<canvas id="canvas_test"></canvas>
+			<span id="test_out"></span>
+		</div>
+	</div>
+</div>
+</body>
+</html>

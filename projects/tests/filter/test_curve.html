@@ -1,0 +1,79 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>curve</title>
+<script type="text/javascript">
+var f_draw_a_graph = function(){
+	let from_x = document.getElementById("from_x").value*1;
+	let to_x = document.getElementById("to_x").value*1;
+	let from_y = document.getElementById("from_y").value*1;
+	let to_y = document.getElementById("to_y").value*1;
+	let step_map_x = document.getElementById("step_map_x").value*1;
+	let step_map_y = document.getElementById("step_map_y").value*1;
+	let width_svg = (to_x - from_x) * step_map_x;
+	let height_svg = (to_y - from_y) * step_map_y;
+	let math_f = document.getElementById("math_f").value;
+	let distance_axis_y = height_svg + (from_y * step_map_y);
+	let curve_d = "";
+	for(let i = 0; i <= width_svg; i++){
+		if(i == 0){
+			let x = from_x;
+			let y = eval(math_f);
+			let y_d = distance_axis_y - y * step_map_y;
+			curve_d = "M0,"+y_d+" ";
+		}else{
+			let x = from_x + i / step_map_x;
+			let y = eval(math_f);
+			let y_d = distance_axis_y - y * step_map_y;
+			curve_d += "L"+i+","+y_d+" ";
+		}
+	}
+	svg_curve.setAttributeNS(null, "d", curve_d);
+	svg.setAttributeNS(null, "width", width_svg);
+	svg.setAttributeNS(null, "height", height_svg);
+	let grid_d = "";
+	if(from_x <= 0 && to_x >= 0){
+		let distance_axis_x = Math.abs(from_x * step_map_x);
+		grid_d += "M"+distance_axis_x+",0 v"+height_svg+" ";
+		for(let i = 0; i <= (to_y - from_y); i++){
+			grid_d += "M"+(distance_axis_x - 5)+","+(i * step_map_y)+" h10 ";
+		}
+	}
+	if(from_y <= 0 && to_y >= 0){
+		grid_d += "M0,"+distance_axis_y+" h"+width_svg+" ";
+		for(let i = 0; i <= (to_x - from_x); i++){
+			grid_d += "M"+(i * step_map_x)+","+(distance_axis_y - 5)+" v10 ";
+		}
+	}
+	svg_grid.setAttributeNS(null, "d", grid_d);
+}
+var svgns = "http://www.w3.org/2000/svg";
+var svg = null;
+var svg_grid = null;
+var svg_curve = null;
+window.onload = function(){
+	svg = document.getElementById('grafika');
+	svg.style['background-color'] = "#002a00";
+	svg_grid = document.createElementNS(svgns, "path");
+	svg_grid.setAttributeNS(null, "fill", "none");
+	svg_grid.setAttributeNS(null, "stroke", "#888");
+	svg_grid.setAttributeNS(null, "stroke-width", 2);
+	svg.appendChild(svg_grid);
+	svg_curve = document.createElementNS(svgns, "path");
+	svg_curve.setAttributeNS(null, "fill", "none");
+	svg_curve.setAttributeNS(null, "stroke", "#f00");
+	svg_curve.setAttributeNS(null, "stroke-width", 2);
+	svg.appendChild(svg_curve);
+	f_draw_a_graph();
+}
+</script>
+</head>
+<body>
+	От: <input type="text" size="2" id="from_x" value="-5"> x До: <input type="text" size="2" id="to_x" value="5"> x Шаг: <input type="text" size="2" id="step_map_x" value="100"> в пикселях.
+	<br>
+	От: <input type="text" size="2" id="from_y" value="-4"> y До: <input type="text" size="2" id="to_y" value="4"> y Шаг: <input type="text" size="2" id="step_map_y" value="100"> в пикселях.
+	<br>
+	y = <input type="text" size="30" id="math_f" value="Math.cos(7 * x) + Math.sin(x)">  <input type="button" value="Нарисовать график" onClick="f_draw_a_graph()">
+	<br>
+	<svg xmlns="http://www.w3.org/2000/svg" id="grafika"></svg>
+</body>
+</html>

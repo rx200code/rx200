@@ -1,0 +1,115 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>canvas WebGL</title>
+<style type="text/css">
+body{
+	margin: 0;
+}
+img{
+	position: absolute;
+	top:0px;
+	left:0px;
+}
+canvas{
+	position: absolute;
+	top:0px;
+	left:0px;
+}
+/*
+canvas{
+	width: 100vw;
+	height: 100vh;
+	display: block;
+}
+*/
+</style>
+<!---->
+<script id="vertex-shader" type="x-shader/x-vertex">
+attribute vec2 a_position;
+attribute vec2 a_texCoord;
+uniform vec2 u_resolution;
+varying vec2 v_texCoord;
+
+
+
+void main(){
+	//vec2 zeroToOne = a_position / u_resolution;
+	//vec2 zeroToTwo = zeroToOne * 2.0;
+	//vec2 clipSpace = zeroToTwo - 1.0;
+	
+	vec2 zeroToOne = a_position / u_resolution;
+	vec2 zeroToTwo = zeroToOne * 2.0;
+	vec2 clipSpace = zeroToTwo - 1.0;
+	
+	gl_Position = vec4(clipSpace * vec2(1, -1), 0, 1);
+	//gl_Position = a_position;
+	v_texCoord = a_texCoord;
+}
+</script>
+<!---->
+<!---->
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+//uniform vec4 u_color;
+uniform sampler2D u_image;
+varying vec2 v_texCoord;
+void main(){
+	//gl_FragColor = vec4(1, 0, 0.5, 1);
+	//gl_FragColor = u_color;
+	//gl_FragColor = texture2D(u_image, v_texCoord);
+	gl_FragColor = texture2D(u_image, v_texCoord).bgra;
+}
+</script>
+<!---->
+<!----
+<script id="fragment-shader" type="x-shader/x-fragment">
+precision mediump float;
+uniform sampler2D u_image;
+varying vec2 v_texCoord;
+void main(){
+	gl_FragColor = texture2D(u_image, v_texCoord);
+}
+</script>
+<!---->
+<script type="text/javascript">
+let canvas = document.createElement('canvas');
+canvas.width = 1000;
+canvas.height = 800;
+let gl = canvas.getContext("webgl");
+function compileShader(shaderSource, shaderType){
+	// создаём объект шейдера
+	let shader = gl.createShader(shaderType);
+	// устанавливаем исходный код шейдера
+	gl.shaderSource(shader, shaderSource);
+	// компилируем шейдер
+	gl.compileShader(shader);
+	// проверяем результат компиляции
+	if(!gl.getShaderParameter(shader, gl.COMPILE_STATUS))alert("компиляция шейдера не удалась:"+gl.getShaderInfoLog(shader));// Ошибка! Что-то не так на этапе компиляции
+	else return shader;
+}
+function createProgram(){
+	let vertexShader = compileShader(document.getElementById("vertex-shader").text, gl.VERTEX_SHADER);
+	let fragmentShader = compileShader(document.getElementById("fragment-shader").text, gl.FRAGMENT_SHADER);
+	// создаём программу
+	let program = gl.createProgram();
+	// прикрепляем шейдеры
+	gl.attachShader(program, vertexShader);
+	gl.attachShader(program, fragmentShader);
+	// компонуем программу
+	gl.linkProgram(program);
+	// проверяем результат компоновки
+	if(!gl.getProgramParameter(program, gl.LINK_STATUS))alert("ошибка компоновки программы:"+gl.getProgramInfoLog (program));// что-то пошло не так на этапе компоновки
+	else return program;
+}
+</script>
+<script src="js/canvas.js"></script>
+<script type="text/javascript">
+
+</script>
+</head>
+<body>
+	<!----
+	<img id="my_image" src="file:///R:/pro/webgl/tests/map.jpg" alt="map.jpg">
+	<!---->
+</body>
+</html>

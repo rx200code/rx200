@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>template HTML5</title>
+		<script>
+			
+			function test(){
+				
+				let test_r = Math.floor(Math.random() * 1000000);
+				out(test_r);
+
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		
+		<input type="button" onclick="test()" value="test" />
+		<br>
+		<textarea>textarea</textarea>
+		<br>
+		<input type="text" value="" />
+		<br>
+		<input type="number" value="" />
+		<br>
+		<span id="info">info</span>
+		<br>
+		<span id="out">out</span>
+	</body>
+</html>
+ 

@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Конвертер</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+	body{
+		animation-name: in-a-circle;
+		animation-duration: 3000s;
+		animation-iteration-count: infinite;
+		animation-direction: normal;
+		animation-timing-function: linear;
+		
+		
+		
+		
+		/*animation: mymove 50s infinite ease-in-out;/**/
+		/*background-color: #fff; /* Цвет фона */
+		/*background-size: 1000px;/**/
+		/*background-size: cover;/**/
+		/*background-image: url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAwIiBoZWlnaHQ9IjUwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPGRlZnM+IAogICAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkaWVudF9tb3VudCIgeDI9IjAiIHkyPSIxIj4gCgkJPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZiIvPgoJCTxzdG9wIG9mZnNldD0iMzAlIiBzdG9wLWNvbG9yPSIjMDBmIi8+IAoJCTxzdG9wIG9mZnNldD0iOTUlIiBzdG9wLWNvbG9yPSIjY2VmIi8+IAogICAgPC9saW5lYXJHcmFkaWVudD4KPC9kZWZzPiAKICA8cGF0aCBkPSJNMTAgMTEwIEMgNzAgMTAsIDcwIDEwLCAyMTAgMTEwIiBzdHJva2U9ImJsYWNrIiBmaWxsPSJ0cmFuc3BhcmVudCIvPgogIDxwYXRoIGQ9Ik0xMCAxMTAgaDIwMCIgc3Ryb2tlPSJncmVlbiIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJNMTAgMTEwIEw3MCAxMCBMMjEwIDExMCIgc3Ryb2tlPSJyZWQiIGZpbGw9InRyYW5zcGFyZW50Ii8+CiAgPHBhdGggZD0iTTEwIDExMCBRIDcwIDEwIDIxMCAxMTAiIHN0cm9rZT0iYmx1ZSIgZmlsbD0idHJhbnNwYXJlbnQiLz4KICA8cGF0aCBkPSJNMzAgMjAwIHEgNTAgMCA4MCAtNTAgcTMwIDUwIDgwIDUwIiBzdHJva2U9ImJsYWNrIiBmaWxsPSJ1cmwoI2dyYWRpZW50X21vdW50KSIvPgo8L3N2Zz4=);/**/
+		/*background-image: url(test.svg);/**/
+		/*background-image: repeating-linear-gradient(170deg, #f41, #f41 29px, #fff 30px, #fff 89px, #f41 90px, #f41 120px);/**/
+		
+	}
+	@keyframes in-a-circle{
+		from{background-position: 0px 0px;}
+		2%{background-position: 79px -1253px;}
+		4%{background-position: 314px -2487px;}
+		6%{background-position: 702px -3681px;}
+		8%{background-position: 1237px -4818px;}
+		10%{background-position: 1910px -5878px;}
+		12%{background-position: 2710px -6845px;}
+		14%{background-position: 3626px -7705px;}
+		16%{background-position: 4642px -8443px;}
+		18%{background-position: 5742px -9048px;}
+		20%{background-position: 6910px -9511px;}
+		22%{background-position: 8126px -9823px;}
+		24%{background-position: 9372px -9980px;}
+		26%{background-position: 10628px -9980px;}
+		28%{background-position: 11874px -9823px;}
+		30%{background-position: 13090px -9511px;}
+		32%{background-position: 14258px -9048px;}
+		34%{background-position: 15358px -8443px;}
+		36%{background-position: 16374px -7705px;}
+		38%{background-position: 17290px -6845px;}
+		40%{background-position: 18090px -5878px;}
+		42%{background-position: 18763px -4818px;}
+		44%{background-position: 19298px -3681px;}
+		46%{background-position: 19686px -2487px;}
+		48%{background-position: 19921px -1253px;}
+		50%{background-position: 20000px 0px;}
+		52%{background-position: 19921px 1253px;}
+		54%{background-position: 19686px 2487px;}
+		56%{background-position: 19298px 3681px;}
+		58%{background-position: 18763px 4818px;}
+		60%{background-position: 18090px 5878px;}
+		62%{background-position: 17290px 6845px;}
+		64%{background-position: 16374px 7705px;}
+		66%{background-position: 15358px 8443px;}
+		68%{background-position: 14258px 9048px;}
+		70%{background-position: 13090px 9511px;}
+		72%{background-position: 11874px 9823px;}
+		74%{background-position: 10628px 9980px;}
+		76%{background-position: 9372px 9980px;}
+		78%{background-position: 8126px 9823px;}
+		80%{background-position: 6910px 9511px;}
+		82%{background-position: 5742px 9048px;}
+		84%{background-position: 4642px 8443px;}
+		86%{background-position: 3626px 7705px;}
+		88%{background-position: 2710px 6845px;}
+		90%{background-position: 1910px 5878px;}
+		92%{background-position: 1237px 4818px;}
+		94%{background-position: 702px 3681px;}
+		96%{background-position: 314px 2487px;}
+		98%{background-position: 79px 1253px;}
+		to{background-position: 0px 0px;}
+	}
+</style>
+
+<script type="text/javascript">
+function test2(){
+	let line_feed = "\r\n";
+	let amount_angles = 5;
+	let radius = 100;
+	
+	let percent, x, y;
+	let a = 2 * Math.PI / amount_angles;
+	let i_a = a + Math.PI;
+	let text_out = "from{background-position: 0px 0px;}" + line_feed;
+	for(let i = 1; i < amount_angles; i++){
+		percent = Math.round(100 / amount_angles * i);
+		x = Math.round(Math.cos(i_a) * radius + radius);
+		y = Math.round(Math.sin(i_a) * radius);
+		i_a += a;
+		text_out += percent + "%{background-position: " + x + "px " + y + "px;}" + line_feed;
+	}
+	text_out += "to{background-position: 0px 0px;}";
+	
+	
+	out(text_out);
+}
+function test(){
+	test2();
+	
+	
+	let text = document.getElementById("in").value;
+	
+	
+	text = "data:image/svg+xml;base64," + window.btoa(text);
+	document.body.style.backgroundColor = "#" + document.getElementById("color").value;
+	document.body.style.backgroundSize = document.getElementById("size").value + "px";
+	//document.body.style.backgroundImage = "repeating-linear-gradient(170deg, #f41, #f41 29px, #fff 30px, #fff 89px, #f41 90px, #f41 120px)";
+	document.body.style.backgroundImage = "url(" + text + ")";
+	//document.body.style.filter = "url(" + text + "#filter)";
+	//document.getElementById("in").style.backgroundImage = "url(" + text + ")";
+	document.getElementById("out2").value = text;
+	//out(text);
+};
+function test_file(){
+	const file = document.getElementById("file").files[0];
+	
+	
+	var reader = new FileReader();
+	reader.readAsDataURL(file);
+	reader.onload = function () {
+		document.getElementById("out2").value = reader.result;
+		document.body.style.backgroundImage = "url(" + reader.result + ")";
+	};
+	reader.onerror = function (error) {
+		document.getElementById("out2").value = 'Error: ' + error;
+	};
+	
+	
+	let text = "" + file.name;
+	text += "<br>" + file.type;
+	
+	out(text);
+};
+function out(text){
+	document.getElementById("out").innerHTML = text;
+};
+</script>
+</head>
+<body>
+<textarea rows="10" cols="100" spellcheck="false" id="in"></textarea><textarea rows="10" cols="100" spellcheck="false" id="out2"></textarea>
+<br>
+<input type="button" value="преобразовать" onclick="test()"/><input type="text" value="FFFFFF" id="color"/><input type="text" value="1000" id="size"/>
+<input type="file" id="file" accept="image/png, image/jpeg"/><input type="button" value="преобразовать файл" onclick="test_file()"/>
+<br>
+<!----><pre id="out"></pre><!---->
+<!----
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.008"
+			seed="0"
+			numOctaves="10"
+			stitchTiles="stitch"
+		/>
+		<feColorMatrix
+		type="matrix"
+		values="0.39 0.769 0.189 0  0 
+          0.349 0.686 0.168 0  0  
+          0.272 0.534 0.131 0  0 
+            0  0 0 0  1"/>
+<feComponentTransfer>
+<feFuncR type="table" tableValues=".0 .9"/>
+<feFuncG type="table" tableValues=".4 1"/>
+<feFuncB type="table" tableValues=".7 1"/>
+		</feComponentTransfer>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter)"/>
+</svg><!---->
+</body>
+</html>

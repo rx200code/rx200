@@ -1,0 +1,140 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Таймер</title>
+<style>
+.time_input{
+	width: 40px; /* Ширина поля в пикселах */
+}
+#b_start_stop_timer{
+	width: 200px; /* Ширина поля в пикселах */
+}
+</style>
+<script type="text/javascript">
+
+function test(){//JSON.stringify(
+	let text = "start";
+	
+	out(text);
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+</script>
+</head>
+<body>
+<input type="button" value="test" onClick="test()">
+<br>
+<span id="output"></span>
+<br>
+Время: <span id="time">00:00:00</span> текущее время  
+&#x00b1; h: <input type="number" min="-24" max="24" step="1" value="0" id="offset_hours" class="time_input"> 
+m: <input type="number" min="-60" max="60" step="1" value="0" id="offset_minutes" class="time_input">
+s: <input type="number" min="-60" max="60" step="1" value="0" id="offset_seconds" class="time_input"> для синхронизации с временем сервера, прибавляется к текущему времени(на компьютере).
+<br>
+Установите таймер 
+h: <input type="number" min="0" max="23" step="1" value="0" id="timer_hours" class="time_input" oninput="f_timer_out()"> 
+m: <input type="number" min="0" max="59" step="1" value="0" id="timer_minutes" class="time_input" oninput="f_timer_out()">
+s: <input type="number" min="0" max="59" step="1" value="0" id="timer_seconds" class="time_input" oninput="f_timer_out()">
+<input type="button" value="запустить таймер" id="b_start_stop_timer" onClick="f_start_stop_timer()">
+day: <input type="number" min="0" max="31" step="1" value="0" id="timer_days" class="time_input" oninput="f_timer_out()">
+<span id="timer"></span>
+<br>
+<span id="timer_date_out"></span>
+<br>
+<span id="timer_date_out_server"></span>
+<script type="text/javascript">
+function f_get_time(d){
+	let text = "";
+	let i =  d.getHours();
+	if(i < 10)text += "0"+i;
+	else text += i;
+	text += ":";
+	i = d.getMinutes();
+	if(i < 10)text += "0"+i;
+	else text += i;
+	text += ":";
+	i = d.getSeconds();
+	if(i < 10)text += "0"+i;
+	else text += i;
+	return text;
+}
+var date_out = new Date();
+
+var out_time = document.getElementById("time");
+var offset_hours = document.getElementById("offset_hours");
+var offset_minutes = document.getElementById("offset_minutes");
+var offset_seconds = document.getElementById("offset_seconds");
+
+var timer_days = document.getElementById("timer_days");
+var timer_hours = document.getElementById("timer_hours");
+var timer_minutes = document.getElementById("timer_minutes");
+var timer_seconds = document.getElementById("timer_seconds");
+var timer = document.getElementById("timer");
+function f_timer_out(){
+	timer.innerHTML = "Дней: "+timer_days.value+" Время: "+
+		(timer_hours.value < 10 ? "0"+timer_hours.value : timer_hours.value)+":"+
+		(timer_minutes.value < 10 ? "0"+timer_minutes.value : timer_minutes.value)+":"+
+		(timer_seconds.value < 10 ? "0"+timer_seconds.value : timer_seconds.value);
+}
+var flag_timer = false;
+var b_start_stop_timer = document.getElementById("b_start_stop_timer");
+var timer_date_out = document.getElementById("timer_date_out");
+var timer_date_out_server = document.getElementById("timer_date_out_server");
+var timer_date = new Date();
+var timer_date_server = new Date();
+var i_timer = 0;
+function f_start_stop_timer(){
+	
+	if(flag_timer){
+		b_start_stop_timer.value = "запустить таймер";
+		flag_timer = false;
+	}else{
+		i_timer = timer_days.value * 86400000 + timer_hours.value * 3600000 + timer_minutes.value * 60000 + timer_seconds.value * 1000;
+		if(i_timer <= 0)return;
+		
+		timer_date.setTime(Date.now() + i_timer);
+		timer_date_out.innerHTML = "Время прибытия по вашему времени: числа: <b>"+timer_date.getDate()+"</b>; время: <b>"+f_get_time(timer_date)+"</b>";
+		
+		//i_timer += offset_hours.value * 3600000 + offset_minutes.value * 60000 + offset_seconds.value * 1000;
+		timer_date_server.setTime(timer_date.getTime() + offset_hours.value * 3600000 + offset_minutes.value * 60000 + offset_seconds.value * 1000);
+		
+		timer_date_out_server.innerHTML = "Время прибытия по времени игры: числа: <b>"+timer_date_server.getDate()+"</b>; время: <b>"+f_get_time(timer_date_server)+"</b>";
+		
+		
+		b_start_stop_timer.value = "остановить таймер";
+		flag_timer = true;
+	}
+	
+}
+f_timer_out();
+
+function f_time_out(){
+	let int_time = Date.now();
+	if(flag_timer){
+		let progress_timer = timer_date.getTime() - int_time;
+		if(progress_timer > 0){
+			progress_timer /= 1000;
+			//progress_timer = ~~progress_timer;
+			let progress_timer_s = ~~(progress_timer % 60);
+			let progress_timer_m = ~~(progress_timer / 60 % 60);
+			let progress_timer_h = ~~(progress_timer / 3600 % 24);
+			timer.innerHTML = "Дней: "+(~~(progress_timer / 86400))+" Время: <b>"+(progress_timer_h < 10 ? "0": "")+progress_timer_h+":"+(progress_timer_m < 10 ? "0": "")+progress_timer_m+":"+(progress_timer_s < 10 ? "0": "")+progress_timer_s+"</b>";
+		}else{
+			timer.innerHTML = "Дней: 0 Время: 00:00:00";
+			b_start_stop_timer.value = "запустить таймер";
+			flag_timer = false;
+		}
+	}
+	int_time += offset_hours.value * 3600000 + offset_minutes.value * 60000 + offset_seconds.value * 1000;
+	date_out.setTime(int_time);
+	out_time.innerHTML = f_get_time(date_out);
+}
+setInterval(f_time_out, 1000);
+function test2(){//JSON.stringify(
+	let text = "";
+	
+	out(text);
+}
+</script>
+</body>
+</html>

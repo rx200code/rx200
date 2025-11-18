@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>opacity</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+</head>
+<body>
+<img src="http://htmlbook.ru/example/images/girl.png" id="img" width="189" height="255">
+<br>
+<span id="output"></span>
+<script type="text/javascript">
+window.onload = function(){
+	let img = document.getElementById("img");
+	img.style.opacity = 0;
+	let timerId = setInterval(() => {
+		img.style.opacity = img.style.opacity * 1 + .1;
+		if(img.style.opacity >= 1)clearInterval(timerId);
+	}, 50);
+};
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+</script>
+</body>
+</html>

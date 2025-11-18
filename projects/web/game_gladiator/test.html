@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>test</title>
+		<style>
+			
+		</style>
+		<script>
+			window.onload = () => {
+				
+			};
+			/*
+			{
+				"sign": "tVg78Xv6uscTGYDz9THlpvCuYiM_mhGQmRXOTHhdR0U",
+				"ts": 1759645290,
+				"payload": "test text"
+			}
+			/**/
+			
+			function concat_Uint8Array(buffer_1, buffer_2){
+				let arr_buffer = new Uint8Array(buffer_1.length + buffer_2.length);
+				arr_buffer.set(buffer_1, 0);
+				arr_buffer.set(buffer_2, buffer_1.length);
+				return arr_buffer;
+			}
+			function out_Uint8Array(arr_buffer){
+				let text_out = "";
+				for(let i = 0; i < arr_buffer.length; i++){
+					if(i % 16 === 0)text_out += "\n";
+					text_out += arr_buffer[i].toString(16) + ",";
+				}
+				return text_out;
+			}
+			function rotr(n, d){
+				return (n >> d) | (n << (32 - d));
+			}
+			function sha256(text){
+				let blocks_size = (text.length + 9) / 64 + 1 | 0;
+				let size = blocks_size * 64;
+				let buffer = new ArrayBuffer(size);
+				let bufferUint8 = new Uint8Array(buffer);
+				let bufferUint32 = new Uint32Array(buffer);
+				for(let i = 0; i < text.length; i++){
+					bufferUint8[i] = text.charCodeAt(i);
+				}
+				bufferUint8[text.length] = 128;
+				bufferUint32[bufferUint32.length - 1] = text.length * 8;
+				//
+				let h0 = 0x6A09E667;
+				let h1 = 0xBB67AE85;
+				let h2 = 0x3C6EF372;
+				let h3 = 0xA54FF53A;
+				let h4 = 0x510E527F;
+				let h5 = 0x9B05688C;
+				let h6 = 0x1F83D9AB;
+				let h7 = 0x5BE0CD19;
+
+				let k = [
+					0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
+					0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
+					0xE49B69C1, 0xEFBE4786, 0x0FC19DC6, 0x240CA1CC, 0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA,
+					0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7, 0xC6E00BF3, 0xD5A79147, 0x06CA6351, 0x14292967,
+					0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13, 0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85,
+					0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3, 0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070,
+					0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5, 0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
+					0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
+				];
+				
+				for(let j = 0; j < blocks_size; j++){
+					let w = new Uint32Array(64);
+					for(let i = 0; i < 16; i++){
+						w[i] = bufferUint32[i + (j * 16)];
+					}
+					for(let i = 16; i < 64; i++){
+						let s0 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ (w[i-15] >> 3);
+						let s1 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ (w[i-2] >> 10);
+						w[i] = w[i-16] + s0 + w[i-7] + s1;
+					}
+					let a = h0;
+					let b = h1;
+					let c = h2;
+					let d = h3;
+					let e = h4;
+					let f = h5;
+					let g = h6;
+					let h = h7;
+					
+					for(let i = 0; i < 64; i++){
+						let E0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+						let Ma = (a & b) ^ (a & c) ^ (b & c);
+						let t2 = E0 + Ma;
+						let E1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+						let Ch = (e & f) ^ ((~e) & g);
+						let t1 = h + E1 + Ch + k[i] + w[i];
+
+						h = g;
+						g = f;
+						f = e;
+						e = d + t1;
+						d = c;
+						c = b;
+						b = a;
+						a = t1 + t2;
+					}
+					h0 = h0 + a;
+					h1 = h1 + b;
+					h2 = h2 + c;
+					h3 = h3 + d;
+					h4 = h4 + e;
+					h5 = h5 + f;
+					h6 = h6 + g;
+					h7 = h7 + h;
+					
+				}
+				let buffer_out = new ArrayBuffer(32);
+				let buffer_outUint32 = new Uint32Array(buffer_out);
+				buffer_outUint32[0] = h0;
+				buffer_outUint32[1] = h1;
+				buffer_outUint32[2] = h2;
+				buffer_outUint32[3] = h3;
+				buffer_outUint32[4] = h4;
+				buffer_outUint32[5] = h5;
+				buffer_outUint32[6] = h6;
+				buffer_outUint32[7] = h7;
+
+				let buffer_outUint8 = new Uint8Array(buffer_out);
+				alert(out_Uint8Array(buffer_outUint8));
+				return buffer_outUint8;
+			}
+			async function hash_hmac_sha256_vk(msg, key){
+				let b = 64;
+				let sign = "";
+				let arr_buffer = new Uint8Array(b);
+				/**
+				for(let i = 0; i < arr_buffer.length && i < key.length; i++){
+					arr_buffer[i] = key.charCodeAt(i);
+				}
+				/**/
+				// 1
+
+				let arr_test = new Uint8Array(key.length);
+				for(let i = 0; i < arr_test.length; i++){
+					arr_test[i] = key.charCodeAt(i);
+				}
+
+				for(let i = 0; i < arr_buffer.length && i < arr_test.length; i++){
+					arr_buffer[i] = arr_test[i];
+				}
+				// 2
+				for(let i = 0; i < arr_buffer.length; i++){
+					arr_buffer[i] = arr_buffer[i] ^ 0x36;
+				}
+				// 3
+				msg = "Hello World";
+				let arr_buffer_msg = new Uint8Array(msg.length);
+				for(let i = 0; i < arr_buffer_msg.length; i++){
+					arr_buffer_msg[i] = msg.charCodeAt(i);
+				}
+
+				let arr_buffer_2 = concat_Uint8Array(arr_buffer, arr_buffer_msg);
+
+				// 4
+				let hashBuffer = new Uint8Array(await window.crypto.subtle.digest("SHA-256", arr_buffer_2));
+				// 5
+				let arr_buffer_5 = new Uint8Array(b);
+				for(let i = 0; i < arr_buffer_5.length && i < arr_test.length; i++){
+					arr_buffer_5[i] = arr_test[i];
+				}
+				for(let i = 0; i < arr_buffer_5.length; i++){
+					arr_buffer_5[i] = arr_buffer_5[i] ^ 0x5c;
+				}
+				// 6
+				let arr_buffer_6 = concat_Uint8Array(arr_buffer_5, hashBuffer);
+				// 7
+				let hashBuffer_2 = new Uint8Array(await window.crypto.subtle.digest("SHA-256", arr_buffer_6));
+				//alert(out_Uint8Array(hashBuffer_2));
+				for(let i = 0; i < hashBuffer_2.length; i++){
+					sign += String.fromCharCode(hashBuffer_2[i]);
+				}
+				//const utf8Bytes = Uint8Array.from(hashBuffer_2, (m) => m.codePointAt(0));
+				// Decode the Uint8Array back to a JavaScript string
+				//sign = new TextDecoder().decode(hashBuffer_2);
+				//alert(new TextDecoder().decode(hashBuffer_2));
+				//"tVg78Xv6uscTGYDz9THlpvCuYiM_mhGQmRXOTHhdR0U"
+				//"xydaNvYglKmYTgbQdFjwohCyUbwIopYOCX4qFxFYe08="
+				//alert(btoa(sign));
+				
+				alert(out_Uint8Array(hashBuffer_2));
+				return sign;
+				/**/
+
+				/**/
+				
+				
+
+				/**
+				for(let i = 0; i < msg.length; i++){
+					let code_msg = msg.charCodeAt(i);
+					let code_key = i < key.length ? key.charCodeAt(i): 0;
+					let code_out = code_msg ^ code_key;
+
+				}
+				/**/
+			}
+			
+			async function test(){
+				//
+				let key = "sPntLaiCyKYd8QFhQ69w";
+				let hash_params = {
+					"app_id": "52910233",
+					"request_id": "test text",
+					"ts": "1759645290",
+					"user_id": "1477085"
+				};
+				let msg = (new URLSearchParams(hash_params)).toString();
+				sha256(msg);
+				
+				//alert(await hash_hmac_sha256_vk(msg, key));
+				
+
+				
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" />
+		<br>
+		<span id="out">out</span>
+		<br>
+	</body>
+</html>

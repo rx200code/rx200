@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- 
+Создатель © feb7e9c4d5539ae0f1496cdb2aaee27c
+-->
+<title>🗺️ карты.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<!-- Добавляем библиотеки карт -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/css/ol.css" type="text/css">
+<script src="https://cdn.jsdelivr.net/gh/openlayers/openlayers.github.io@master/en/v6.3.1/build/ol.js"></script>
+<!--<script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"></script>-->
+
+
+<style type="text/css">
+#map,#menu{
+	position:absolute;
+	top:0px;
+}
+#map{
+	left:0px;
+	
+	/*margin:1px;*/
+	background-color:#ddd;
+	/**/
+}
+#menu{
+	right:0px;
+	
+	background-color:#ff5050;
+	/*opacity:0.7;
+	/**/
+}
+.b_menu{
+	background-color:#ddd;
+	
+	border-width: 0px;
+	margin:0px 1px 0px 0px;/**/
+	font-size:20px;
+	width:50px;
+	height:50px;
+}
+.b_menu[disabled]{
+	background-color:#ffe;
+}
+.b_menu:hover{
+	background-color:#ffe;
+}
+.div_menu{
+	display:none;
+	background-color:#ffe;
+	width:400px;
+	height:100px;
+	margin:0px;
+	padding:0px;
+	overflow:auto;
+}
+.content_menu{
+	padding:10px;
+	font-family: monospace;
+}
+input[type=text]{
+	border: 1px solid #ffe;
+	background-color:#ddd;
+	color:#000;
+}
+input[type=text]:focus{
+	border: 1px solid #ff5050;
+}
+input[type=text]:hover{
+	border: 1px solid #ff5050;
+}
+</style>
+
+<script src="js/map.js"></script>
+<script type="text/javascript">
+var id_creator = 'feb7e9c4d5539ae0f1496cdb2aaee27c';
+var disabled_b_menu = null;
+var display_div_menu = null;
+var map = null;
+
+window.onload = function(){
+	f_load_view();
+	let width = document.documentElement.clientWidth;
+	let height = document.documentElement.clientHeight;
+	let width_menu = 400;
+	//alert(width);
+	document.getElementById("map").style.width = (width - width_menu)+"px";
+	document.getElementById("map").style.height = height+"px";
+	document.getElementById("menu").style.width = width_menu+"px";
+	document.getElementById("menu").style.height = height+"px";
+	
+	let h_div_menu = height - 50;
+	document.getElementById("menu_map").style.height = h_div_menu+"px";
+	document.getElementById("menu_map").style.display = "block";
+	document.getElementById("menu_fire").style.height = h_div_menu+"px";
+	document.getElementById("menu_grid").style.height = h_div_menu+"px";
+	document.getElementById("menu_test").style.height = h_div_menu+"px";
+	display_div_menu = document.getElementById("menu_map");
+	disabled_b_menu = document.getElementById("menu").querySelector('button');
+	disabled_b_menu.disabled = true;
+	
+	
+	map = new Map();
+	/*
+	map = new ol.Map({
+		target:'map',
+		layers:[
+			new ol.layer.Tile({
+				source: new ol.source.OSM()
+			})
+		],
+		view: new ol.View({
+			center: ol.proj.fromLonLat([82.9214626, 55.0265031]),
+			zoom: 13
+		})
+	});//*/
+	
+};
+window.onunload = function(){
+	f_seve_view();
+};
+var flag_local = false;
+function f_seve_view(){
+	if(flag_local){
+		localStorage.setItem(id_creator, JSON.stringify({
+			lat:document.getElementById("lat_center").value,
+			lon:document.getElementById("lon_center").value,
+			zoom:document.getElementById("zoom").value
+		}));
+	}
+};
+function f_load_view(){
+	if(f_is_localStorage()){
+		flag_local = true;
+		let data_string = localStorage.getItem(id_creator);
+		if(data_string != null){
+			let date_view = JSON.parse(data_string);
+			document.getElementById("lat_center").value = date_view.lat;
+			document.getElementById("lon_center").value = date_view.lon;
+			document.getElementById("zoom").value = date_view.zoom;
+		}
+	}
+};
+function f_is_localStorage(){//проверяет доступно ли хранилище данных.
+	try{
+		let storage = window['localStorage'];
+		let x = '__storage_test__';
+		storage.setItem(x, x);
+		storage.removeItem(x);
+		return true;
+	}
+	catch(e){
+		return false;
+	}
+}
+function f_menu(elm, name){
+	disabled_b_menu.disabled = false;
+	disabled_b_menu = elm;
+	disabled_b_menu.disabled = true;
+	display_div_menu.style.display = "none";
+	display_div_menu = document.getElementById("menu_"+name);
+	display_div_menu.style.display = "block";
+};
+function test(){//JSON.stringify(
+	//alert("test");
+}
+</script>
+</head>
+<body>
+<div id="map" class="map"></div>
+<div id="menu">
+	<button class="b_menu" onClick="f_menu(this,'map')">🗺️</button><button class="b_menu" onClick="f_menu(this,'fire')">🔥</button><button class="b_menu" onClick="f_menu(this,'grid')">🌐</button><button class="b_menu" onClick="f_menu(this,'test')">🧭</button>
+	<div class="div_menu" id="menu_map">
+		<!--<p><input type="radio" name="api_map" value="rad1" checked> Leaflet<input type="radio" name="api_map" value="rad2"> OpenLayers<input type="radio" name="api_map" value="rad3"> Google<input type="radio" name="api_map" value="rad4"> Яндекс</p>-->
+		<div class="content_menu">
+		<center style="font-size: 150%; ">центр карты</center>
+		широта &nbsp;N: <input type="text" value="55.0265031" id="lat_center" size="18">
+		<br>
+		долгота E: <input type="text" value="82.9214626" id="lon_center" size="18">
+		<!--<input type="button" value="Перейти" onClick="f_map_center()">-->
+		<br>
+		zoom: &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<input type="text" value="13" id="zoom" size="18">
+		<hr>
+		<input type="radio" name="drink" value="1"> OpenStreetMap (OSM)
+		<br>
+		<input type="radio" name="drink" value="2"> OpenTopoMap (OSM)
+		<br>
+		<input type="radio" name="drink" value="3"> OpenStreetMap France
+		<br>
+		<input type="radio" name="drink" value="4"> Esri Imagery
+		<br>
+		<input type="checkbox"><input type="range" min="0" max="1" step=".01" value=".5" oninput="" style="/*display:none;*/">
+		
+		</div>
+	</div>
+	<div class="div_menu" id="menu_fire">2</div>
+	<div class="div_menu" id="menu_grid">3</div>
+	<div class="div_menu" id="menu_test">4</div>
+</div>
+</body>
+</html>

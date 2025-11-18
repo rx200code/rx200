@@ -1,0 +1,131 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Фильтры SVG</title>
+</head>
+<body>
+<br>
+
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="400" style="background-color: #fed;">
+	<style>
+		a{
+			fill: #00d;
+			font-size: 40px;
+			text-anchor: middle;
+			font-weight: bold;
+		}
+		a:hover{
+			text-decoration: underline;
+		}
+	</style>
+	<defs>
+		<g id="model">
+			<path
+				d="M0,0 h100 v100 h-100 z"
+				fill="#f00"
+				fill-opacity="0.5"
+				stroke="#000"
+				stroke-width="2"
+			/>
+			
+			<text
+				x="0"
+				y="0"
+				dx="50px"
+				dy="50px"
+				text-anchor="middle"
+				dominant-baseline="middle"
+				font-size="70px"
+				fill="black"
+			>Rx</text>
+			
+			<path
+				d="M100,0 h100 v100 h-100 z"
+				fill="#0f0"
+			/>
+			
+			<path
+				d="M0,100 h100 v100 h-100 z"
+				fill="#00f"
+			/>
+			
+			<path
+				d="M100,100 h100 v100 h-100 z"
+				fill="#f00"
+			/>
+		</g>
+		<filter
+			id="feColorMatrix"
+			x="0%"
+			y="0%"
+			width="100%"
+			height="100%"
+		>
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 0 0.5"
+			/>
+			<!--
+			<feBlend
+				mode="darken"
+				in="opaqueBlur"
+				in2="SourceGraphic"
+			/>
+			-->
+		</filter>
+		<mask id="myMask">
+			<rect x="0" y="0" width="200" height="200" fill="white"/>
+			<rect x="50" y="50" width="100" height="100" fill="black"/>
+		</mask>
+		<mask id="myMask2">
+			<rect x="0" y="0" width="200" height="200" fill="black"/>
+			<rect x="50" y="50" width="100" height="100" fill="white"/>
+		</mask>
+	</defs>
+	
+	<text
+		x="100"
+		y="100"
+		dx="100px"
+		dy="-40px"
+		text-anchor="middle"
+		font-size="40px"
+		font-weight="bold"
+		fill="#000"
+	>model</text>
+	<use
+		href="#model"
+		x="100"
+		y="100"
+	/>
+	
+	<a href="https://developer.mozilla.org/en-US/docs/Web/SVG/Element/feColorMatrix" target="_blank">
+		<text
+			x="500"
+			y="100"
+			dx="100px"
+			dy="-40px"
+		>&lt;feColorMatrix&gt;</text>
+	</a>
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		mask="url(#myMask)"
+	/>
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		mask="url(#myMask2)"
+		filter="url(#feColorMatrix)"
+	/>
+	
+	
+</svg>
+</body>
+</html>

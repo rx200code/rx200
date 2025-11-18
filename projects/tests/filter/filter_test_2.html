@@ -1,0 +1,187 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Фильтры SVG</title>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" style="background-color: #fed;">
+	<style>
+		#use_model{
+			filter: url(#feColorMatrix_0);
+			-webkit-filter: url(#feColorMatrix_0);
+			-moz-filter: url("#feColorMatrix_0");
+			-o-filter: url(#feColorMatrix_0);
+			
+		}
+		
+	</style>
+	<defs>
+		<g id="model">
+			<path
+				d="M0,0 h100 v100 h-100 z"
+				fill="#f00"
+				fill-opacity="0.5"
+				stroke="#000"
+				stroke-width="5"
+			/>
+			
+			<text
+				x="0"
+				y="0"
+				dx="50px"
+				dy="50px"
+				text-anchor="middle"
+				dominant-baseline="middle"
+				font-size="70px"
+				fill="black"
+			>Rx</text>
+			
+			<path
+				d="M100,0 h100 v100 h-100 z"
+				fill="#0f0"
+			/>
+			
+			<path
+				d="M0,100 h100 v100 h-100 z"
+				fill="#00f"
+			/>
+			
+			<path
+				d="M100,100 h100 v100 h-100 z"
+				fill="#f00"
+			/>
+		</g>
+		<filter
+			id="feColorMatrix_0"
+		>
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 1 0 0 0
+					0 1 1 0 0
+					0 0 1 0 0
+					0 0 0 .7 0"
+			/>
+		</filter>
+		
+		<filter
+			id="feColorMatrix_1"
+		>
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 1 0 0 0
+					0 1 1 0 0
+					0 0 1 0 0
+					0 0 0 .7 0"
+				result="matrix_0"
+			/>
+			<feColorMatrix
+				in="matrix_0"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 1 0"
+				x="50"
+				y="50"
+				width="100"
+				height="100"
+				result="matrix_1"
+			/>
+			<feColorMatrix
+				in="matrix_1"
+				type="matrix"
+				values="
+					0 0 0 0 1
+					0 0 0 0 1
+					0 0 0 0 1
+					0 0 0 0 1"
+				result="matrix_2"
+			/>
+			<!-- k1*i1*i2 + k2*i1 + k3*i2 + k4 -->
+			<feComposite
+				in="SourceGraphic"
+				in2="matrix_2"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="-1"
+				k4="0"
+				result="matrix_3"
+			/>
+			<feComposite
+				in="matrix_3"
+				in2="matrix_1"
+				operator="over"
+				result="comp"
+			/>
+		</filter>
+		
+		<mask id="mask_1">
+			<rect x="-10" y="-10" width="220" height="220" fill="white"/>
+			<rect x="50" y="50" width="100" height="100" fill="black"/>
+		</mask>
+		<mask id="mask_2">
+			<rect x="0" y="0" width="200" height="200" fill="black"/>
+			<rect x="50" y="50" width="100" height="100" fill="white"/>
+		</mask>
+	</defs>
+	
+	<path
+		d="M50,190 h1100 "
+		stroke="#000"
+		stroke-width="5"
+	/>
+	
+	<use
+		href="#model"
+		x="100"
+		y="100"
+	/>
+	
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		mask="url(#mask_1)"
+	/>
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		mask="url(#mask_2)"
+		filter="url(#feColorMatrix_0)"
+	/>
+	
+	<use
+		href="#model"
+		x="900"
+		y="100"
+		filter="url(#feColorMatrix_1)"
+	/>
+	
+	<path
+		d="M50,590 h1100 "
+		stroke="#000"
+		stroke-width="5"
+	/>
+	
+	<use
+		href="#model"
+		x="100"
+		y="500"
+		filter="url(#feColorMatrix_0)"
+	/>
+	
+	<use
+		href="#model"
+		id="use_model"
+		x="500"
+		y="500"
+	/>
+</svg>
+</body>
+</html>

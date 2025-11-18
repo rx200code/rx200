@@ -1,0 +1,82 @@
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Сфера.</title>
+<script type="text/javascript">
+
+
+var view = new Object();
+let width = 1000;
+let height = 800;
+
+let centerX = width / 2;
+let centerY = height / 2;
+let radius = height * .45;
+let depthR = 0x22;
+let depthG = 0x22;
+let depthB = 0x22;
+//let depth = 0x00;
+let background = 0x00;
+view.start = function(){
+	this.color = "#e9e9e9";
+	this.canvas = document.createElement('canvas');
+	this.canvas.width = width;
+	this.canvas.height = height;
+	document.body.prepend(this.canvas);
+	this.c = this.canvas.getContext('2d');
+	
+	this.imageData = this.c.createImageData(width, height);
+	
+	this.c.fillStyle = this.color;
+	this.c.fillRect(0, 0, this.width, this.height);
+	
+	this.view = function(){
+		//this.c.fillRect(0, 0, width, height);
+		
+		
+		for(let h = 0; h < height; h++){
+			for(let w = 0; w < width; w++){
+				let distance = ((w - centerX) ** 2 + (h - centerY) ** 2) ** .5;
+				let id = h * width * 4 + w * 4;
+				if(distance <= radius){
+					let cof = ((radius ** 2 - distance ** 2) ** .5) / radius;
+					let colorR = Math.round(((0xFF - depthR) * cof) + depthR);// | 0;
+					let colorG = Math.round(((0xFF - depthG) * cof) + depthG);// | 0;
+					let colorB = Math.round(((0xFF - depthB) * cof) + depthB);// | 0;
+					this.imageData.data[id + 0] = colorR;  // R value
+					this.imageData.data[id + 1] = colorG;  // G value
+					this.imageData.data[id + 2] = colorB;  // B value
+					this.imageData.data[id + 3] = 0xFF;  // A value
+				}else{
+					this.imageData.data[id + 0] = background;  // R value
+					this.imageData.data[id + 1] = background;  // G value
+					this.imageData.data[id + 2] = background;  // B value
+					this.imageData.data[id + 3] = 0xFF;  // A value
+				}
+			}
+		}
+		
+		this.c.putImageData(this.imageData, 0, 0);
+		
+		
+		out("centerX "+centerX+"<br>centerY "+centerY)
+	}.bind(this);
+	this.view();
+	
+}
+window.onload = function(){
+	view.start();
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+</script>
+</head>
+<body>
+<!--TEST-->
+<br>
+<span id="output"></span>
+<!--TEST-->
+</body>
+</html>
+

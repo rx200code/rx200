@@ -1,0 +1,36 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>dom</title>
+<script type="text/javascript">
+var dom;//=document.getElementById("dom");
+window.onload = function(){dom=document.getElementById("dom");};
+function fff2(){
+  var text="";
+  var textObj=document.getElementById("input").value;
+  var obj=eval(document.getElementById("input").value);
+  text+=""+obj+"<br>";
+  for(var i in obj)text+="<span onClick=document.getElementById('input').value=&quot;"+
+  textObj+(isFinite(i)?"["+i+"]":"."+i)+"&quot;>"+
+  eval(document.getElementById("input2").value)+"</span><br>";
+  document.getElementById("output2").innerHTML=text;}
+function fff(textObj){
+  var text="";
+  var obj=eval(textObj);
+  text+="<span onClick=fff(\""+(textObj.lastIndexOf("[")<0?textObj:textObj.substring(0,textObj.lastIndexOf("[")))+"\")><b>"+textObj+"</b></span><br>"+obj+"<br>";
+  for(var i in obj)text+="<span onClick=fff(\""+textObj+"['"+i+"']\")><b>"+i+
+  "</b></span><span  onClick=document.getElementById('input').value=\""+textObj+(isFinite(i)?"["+i+"]":"."+i)+"\"> = "+obj[i]+"</span><br>";
+  document.getElementById("output").innerHTML=text;}
+</script>
+</head>
+<body>
+<div id="dom">123div123</div>
+<input type="button" value="button" onClick="fff('dom')">
+<span id="output"></span>
+<br><input type="button" value="button2" onClick="fff2()">
+<input type="text" id="input" size="140" value="">
+<input type="button" value="()" onClick="document.getElementById('input').value+='()'"><br>
+<input type="button" value="reset" onClick="document.getElementById('input2').value=&quot;i+' = '+obj[i]&quot;">
+<input type="text" id="input2" size="140" value="i+' = '+obj[i]">
+<br><span id="output2"></span>
+</body>
+</html>

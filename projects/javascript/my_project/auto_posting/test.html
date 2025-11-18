@@ -1,0 +1,24 @@
+<html>
+<title>JSONP</title>
+<head></head>
+<body>
+<script type="text/javascript">
+	//alert(4+8192+262144);//270340
+	//access_token=vk1.a.xxxxxXXxxxxx
+
+	var script = document.createElement('SCRIPT');
+	//script.src = "https://api.vk.com/method/users.get?user_id=1477085&fields=name&v=5.131&callback=callbackFunc";
+	//script.src = "https://api.vk.com/method/users.getById?access_token=vk1.a.xxxxxXXxxxxx&group_ids=public222541136&v=5.131&callback=callbackFunc";
+	//script.src = "https://api.vk.com/method/groups.getById?access_token=vk1.a.xxxxxXXxxxxx&group_ids=public222541136&v=5.131&callback=callbackFunc";
+	script.src = "https://api.vk.com/method/groups.getById?access_token=xxxxxXXxxxxx&group_ids=public222541136&v=5.131&callback=callbackFunc";
+
+	//xxxxxXXxxxxx
+	document.getElementsByTagName("head")[0].appendChild(script);
+	function callbackFunc(result) {
+		alert(result);
+		alert(JSON.stringify(result));
+	}
+</script>
+</body>
+
+</html>

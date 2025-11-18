@@ -1,0 +1,23 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Настройка цвета</title>
+<script defer src="create_color.js"></script>
+
+<script type="text/javascript">
+function out_color(t_color){
+	//document.getElementById("out").style.backgroundColor = "#"+t_color;
+	out(t_color);
+}
+window.onload = function(){
+	document.getElementById("canvas").append(create_color(out_color));
+	out("Готово");
+}
+function out(text){
+	document.getElementById("out").innerHTML = text;
+}
+</script>
+</head>
+<body>
+<div id="canvas"></div><br><br><span id="out">123123</span>
+</body>
+</html>

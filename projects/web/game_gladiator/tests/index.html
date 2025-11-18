@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>gladiator</title>
+		<style>
+			#game{
+				/**
+				overflow: hidden;
+				/**/
+				position: relative;
+				padding: 0;
+				margin: 0;
+				background-color: #888;
+				border: solid 2px #000;
+				width: 1000px;
+				height: 500px;
+			}
+		</style>
+		<script src="code/main.js"></script>
+		<script>
+			window.onload = () => {
+				
+				main(document.getElementById("game"));
+			};
+			function test(){
+				out("test");
+				
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<div id="game"></div>
+		<input type="button" onclick="test()" value="test" /> <span id="info">info</span>
+		<br>
+		<span id="out">out</span>
+	</body>
+</html>
+ 

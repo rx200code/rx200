@@ -1,0 +1,34 @@
+<body>
+<style>
+	
+html, body { display: flex; height: 100%; width: 100%; margin: 0; }
+
+.⛅ {
+	/*font: 12.5em Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji;*/
+	font: 300px Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji;
+	margin: auto;
+}
+.qwe {
+	/*font: 12.5em Apple Color Emoji, Segoe UI Emoji, Noto Color Emoji;*/
+	font: 300px Segoe UI Emoji, Noto Color Emoji;
+	margin: auto;
+}
+</style>
+<script>
+		
+var month = 1 + new Date().getMonth();
+//var season = Math.floor(month % 12 / 3);
+var season = 0;
+
+// пример использования
+//var seasonName = ["winter", "spring", "summer", "fall"][season];
+var seasonEmoji = ["&#9731;", "&#127793;", "&#127958;", "&#127810;"][season];
+var seasonColor = ["#f0f8ff", "#f1fff0", "#fefff0", "#fff4f0"][season];
+//var seasonPic = "pics/" + seasonName + ".jpg";
+
+//document.body.style.backgroundColor = seasonColor;
+document.write('<p class="⛅">' + seasonEmoji + '</p>');
+document.write('<p class="qwe">' + seasonEmoji + '</p>');
+document.write('<p class="⛅">' + "&#x"+"2167" + '</p>');
+		
+</script>

@@ -1,0 +1,65 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>test</title>
+<script type="text/javascript">
+var svg = null;
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function out2(text){
+	document.getElementById("output2").innerHTML=text;
+}
+function getMousePosition(e){
+        let CTM = svg.getScreenCTM(); // Возвращает DOMMatrix, представляющую матрицу, которая преобразует систему координат текущего элемента в систему координат окна просмотра SVG для фрагмента документа SVG.
+        if (e.touches) { e = e.touches[0]; } // iPhone
+        return {
+            x: (e.clientX - CTM.e) / CTM.a,
+            y: (e.clientY - CTM.f) / CTM.d
+        }
+    }
+function test(){
+	//out();
+	//return;
+	let svg_x = svg.getBoundingClientRect().left + window.scrollX;//Положение SVG по оси X.
+	let svg_y = svg.getBoundingClientRect().top + window.scrollY;//Положение SVG по оси Y.
+	let elm_g = document.getElementById("circle");
+	let elm_g_x = elm_g.getBoundingClientRect().x - svg_x + window.scrollX;//Определяем положение g относительно основного окна  SVG по оси "x". Положение g относительно документа минус отступ(положение) окна SVG относительно всего документа плюс скролл по оси "x".
+	let elm_g_y = elm_g.getBoundingClientRect().y - svg_y + window.scrollY;//Определяем положение g относительно основного окна  SVG по оси "y". Положение g относительно документа минус отступ(положение) окна SVG относительно всего документа плюс скролл по оси "y".
+	let CTM = svg.getScreenCTM();
+	let elm_g_pos_x = (elm_g.getBoundingClientRect().x - CTM.e) / CTM.a;
+	let elm_g_pos_y = (elm_g.getBoundingClientRect().y - CTM.f) / CTM.d;
+	out("SVG x = "+svg_x+", y = "+svg_y+"; G x = "+elm_g_x+", y = "+elm_g_y+".");
+	out2("x = "+elm_g_pos_x+", y = "+elm_g_pos_y);
+}
+window.onload = function(){
+	svg = document.getElementsByClassName('canvas-svg')[0];
+	svg.style['background-color'] = "#0f0";
+	test()
+	svg.addEventListener("mousemove", function(event){//Срабатывает при движении мыши.
+		//out2((event.pageX - svg.getBoundingClientRect().left + window.scrollX)+" "+(event.pageY - svg.getBoundingClientRect().top + window.scrollY));//Координаты мыши относительно экрана svg.
+		out2(event.clientY);
+		out(getMousePosition(event).y);
+	});
+}
+</script>
+</head>
+<body>
+<br>
+<input type="text" size="2" id="c_1" value="7f" oninput="">
+<input type="button" id="test" value="test" onClick="test()">
+<br>
+<span id="output"></span>
+<br>
+<span id="output2"></span>
+<br>
+<svg width="100%" height="100%" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMin slice" x="0" y="0"  class="canvas-svg" tabindex="1">
+<path d="M0,174.9955914041193 H1000" stroke="black" fill="transparent"/>
+<path d="M174.9955914041193,0 V400" stroke="black" fill="transparent"/>
+<g transform="translate(100 100)">
+     <g transform="translate(100 100)"> 
+          <circle id="circle" r="50" cx="25" cy="25" fill="yellow" />
+     </g>
+</g>
+<svg>
+</body>
+</html>

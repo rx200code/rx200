@@ -1,0 +1,454 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Фильтры SVG</title>
+</head>
+<body>
+<table><tr><td>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" style="background-color: #fff;">
+	<style>
+	</style>
+	<defs>
+		<g id="model_2">
+			<image
+				href="https://artchive.ru/res/media/img/sx200/work/864/378925.jpg"
+				height="200"
+				width="200"
+			/>
+		</g>
+		<g id="model">
+			<path
+				d="M0,0 h100 v100 h-100 z"
+				fill="#f00"
+				fill-opacity="0.5"
+				stroke="#000"
+				stroke-width="5"
+			/>
+			
+			<text
+				x="0"
+				y="0"
+				dx="50px"
+				dy="50px"
+				text-anchor="middle"
+				dominant-baseline="middle"
+				font-size="70px"
+				fill="black"
+			>Rx</text>
+			
+			<path
+				d="M100,0 h100 v100 h-100 z"
+				fill="#0f0"
+			/>
+			
+			<path
+				d="M0,100 h100 v100 h-100 z"
+				fill="#00f"
+			/>
+			
+			<path
+				d="M100,100 h100 v100 h-100 z"
+				fill="#f00"
+			/>
+		</g>
+		<!----
+		<filter
+			id="GaussianBlur"
+		>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="2"
+			/>
+		</filter>
+		<!---->
+		<!----
+		<filter
+			id="HighPass"
+		>
+			<feConvolveMatrix
+				in="SourceGraphic"
+				order="5"
+				kernelMatrix="
+					0 1 1 1 0
+					1 2 2 2 1
+					1 2 1 2 1
+					1 2 2 2 1
+					0 1 1 1 0
+				"
+			/>
+		</filter>
+		<!---->
+		<filter
+			id="GaussianBlur"
+			color-interpolation-filters="sRGB"
+		>
+			<!----
+			<feConvolveMatrix
+				in="SourceGraphic"
+				order="15 15"
+				divisor="16,4375"
+				preserveAlpha="true"
+				bias="0"
+				
+				kernelMatrix="
+					0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125
+					0.0078125 0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.125     0.125     0.125     0.125     0.125     0.125     0.125     0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.125     0.25      0.25      0.25      0.25      0.25      0.125     0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.125     0.25      0.5       0.5       0.5       0.25      0.125     0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.125     0.25      0.5       1         0.5       0.25      0.125     0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.125     0.25      0.5       0.5       0.5       0.25      0.125     0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.125     0.25      0.25      0.25      0.25      0.25      0.125     0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.125     0.125     0.125     0.125     0.125     0.125     0.125     0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.0625    0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.03125   0.015625  0.0078125
+					0.0078125 0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.015625  0.0078125
+					0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125 0.0078125
+				"
+				result="matrix_15"
+			/>
+			<!---->
+			<!----
+			<feConvolveMatrix
+				in="SourceGraphic"
+				order="1 1"
+				divisor="1"
+				preserveAlpha="true"
+				bias="0"
+				
+				kernelMatrix="
+					0.0078125
+				"
+				result="matrix_1"
+			/>
+			<!---->
+			<!----
+			<feComposite
+				in="matrix_15"
+				in2="matrix_1"
+				result="comp"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+			/>
+			<!---->
+			<!---->
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="7"
+				result="gaussian_blur_7x"
+			/>
+			
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="6"
+				result="gaussian_blur_6x"
+			/>
+			
+			<feColorMatrix
+				id="m_frequency_2"
+				in="gaussian_blur_7x"
+				type="matrix"
+				values="
+					.5 0 0 0 0
+					0 .5 0 0 0
+					0 0 .5 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_7"
+			/>
+			<feColorMatrix
+				id="m_frequency_4"
+				in="gaussian_blur_6x"
+				type="matrix"
+				values="
+					.25 0 0 0 0
+					0 .25 0 0 0
+					0 0 .25 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_6"
+			/>
+			
+			<feComposite
+				id="frequency_2_4"
+				in="gaussian_blur_7"
+				in2="gaussian_blur_6"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+				result="gaussian_blur_7_6"
+			/>
+			
+			
+			
+			<!---->
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="5"
+				result="gaussian_blur_5x"
+			/>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="4"
+				result="gaussian_blur_4x"
+			/>
+			
+			<feColorMatrix
+				id="m_frequency_8"
+				in="gaussian_blur_5x"
+				type="matrix"
+				values="
+					.125 0 0 0 0
+					0 .125 0 0 0
+					0 0 .125 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_5"
+			/>
+			<feColorMatrix
+				id="m_frequency_16"
+				in="gaussian_blur_4x"
+				type="matrix"
+				values="
+					.0625 0 0 0 0
+					0 .0625 0 0 0
+					0 0 .0625 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_4"
+			/>
+			
+			<feComposite
+				in="gaussian_blur_5"
+				in2="gaussian_blur_4"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+				result="gaussian_blur_5_4"
+			/>
+			<feComposite
+				in="gaussian_blur_7_6"
+				in2="gaussian_blur_5_4"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+				result="gaussian_blur_7_6_5_4"
+			/>
+			<!---->
+			<!---->
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="3"
+				result="gaussian_blur_3x"
+			/>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="2"
+				result="gaussian_blur_2x"
+			/>
+			
+			<feColorMatrix
+				id="m_frequency_32"
+				in="gaussian_blur_3x"
+				type="matrix"
+				values="
+					.03125 0 0 0 0
+					0 .03125 0 0 0
+					0 0 .03125 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_3"
+			/>
+			<feColorMatrix
+				id="m_frequency_64"
+				in="gaussian_blur_2x"
+				type="matrix"
+				values="
+					.015625 0 0 0 0
+					0 .015625 0 0 0
+					0 0 .015625 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_2"
+			/>
+			
+			<feComposite
+				in="gaussian_blur_3"
+				in2="gaussian_blur_2"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+				result="gaussian_blur_3_2"
+			/>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="1"
+				result="gaussian_blur_1x"
+			/>
+			<feGaussianBlur
+				in="SourceGraphic"
+				stdDeviation="0"
+				result="gaussian_blur_0x"
+			/>
+			
+			<feColorMatrix
+				id="m_frequency_128"
+				in="gaussian_blur_1x"
+				type="matrix"
+				values="
+					.0078125 0 0 0 0
+					0 .0078125 0 0 0
+					0 0 .0078125 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_1"
+			/>
+			<feColorMatrix
+				id="m_frequency_256"
+				in="gaussian_blur_0x"
+				type="matrix"
+				values="
+					.00390625 0 0 0 0
+					0 .00390625 0 0 0
+					0 0 .00390625 0 0
+					0 0 0 1 0"
+				result="gaussian_blur_0"
+			/>
+			
+			<feComposite
+				in="gaussian_blur_1"
+				in2="gaussian_blur_0"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+				result="gaussian_blur_1_0"
+			/>
+			<feComposite
+				in="gaussian_blur_3_2"
+				in2="gaussian_blur_1_0"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+				result="gaussian_blur_3_2_1_0"
+			/>
+			<feComposite
+				in="gaussian_blur_7_6_5_4"
+				in2="gaussian_blur_3_2_1_0"
+				operator="arithmetic"
+				k1="0"
+				k2="1"
+				k3="1"
+				k4="0"
+				result="comp"
+			/>
+			<!---->
+		</filter>
+	</defs>
+	
+	<path
+		d="M50,190 h1100 M50,590 h1100"
+		stroke="#000"
+		stroke-width="5"
+	/>
+	
+	<use
+		href="#model"
+		x="100"
+		y="100"
+	/>
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		filter="url(#GaussianBlur)"
+	/>
+	<use
+		href="#model"
+		x="900"
+		y="100"
+	/>
+	
+	<use
+		href="#model_2"
+		x="100"
+		y="500"
+	/>
+	<use
+		href="#model_2"
+		x="500"
+		y="500"
+		filter="url(#GaussianBlur)"
+	/>
+	<use
+		href="#model_2"
+		x="900"
+		y="500"
+	/>
+</svg>
+</td>
+<td>
+<script type="text/javascript">
+	//var x = -3;
+	//alert(1/(1*Math.sqrt(2*Math.PI))*Math.exp(-1*Math.pow(x, 2)/(2*Math.pow(1, 2))));
+	//alert(0.0078125 + 0.0078125 + 0.015625 + 0.03125 + 0.0625 + 0.125 + 0.25 + 0.5);
+	//alert(256 * (.0078125/2));
+	function f_frequency(value, frequency){
+		//out(value);
+		let a_channel = document.getElementById("a_channel");
+		let t_matrix_valuec = value+" 0 0 0 0 0 "+value+" 0 0 0 0 0 "+value+" 0 0 0 0 0 "+(a_channel.checked ? value : "1")+" 0";
+		let matrix = document.getElementById("m_frequency_"+frequency);
+		matrix.setAttributeNS(null, "values", t_matrix_valuec);
+		out(value);
+	}
+	function f_frequency_2_4(value){
+		//out(value);
+		let frequency_2_4 = document.getElementById("frequency_2_4");
+		frequency_2_4.setAttributeNS(null, "k4", value);
+		out(value);
+	}
+	function out(text){
+		document.getElementById("output").innerHTML=text;
+	}
+</script>
+<table>
+<tr><td>Альфа канал </td><td><input type="checkbox" id="a_channel"></td></tr>
+<tr><td>частота 256 </td><td><input id="input_frequency_256" type="range" min="0" max="1" step=".00390625" value=".00390625" oninput="f_frequency(this.value, '256')"></td></tr>
+<tr><td>частота 128 </td><td><input id="input_frequency_128" type="range" min="0" max="1" step=".00390625" value=".0078125" oninput="f_frequency(this.value, '128')"></td></tr>
+<tr><td>частота 64 </td><td><input id="input_frequency_64" type="range" min="0" max="1" step=".00390625" value=".015625" oninput="f_frequency(this.value, '64')"></td></tr>
+<tr><td>частота 32 </td><td><input id="input_frequency_32" type="range" min="0" max="1" step=".00390625" value=".03125" oninput="f_frequency(this.value, '32')"></td></tr>
+<tr><td>частота 16 </td><td><input id="input_frequency_16" type="range" min="0" max="1" step=".00390625" value=".0625" oninput="f_frequency(this.value, '16')"></td></tr>
+<tr><td>частота 8 </td><td><input id="input_frequency_8" type="range" min="0" max="1" step=".00390625" value=".125" oninput="f_frequency(this.value, '8')"></td></tr>
+<tr><td>частота 4 </td><td><input id="input_frequency_4" type="range" min="0" max="1" step=".00390625" value=".25" oninput="f_frequency(this.value, '4')"></td></tr>
+<tr><td>частота 2 </td><td><input id="input_frequency_2" type="range" min="0" max="1" step=".00390625" value=".5" oninput="f_frequency(this.value, '2')"></td></tr>
+<tr><td>Дополнительное </br>поднятие </br>/понижение</br>частоты 2 и 4 </br>включая их</br> альфа канал</td><td><input id="input_frequency_2_4" type="range" min="-1" max="1" step=".00390625" value="0" oninput="f_frequency_2_4(this.value)"></td></tr>
+<tr><td></td><td><span id="output"></span></td></tr>
+</table>
+</td></tr>
+</table>
+<script type="text/javascript">
+	window.onload = function(){
+		//Настройки.
+		document.getElementById("a_channel").checked = false;
+		document.getElementById("input_frequency_256").value=".00390625";
+		document.getElementById("input_frequency_128").value=".0078125";
+		document.getElementById("input_frequency_64").value=".015625";
+		document.getElementById("input_frequency_32").value=".03125";
+		document.getElementById("input_frequency_16").value=".0625";
+		document.getElementById("input_frequency_8").value=".125";
+		document.getElementById("input_frequency_4").value=".25";
+		document.getElementById("input_frequency_2").value=".5";
+		document.getElementById("input_frequency_2_4").value="0";
+		
+	}
+</script>
+</body>
+</html>

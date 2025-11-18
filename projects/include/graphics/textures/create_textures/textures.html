@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<title>Фильтры.</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<style>
+body{
+	padding: 0px;
+	margin: 0px;
+}
+svg{
+	background-color: #aaa;
+	
+}
+</style>
+
+<script type="text/javascript">
+
+</script>
+</head>
+<body>
+
+<p>1</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+  <filter id='noiseFilter'>
+    <feTurbulence 
+      type='fractalNoise' 
+      baseFrequency='0.65' 
+      numOctaves='3' 
+      stitchTiles="stitch" />
+  </filter>
+<rect width='100%' height='100%' filter='url(#noiseFilter)' />
+</svg>
+
+<p>2</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+  <filter id='noiseFilter2'>
+    <feTurbulence type="turbulence" baseFrequency="0.01 0.01" numOctaves="2" seed="5" stitchTiles="noStitch" />
+  </filter>
+<rect width='1000' height='1000' filter='url(#noiseFilter2)' />
+</svg>
+
+<p>3</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+    <filter id="filter3">
+        <feTurbulence type="fractalNoise" baseFrequency="0.003" numOctaves="1"/>
+        <feColorMatrix values="1 0 0 0 0
+                               1 0 0 0 0
+                               1 0 0 0 0
+                               0 0 0 0 1"/>
+        <feComponentTransfer>
+            <feFuncR type="table" tableValues="0 .02 .03 .03 .09 .12 .27 .91 .3 .03 0 0"/>
+            <feFuncG type="table" tableValues=".01 .09 .16 .18 .38 .48 .54 .73 .33 .09 .01 .01"/>
+            <feFuncB type="table" tableValues=".03 .17 .3 .25 .37 .42 .42 .6 .17 .01 0 0"/>
+        </feComponentTransfer>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#filter3)"/>
+</svg>
+
+
+<p>4</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+    <filter id="filter4">
+        <feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.003"
+			seed="0"
+			numOctaves="4"
+			stitchTiles="stitch"
+		/>
+        
+        <feComponentTransfer>
+            <feFuncR type="table" tableValues=".05 .09 .09 .09 .09 .12 .9 .91 .9 .03 0 0"/>
+            <feFuncG type="table" tableValues=".01 .09 .16 .18 .38 .48 .54 .73 .33 .09 .01 .01"/>
+            <feFuncB type="table" tableValues=".03 .17 .3 .25 .37 .42 .42 .6 .17 .01 0 0"/>
+        </feComponentTransfer>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#filter4)"/>
+</svg>
+
+<p>5</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+    <filter id="filter5">
+        <feTurbulence type="fractalNoise" baseFrequency="0.0017" seed="7" numOctaves="4"/>
+        
+        <feComponentTransfer>
+            <feFuncR type="table" tableValues=".05 .09 .09 .09 .09 .12 .9 .91 .9 .03 0 0"/>
+            <feFuncG type="table" tableValues=".01 .09 .16 .18 .38 .48 .54 .73 .33 .09 .01 .01"/>
+            <feFuncB type="table" tableValues=".03 .17 .3 .25 .37 .42 .42 .6 .17 .01 0 0"/>
+        </feComponentTransfer>
+    </filter>
+    <rect width="100%" height="100%" filter="url(#filter5)"/>
+</svg>
+
+<p>6</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+  <circle id="orange-circle" r="30" cx="50" cy="200" fill="orange" >
+<animate 
+    attributeName="cx"
+    from="50"
+    to="50" 
+    dur="2s"
+    begin="0s"
+    values="50; 450; 50"
+    keyTimes="0; 0.5; 1"
+    fill="freeze"
+	repeatCount="indefinite"
+    id="circ-anim" />
+	</circle>
+</svg>
+
+<p>7</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+    <filter id="filter11">
+        <feTurbulence
+		x="-500"
+		y="0"
+		width="1500"
+		height="1000"
+		type="fractalNoise"
+		baseFrequency="0.0017"
+		seed="0"
+		numOctaves="4"
+		stitchTiles="stitch"
+		>
+		
+		</feTurbulence>
+		
+		<feOffset dx="0" dy="0" >
+		<animate 
+    attributeName="dx"
+    from="0"
+    to="500"
+    dur="10s"
+    begin="0s"
+    fill="freeze" />
+		</feOffset>
+		
+    </filter>
+    <rect x="-500" y="0" width="1500" height="1000" filter="url(#filter11)">
+	
+	</rect>
+</svg>
+
+<p>8</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter12">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.07"
+			seed="0"
+			numOctaves="4"
+			stitchTiles="stitch"
+		/>
+		
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter12)"/>
+</svg>
+
+<p>9</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter13">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.07"
+			seed="0"
+			numOctaves="4"
+			stitchTiles="stitch"
+		/>
+		<feComponentTransfer>
+			<feFuncR type="table" tableValues=".0 1"/>
+			<feFuncG type="table" tableValues=".0 1"/>
+			<feFuncB type="table" tableValues=".0 1"/>
+			<feFuncA type="table" tableValues="1 1"/>
+		</feComponentTransfer>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter13)"/>
+</svg>
+
+<p>10</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter14">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.8"
+			seed="0"
+			numOctaves="4"
+			stitchTiles="stitch"
+		/>
+		<feComponentTransfer>
+			<feFuncR type="table" tableValues=".0 0 .1"/>
+			<feFuncG type="table" tableValues="0 0 0 .4"/>
+			<feFuncB type="table" tableValues="0 0 0 1"/>
+			<feFuncA type="table" tableValues="0 .5"/>
+		</feComponentTransfer>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter14)"/>
+</svg>
+<!----
+<svg width="100" height="100" viewBox="0 0 100 100" xmlns='http://www.w3.org/2000/svg'><filter id="f"><feTurbulence x="0" y="0" width="100%" height="100%" type="fractalNoise" baseFrequency="0.8" seed="0" numOctaves="4" stitchTiles="stitch"/><feComponentTransfer><feFuncR type="table" tableValues=".0 0 .1"/><feFuncG type="table" tableValues="0 0 0 .4"/><feFuncB type="table" tableValues="0 0 0 1"/><feFuncA type="table" tableValues="0 .5"/></feComponentTransfer></filter><rect width="100%" height="100%" filter="url(#f)"/></svg>
+<!---->
+
+<p>11</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter15">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.8"
+			seed="0"
+			numOctaves="4"
+			stitchTiles="stitch"
+		/>
+		<feColorMatrix
+		type="matrix"
+		values=".2126 .7152 .0722 0 0
+				.2126 .7152 .0722 0 0
+				.2126 .7152 .0722 0 0
+				0 0 0 0 1 "/>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter15)"/>
+</svg>
+
+<p>12</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter17">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.8"
+			seed="0"
+			numOctaves="4"
+			stitchTiles="stitch"
+		/>
+		<feColorMatrix
+		type="matrix"
+		values="0.39 0.769 0.189 0 0
+				0.349 0.686 0.168 0 0
+				0.272 0.534 0.131 0 0
+				0 0 0 0 1"/>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter17)"/>
+</svg>
+
+<p>13</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter18">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.01"
+			seed="0"
+			numOctaves="8"
+			stitchTiles="stitch"
+		/>
+		<feColorMatrix
+		type="matrix"
+		values="0.39 0.769 0.189 0  0 
+          0.349 0.686 0.168 0  0  
+          0.272 0.534 0.131 0  0 
+            0  0 0 0  1"/>
+<feComponentTransfer>
+<feFuncR type="table" tableValues=".3 1"/>
+<feFuncG type="table" tableValues=".1 1"/>
+<feFuncB type="table" tableValues=".0 .5"/>
+		</feComponentTransfer>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter18)"/>
+</svg>
+
+<p>14</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter21">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.008"
+			seed="0"
+			numOctaves="10"
+			stitchTiles="stitch"
+		/>
+		<feColorMatrix
+		type="matrix"
+		values="0.39 0.769 0.189 0  0 
+          0.349 0.686 0.168 0  0  
+          0.272 0.534 0.131 0  0 
+            0  0 0 0  1"/>
+<feComponentTransfer>
+<feFuncR type="table" tableValues=".0 .9"/>
+<feFuncG type="table" tableValues=".4 1"/>
+<feFuncB type="table" tableValues=".7 1"/>
+		</feComponentTransfer>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter21)"/>
+</svg>
+
+<p>15</p>
+<svg width="500" height="500" viewBox="0 0 500 500" xmlns='http://www.w3.org/2000/svg'>
+	<filter id="filter22">
+		<feTurbulence
+			x="0"
+			y="0"
+			width="100%"
+			height="100%"
+			type="fractalNoise"
+			baseFrequency="0.008"
+			seed="0"
+			numOctaves="10"
+			stitchTiles="stitch"
+		/>
+		<feColorMatrix
+		type="matrix"
+		values="0.39 0.769 0.189 0  0 
+          0.349 0.686 0.168 0  0  
+          0.272 0.534 0.131 0  0 
+            0  0 0 0  1"/>
+<feComponentTransfer>
+<feFuncR type="table" tableValues=".0 .9"/>
+<feFuncG type="table" tableValues=".4 1"/>
+<feFuncB type="table" tableValues=".7 1"/>
+		</feComponentTransfer>
+	</filter>
+	<rect width="100%" height="100%" filter="url(#filter22)"/>
+</svg>
+
+</body>
+</html>

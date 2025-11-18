@@ -1,0 +1,22 @@
+#span_2{
+	/*border: 1px solid black; /* Параметры рамки */
+	/*height: 800px; /* Высота блока */
+	/*width: 800px; /* Ширина блока */
+	float: left; /* Обтекание */
+	/*display: inline-block;/* Способ показа элемента */
+}
+#error_2{
+	color: red; /* Цвет текста */
+	float: left; /* Обтекание */
+}
+#span_3{
+	position: fixed; /* позиционирование */
+	/*border: 1px solid black; /* Параметры рамки */
+	/*height: 800px; /* Высота блока */
+	/*width: 800px; /* Ширина блока */
+	/*top: 20px; /* Положение от верхнего края */
+	/*right: 10px; /* Положение от правого края */
+	/*float: right; /* Обтекание */
+	/*display: inline-block;/* Способ показа элемента */
+	word-break: break-all; /* Перенос слов */
+}

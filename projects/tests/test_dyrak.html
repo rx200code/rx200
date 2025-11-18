@@ -1,0 +1,123 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Игра Дурак</title>
+<script type="text/javascript">
+var game = {
+	view:null,
+	model:null,
+	controller:null
+}
+game.start = function(){
+	this.view = new this.View();
+	this.model = new this.Model();
+	this.controller = new this.Controller();
+	
+}.bind(game);
+window.onload = game.start;
+
+game.View = function(){
+	this.start = null;
+	
+	this.size_players = 3;
+	
+	this.view = document.getElementById('view');
+	
+	this.start_menu = document.createElement("div");
+	this.start_menu.innerHTML = "Введите количество играков: ";
+	
+	let input_size_players = document.createElement("input");
+	input_size_players.setAttribute("type", "text");
+	input_size_players.setAttribute("size", "2");
+	input_size_players.setAttribute("value", this.size_players);
+	input_size_players.addEventListener("input", function(){this.size_players = input_size_players.value;}.bind(this), false);
+	this.start_menu.appendChild(input_size_players);
+	
+	let error_start_menu = document.createElement("code");
+	let set_error_start_menu = function(text){
+		
+		error_start_menu.innerHTML = text ? " "+text : "";
+	}
+	this.start_menu.appendChild(error_start_menu);
+	
+	this.start_menu.appendChild(document.createElement("br"));
+	
+	this.button_start_game = document.createElement("input");
+	this.button_start_game.setAttribute("type", "button");
+	this.button_start_game.setAttribute("value", "Начать игру");
+	this.button_start_game.addEventListener("click", function(){set_error_start_menu(this.start(this.size_players));}.bind(this), false);
+	this.start_menu.appendChild(this.button_start_game);
+	
+	this.on_start_menu = function(){
+		if(!this.view.contains(this.start_menu))this.view.appendChild(this.start_menu);
+	}
+	this.off_start_menu = function(){
+		if(this.view.contains(this.start_menu))this.view.removeChild(this.start_menu);
+	}
+	this.on_start_menu();
+}
+game.Controller = function(){
+	this.start = function(size_players){
+		if(isNaN(size_players)){
+			return "Ошибка: поле с количеством играков должно быть заполнено числом";
+		}else{
+			size_players = Math.abs(Math.floor(size_players));
+		}
+		
+		return game.model.start(size_players);
+	}
+	game.view.start = this.start;
+	
+}
+game.Model = function(){
+	this.cards = [];
+	this.index_cards;//int
+	this.players = [];
+	for(let i = 1; i <= 36; i++){
+		this.cards[this.cards.length] = i;
+	}
+	this.shuffle_cards = function(){
+		this.cards.sort(function (){return Math.random() - .5;});
+	}
+	this.start =  function(size_players){
+		if(size_players < 2)return "Ошибка: количество играков слишком мало.";
+		if(this.cards.length / size_players < 6)return "Ошибка: количество играков слишком много.";
+		this.shuffle_cards();
+		this.index_cards = 0;
+		
+		
+	}
+	
+}
+
+
+function test(){
+	game.model.shuffle_cards();
+	out(game.model.cards);
+}
+
+class Aaa{
+	constructor(vv = "fff"){
+		this.name = vv;
+	}
+}
+class Aaa2 extends Aaa{
+	constructor(vv){
+		super();
+		this.name2 = vv;
+	}
+}
+
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+</script>
+</head>
+<body>
+	<div id="view"><div>
+	<br>
+		<input type="button" id="test" value="test" onClick="test()">
+	<br>
+		<span id="output"></span>
+	<br>
+</body>
+</html>

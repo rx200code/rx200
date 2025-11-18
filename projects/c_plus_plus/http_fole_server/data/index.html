@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Игра</title>
+<style type="text/css">
+:root{
+	--size-td: 70px;
+}
+td{
+	/**/
+	padding: 0px 30px 0px 0px;
+	width: var(--size-td);
+	height: var(--size-td);
+	/**/
+	cursor: pointer;
+	font-size: 3em; 
+	text-align: center;
+}
+</style>
+<script type="text/javascript">
+//// Создаем массив 25 чисел от 1 до 25, в случайном порядке.
+let width_numbers = 6;//15
+let height_numbers = 6;//7
+let all_numbers = width_numbers * height_numbers;
+let arr_numbers = [];
+for(let i = 1; i <= all_numbers; i++)arr_numbers.push(i);
+
+//arr_numbers.sort(() => Math.random() - 0.5);
+
+//// Создаем переменную счетчик.
+let counter_number = 0;
+//// Создаем таблицу, потом заменим на канвас.
+let arr_td = [];
+function createTable(){
+	let elm_table = document.createElement("table");
+	let elm_tr;
+	for(let i = 0; i < all_numbers; i++){
+		if(i % width_numbers === 0)elm_table.appendChild(elm_tr = document.createElement("tr"));
+		elm_tr.appendChild(arr_td[i] = document.createElement("td"));
+	}
+	document.getElementById("canvas").appendChild(elm_table);
+}
+
+//// функция заполнения.
+function update(){
+	counter_number++;
+	//counter_number = 12;
+	if(counter_number > all_numbers)counter_number = 1;
+	arr_numbers.sort(() => Math.random() - 0.5);
+	for(let i = 0; i < all_numbers; i++){
+		arr_td[i].textContent = arr_numbers[i];
+		if(arr_numbers[i] === counter_number)arr_td[i].addEventListener("click", update, {once: true});
+	}
+	out(counter_number);
+	/**
+	if(counter_number <= all_numbers)out(counter_number);
+	else out("Готово!");
+	/**/
+}
+window.onload = function(){
+	createTable();
+	update();
+	
+};
+
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").innerHTML=text;
+}
+</script>
+</head>
+<body>
+	<span id="canvas"></span>
+	<hr>
+	<button onClick="update()">random</button>
+	<hr>
+	<span id="output"></span>
+	<hr>
+	<pre id="info"></pre>
+	<hr>
+	<button onClick="update()">random</button>
+</body>
+</html>

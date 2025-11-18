@@ -1,0 +1,338 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>canvas</title>
+<link rel="stylesheet" href="file/style.css">
+<!--
+<script src="file/class.js"></script>
+<script src="file/canvas.js"></script>-->
+<script defer src="file/test_mod.js"></script>
+
+<script type="text/javascript">
+let canvas;
+let c;
+let width_canvas = 480;
+let height_canvas = 800;
+let background, text, button, focus;
+
+let grd, grd_white, grd_black;
+
+function toString_16_rgba(n){
+	let t = n.toString(16);
+	return '0'.repeat(8 - t.length)+t;
+}
+function convert_i_to_t2_hex(i){return i < 16 ? "0"+i.toString(16) : i.toString(16);}// принимает значение i от 0 до 255.
+
+
+let x = 0;
+let y = 0;
+let left, _top, width, height;
+function isFocus(){
+	return x > left && x < left + width && y > _top && y < _top +height;
+}
+let isTest = false;
+function test4(e){
+	isTest = false;
+	test();
+}
+function test3(e){
+	x = e.offsetX;
+	y = e.offsetY;
+	pix = c.getImageData(x, y, 1, 1).data;
+	isTest = true;
+	for_color.set_color(convert_i_to_t2_hex(pix[0])+convert_i_to_t2_hex(pix[1])+convert_i_to_t2_hex(pix[2]));
+}
+function test2(e){
+	x = e.offsetX;
+	y = e.offsetY;
+	if(isTest){
+		pix = c.getImageData(x, y, 1, 1).data;
+		for_color.set_color(convert_i_to_t2_hex(pix[0])+convert_i_to_t2_hex(pix[1])+convert_i_to_t2_hex(pix[2]));
+	}else test();
+}
+let coor_grd;
+let coor_grd_x = 0;
+let coor_grd_y = 0;
+let color_grd;
+function out_cof_rgb(r, g, b){
+	let max;
+	if(r === g && r === b)max = 0;
+	else max = Math.max(r, g, b);
+	if(max === 0){// r
+		coor_grd = 0;
+		color_grd = "#F00";
+		coor_grd_x = 20;
+		coor_grd_y = 761 - (r / 0xFF * 200);
+	}else if(max === r){// r
+		let r1 = r / 0xFF;
+		coor_grd_y = 761 - (r / 0xFF * 200);
+		g = g / r1;
+		b = b / r1;
+		if(g > b){// r g
+			//b += (0xFF - b) * r1;
+			
+			
+			
+			coor_grd_x = 20 + 440 - ((b / 0xFF) * 440);// b
+			g = (g - b) / (1 - b / 0xFF);
+			
+			let cof = g / 0xFF;
+			
+			coor_grd = (1 - (cof / 6)) * 480;
+			//color_grd = "#FF"+convert_i_to_t2_hex(g | 0)+"00";
+			//color_grd = "#FF"+convert_i_to_t2_hex((0xFF * cof)| 0)+"00";
+			color_grd = "#FF"+convert_i_to_t2_hex(g | 0)+"00";
+		}else{// r b
+			coor_grd_x = 20 + 440 - ((g / 0xFF) * 440);// g
+			b = (b - g) / (1 - g / 0xFF);
+			
+			let cof = b / 0xFF;
+			coor_grd = (cof / 6) * 480;
+			color_grd = "#FF00"+convert_i_to_t2_hex(b | 0);
+		}
+	}else if(max === g){// g
+		let g1 = g / 0xFF;
+		coor_grd_y = 761 - (g / 0xFF * 200);
+		r = r / g1;
+		b = b / g1;
+		if(b > r){// g b
+			coor_grd_x = 20 + 440 - ((r / 0xFF) * 440);// r
+			b = (b - r) / (1 - r / 0xFF);
+			let cof = b / 0xFF;
+			coor_grd = (((1 / 3) * 2) - (cof / 6)) * 480;
+			color_grd = "#00FF"+convert_i_to_t2_hex(b | 0);
+		}else{// g r
+			coor_grd_x = 20 + 440 - ((b / 0xFF) * 440);// b
+			r = (r - b) / (1 - b / 0xFF);
+			let cof = r / 0xFF;
+			coor_grd = (((1 / 3) * 2) + (cof / 6)) * 480;
+			color_grd = "#"+convert_i_to_t2_hex(r | 0)+"FF00";
+		}
+	}else{// b
+		let b1 = b / 0xFF;
+		coor_grd_y = 761 - (b / 0xFF * 200);
+		r = r / b1;
+		g = g / b1;
+		if(r > g){// b r
+			coor_grd_x = 20 + 440 - ((g / 0xFF) * 440);// g
+			r = (r - g) / (1 - g / 0xFF);
+			let cof = r / 0xFF;
+			coor_grd = ((1 / 3) - (cof / 6)) * 480;
+			color_grd = "#"+convert_i_to_t2_hex(r | 0)+"00FF";
+		}else{// b g
+			coor_grd_x = 20 + 440 - ((r / 0xFF) * 440);// r
+			g = (g - r) / (1 - r / 0xFF);
+			let cof = g / 0xFF;
+			coor_grd = ((1 / 3) + (cof / 6)) * 480;
+			color_grd = "#00"+convert_i_to_t2_hex(g | 0)+"FF";
+		}
+	}
+}
+
+let text_color_rgb;
+function test(){
+	let text_out = ""; 
+	// Вычисляем.
+	background = parseInt(text_color_rgb, 16);
+	text_out += "background = "+background.toString(16)+"<br>";
+	let r = (background >> 16 & 0xFF) * .299;
+	let g = (background >> 8 & 0xFF) * .578;
+	let b = (background & 0xFF) * .114;
+	let light = (r + g + b) | 0;
+	
+	
+	text_out += "r = "+r.toString(16)+"<br>";
+	text_out += "g = "+g.toString(16)+"<br>";
+	text_out += "b = "+b.toString(16)+"<br>";
+	text_out += "light = "+light+"<br>";
+	
+	//text_out += light.toString(16)+"<br>";
+	
+	let dilimitr = 127;
+	/*
+	if(light > dilimitr){// Светлая тема
+		light -= dilimitr;
+		text_out += light.toString(16)+"<br>";
+		light |= (light << 8) | (light << 16);
+		text_out += light.toString(16)+"<br>";
+		light <<= 8;
+		text = 0x000000FF;
+		button = 0x55 | light;
+		focus = 0x33 | light;
+	} else {// Темная тема
+		light += dilimitr;
+		text_out += light.toString(16)+"<br>";
+		light |= (light << 8) | (light << 16);
+		text_out += light.toString(16)+"<br>";
+		light <<= 8;
+		text = 0xFFFFFFFF;
+		button = 0x33 | light;
+		focus = 0x55 | light;
+	}
+	text = toString_16_rgba(text);
+	button = toString_16_rgba(button);
+	focus = toString_16_rgba(focus);
+	
+	text_out += "<br>"+text+"<br>"+button+"<br>"+focus+"<br>"+light.toString(16);
+	out(text_out);
+	//*/
+	if(light > dilimitr){// Светлая тема
+		light -= dilimitr;
+		light = convert_i_to_t2_hex(light);
+		light += light + light;
+		text = "000000FF";
+		button = light+"55";
+		focus = light+"33";
+	} else {// Темная тема
+		light += dilimitr;
+		light = convert_i_to_t2_hex(light);
+		light += light + light;
+		text = "FFFFFFFF";
+		button = light+"55";
+		focus = light+"77";
+	}
+	
+	text_out += "<br>"+text+"<br>"+button+"<br>"+focus+"<br>"+light.toString(16);
+	
+	
+	
+	// Рисуем.
+	c.fillStyle = "#"+text_color_rgb;
+	c.fillRect(0, 0, width_canvas, height_canvas);
+	
+	
+	let offset = 100;
+	let offset_cof = 1.1;
+	left = offset;
+	_top = offset;
+	width = width_canvas - left * 2;
+	height = offset;
+	
+	c.fillStyle = isFocus() ? "#"+focus: "#"+button;
+	c.fillRect(left, _top, width, height);
+	c.fillStyle = "#"+text;
+	c.fillText("Test", left + width / 2, _top + height / 2);
+	
+	_top += offset * offset_cof;
+	c.fillStyle = isFocus() ? "#"+focus: "#"+button;
+	c.fillRect(left, _top, width, height);
+	c.fillStyle = "#"+text;
+	c.fillText("Test", left + width / 2, _top + height / 2);
+	
+	
+	_top += offset * offset_cof;
+	c.fillStyle = isFocus() ? "#"+focus: "#"+button;
+	c.fillRect(left, _top, width, height);
+	c.fillStyle = "#"+text;
+	c.fillText("Test", left + width / 2, _top + height / 2);
+	
+	
+	_top += offset * offset_cof;
+	c.fillStyle = isFocus() ? "#"+focus: "#"+button;
+	c.fillRect(left, _top, width, height);
+	c.fillStyle = "#"+text;
+	c.fillText("Test", left + width / 2, _top + height / 2);
+	
+	
+	c.fillStyle = grd;
+	c.fillRect(0, 780, width_canvas, 20);
+	
+	
+	//////
+	r = background >> 16 & 0xFF;
+	g = background >> 8 & 0xFF;
+	b = background & 0xFF;
+	text_out += "<br><br>"+r.toString(16)+"<br>"+g.toString(16)+"<br>"+b.toString(16);
+	out_cof_rgb(r, g, b);
+	
+	text_out += "<br><br>"+coor_grd;
+	c.fillStyle = "#000";
+	c.beginPath();
+	c.moveTo(coor_grd, isTest ? 795: 790);
+	c.lineTo(coor_grd, 800);
+	c.stroke();
+	
+	
+	text_out += "<br><br>color_grd = "+color_grd;
+	c.fillStyle = color_grd;
+	c.fillRect(20, 560, 440, 200);
+	
+	c.fillStyle = grd_white;
+	c.fillRect(20, 560, 440, 200);
+	
+	c.fillStyle = grd_black;
+	c.fillRect(20, 560, 440, 200);
+	
+	////
+	c.strokeStyle = "#FFF";
+	c.beginPath();
+	c.arc(coor_grd_x, coor_grd_y, isTest ? 40: 4, 0, 2 * Math.PI);
+	c.stroke();
+	c.strokeStyle = "#000";
+	c.beginPath();
+	c.arc(coor_grd_x, coor_grd_y, isTest ? 50: 5, 0, 2 * Math.PI);
+	c.stroke();
+	
+	let pix = c.getImageData(coor_grd_x, coor_grd_y, 1, 1).data;
+	
+	c.fillStyle = "#"+convert_i_to_t2_hex(pix[0])+convert_i_to_t2_hex(pix[1])+convert_i_to_t2_hex(pix[2]);
+	c.fillRect(410, 510, 50, 50);
+	
+	text_out += "<br><br>grd = "+c.fillStyle;
+	text_out += "<br>r = "+convert_i_to_t2_hex(pix[0]);
+	text_out += "<br>g = "+convert_i_to_t2_hex(pix[1]);
+	text_out += "<br>b = "+convert_i_to_t2_hex(pix[2]);
+	
+	pix = c.getImageData(x, y, 1, 1).data;
+	
+	c.fillStyle = "#"+convert_i_to_t2_hex(pix[0])+convert_i_to_t2_hex(pix[1])+convert_i_to_t2_hex(pix[2]);
+	c.fillRect(20, 510, 50, 50);
+	
+	text_out += "<br><br>mouse = "+c.fillStyle;
+	
+	out(text_out);
+}
+let for_color;
+window.onload = function(){
+	let div_left = document.getElementById('left');
+	canvas = document.getElementById("canvas");
+	canvas.width = width_canvas;
+	canvas.height = height_canvas;
+	c = canvas.getContext('2d');
+	c.font = "48px serif";
+	c.textAlign = "center";
+	c.textBaseline = "middle";
+	
+	grd_white = c.createLinearGradient(20, 0, 460, 0);
+	grd_white.addColorStop(0, "#FFFFFFFF");
+	grd_white.addColorStop(1, "#FFFFFF00");
+	//grd_white.addColorStop(0, "#0000FFFF");
+	//grd_white.addColorStop(1, "#0000FF00");
+	
+	grd_black = c.createLinearGradient(0, 561, 0, 761);
+	grd_black.addColorStop(0, "#00000000");
+	grd_black.addColorStop(1, "#000000FF");
+	
+	grd = c.createLinearGradient(0, 0, width_canvas, 0);
+	grd.addColorStop(0,     "#F00");
+	grd.addColorStop(1 / 6, "#F0F");
+	grd.addColorStop(2 / 6, "#00F");
+	grd.addColorStop(3 / 6, "#0FF");
+	grd.addColorStop(4 / 6, "#0F0");
+	grd.addColorStop(5 / 6, "#FF0");
+	grd.addColorStop(1,     "#F00");
+	for_color = create_block_color();
+	div_left.append(for_color);
+	canvas.addEventListener("mousemove", test2);
+	canvas.addEventListener("mousedown", test3);
+	canvas.addEventListener("mouseup", test4);
+}
+
+function out(text){
+	document.getElementById("out").innerHTML = text;
+}
+</script>
+</head>
+<body>
+<div id="left">left</div><div id="center"><canvas id="canvas"></canvas></div><div id="right"><span id="out"></span></div>
+</body>
+</html>

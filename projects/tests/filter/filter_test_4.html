@@ -1,0 +1,309 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>Фильтры SVG</title>
+</head>
+<body>
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" style="background-color: #fed;">
+	<style>
+		.class_model{
+			filter: url(#feColorMatrix_1);
+			-webkit-filter: url(#feColorMatrix_1);
+			-moz-filter: url("#feColorMatrix_1");
+			-o-filter: url(#feColorMatrix_1);
+		}
+		.text{
+			font-size: 30px;
+			text-anchor: middle;
+			font-weight: bold;
+		}
+	</style>
+	<defs>
+		<g id="model">
+			<path
+				d="M0,0 h100 v100 h-100 z"
+				fill="#f00"
+				fill-opacity="0.5"
+				stroke="#000"
+				stroke-width="5"
+			/>
+			
+			<text
+				x="0"
+				y="0"
+				dx="50px"
+				dy="50px"
+				text-anchor="middle"
+				dominant-baseline="middle"
+				font-size="70px"
+				fill="black"
+			>Rx</text>
+			
+			<path
+				d="M100,0 h100 v100 h-100 z"
+				fill="#0f0"
+			/>
+			
+			<path
+				d="M0,100 h100 v100 h-100 z"
+				fill="#00f"
+			/>
+			
+			<path
+				d="M100,100 h100 v100 h-100 z"
+				fill="#f00"
+			/>
+		</g>
+		<filter
+			id="feColorMatrix_0"
+		>
+			<!----
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 1 0 0 0
+					0 1 1 0 0
+					0 0 1 0 0
+					0 0 0 .5 0"
+				result="matrix_0"
+			/>
+			<!---->
+			<!---->
+			<feTurbulence
+				type="turbulence"
+				baseFrequency="0.05"
+				numOctaves="2"
+				result="turbulence"
+			/>
+			<feDisplacementMap
+				in2="turbulence"
+				in="SourceGraphic"
+				scale="50"
+				xChannelSelector="R"
+				yChannelSelector="G"
+			/>
+			<!---->
+		</filter>
+		
+		<filter
+			id="feColorMatrix_1"
+		>
+			<!----
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 1 0 0 0
+					0 1 1 0 0
+					0 0 1 0 0
+					0 0 0 .5 0"
+				result="matrix_0"
+			/>
+			<!---->
+			<!---->
+			<feTurbulence
+				type="turbulence"
+				baseFrequency="0.05"
+				numOctaves="2"
+				result="turbulence"
+			/>
+			<feDisplacementMap
+				in2="turbulence"
+				in="SourceGraphic"
+				scale="50"
+				xChannelSelector="R"
+				yChannelSelector="G"
+				result="matrix_0"
+			/>
+			<!---->
+			
+			<!--1. Определяем область наложения фильтра-->
+			<feColorMatrix
+				in="matrix_0"
+				type="matrix"
+				values="
+					1 0 0 0 0
+					0 1 0 0 0
+					0 0 1 0 0
+					0 0 0 1 0"
+				x="50"
+				y="50"
+				width="100"
+				height="100"
+				result="matrix_0_1"
+			/>
+			
+			<!--2. Независимо от прозрачности делаем шаблон для вырезки. -->
+			<feColorMatrix
+				in="matrix_0_1"
+				type="matrix"
+				values="
+					0 0 0 0 1
+					0 0 0 0 1
+					0 0 0 0 1
+					0 0 0 0 1"
+				result="matrix_1"
+			/>
+			
+			<!--3. Вырезаем из основного изображения область применения фильтра.-->
+			<feComposite
+				in="SourceGraphic"
+				in2="matrix_1"
+				operator="out"
+				result="matrix_2"
+			/>
+			
+			<!--4. Накладываем на основное изображение с вырезанной областью для вильтра, фильтр. Что в итоге дает применения фильтра только к части изображения.-->
+			<feComposite
+				in="matrix_2"
+				in2="matrix_0_1"
+				operator="over"
+				result="comp"
+			/>
+			
+		</filter>
+		
+		<filter
+			id="feColorMatrix_2"
+		>
+			<feColorMatrix
+				in="SourceGraphic"
+				type="matrix"
+				values="
+					1 1 0 0 0
+					0 1 1 0 0
+					0 0 1 0 0
+					0 0 0 .5 0"
+				x="50"
+				y="50"
+				width="100"
+				height="100"
+				result="matrix_0"
+			/>
+			<feBlend
+				in="matrix_0"
+				in2="SourceGraphic"
+				mode="lighten"
+			/>
+		</filter>
+		
+		<!---->
+		<mask id="mask_1">
+			<path d="M-10,-10 h220 v220 h-220 z" fill="white"/>
+			<path d="M50,50 h100 v100 h-100 z" fill="black"/>
+		</mask>
+		<mask id="mask_2">
+			<path d="M50,50 h100 v100 h-100 z" fill="white"/>
+		</mask>
+		<!---->
+		<!----
+		<mask id="mask_1">
+			<path d="M-10,-10 h220 v220 h-220 z" fill="white"/>
+			<path d="M50,120 c0,-50 100,-50 100,0 z" fill="black"/>
+		</mask>
+		<mask id="mask_2">
+			<path d="M50,120 c0,-50 100,-50 100,0 z" fill="white"/>
+		</mask>
+		<!---->
+	</defs>
+	
+	<path
+		d="M50,190 h1100 M50,590 h1100"
+		stroke="#000"
+		stroke-width="5"
+	/>
+	
+	<text
+		class="text"
+		x="200"
+		y="70"
+	>1</text>
+	<text
+		class="text"
+		x="600"
+		y="70"
+	>2</text>
+	<text
+		class="text"
+		x="1000"
+		y="70"
+	>3</text>
+	<text
+		class="text"
+		x="200"
+		y="470"
+	>4</text>
+	<text
+		class="text"
+		x="600"
+		y="470"
+	>5</text>
+	<text
+		class="text"
+		x="1000"
+		y="470"
+	>6</text>
+	<text
+		class="text"
+		x="1157"
+		y="600"
+	>7</text>
+	<text
+		class="text"
+		x="1157"
+		y="200"
+	>7</text>
+	<use
+		href="#model"
+		x="100"
+		y="100"
+		filter="url(#feColorMatrix_2)"
+	/>
+	
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		mask="url(#mask_1)"
+	/>
+	<!---->
+	<use
+		href="#model"
+		x="500"
+		y="100"
+		mask="url(#mask_2)"
+		filter="url(#feColorMatrix_0)"
+	/>
+	<!---->
+	<use
+		href="#model"
+		x="900"
+		y="100"
+		filter="url(#feColorMatrix_1)"
+	/>
+	
+	<use
+		href="#model"
+		x="100"
+		y="500"
+		filter="url(#feColorMatrix_0)"
+	/>
+	
+	<use
+		href="#model"
+		class="class_model"
+		x="500"
+		y="500"
+	/>
+	<image
+		href="https://artchive.ru/res/media/img/sx200/work/864/378925.jpg"
+		class="class_model"
+		transform="translate(900 500)"
+		height="200"
+		width="200"
+	/>
+</svg>
+<!----<img src="https://artchive.ru/res/media/img/sx200/work/864/378925.jpg"/><!---->
+<p>1. Модель без фильтров. 2. Две модели друг на друге, с применением масок и на одну из моделей наложен фильтр. 3. Модель с наложением сложного фильтра. 4. Модель с простым фильтром. 5. Модель с сложным фильтром наложенным через стили. 6. Картинка с сложным фильтром. 7. Линии которые за моделями для контрастного фона.</p>
+</body>
+</html>

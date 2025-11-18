@@ -1,0 +1,21 @@
+#info{
+	border: 1px solid black; /* Параметры рамки */
+	/*height: 800px; /* Высота блока */
+	width: 800px; /* Ширина блока */
+	/*float: right; /* Обтекание */
+	/*display: inline-block;/* Способ показа элемента */
+}
+#grafika{
+	cursor: none;/* Курсор мыши */
+	background-color: #000; /* Цвет фона svg элемента */
+	/*display: inline;/* Способ показа элемента */
+	/*float: left; /* Обтекание */
+	/*border: 1px solid black;/**/
+	/*height: 800px; /* Высота блока */
+	/*width: 1000px; /* Ширина блока */
+	/*background-color: #000; /*#fc0;/* Цвет фона */
+}
+BODY{
+	/*background-color: #000; /*#fc0;/* Цвет фона */
+	/*color: #fff; /*Цвет текста*/
+}

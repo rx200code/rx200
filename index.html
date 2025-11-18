@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Репозиторий rx200</title>
+		<style>
+			.center {
+				text-align: center;
+			}
+			a:visited {
+				color: blue;
+			}
+			div{
+				font-family : "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "twemoji mozilla", BlinkMacSystemFont, "Segoe UI", Roboto, "Segoe UI Emoji", "Segoe UI Symbol";
+			}
+		</style>
+		<script>
+			const token = "";//const token = "Bearer " + "токен";
+			const owner = "rx200code";
+			const repo = "rx200";
+			const path = "https://api.github.com/repos/" + owner + "/" + repo + "/contents";
+			const href = "https://github.com/" + owner + "/" + repo;
+			const href_html = "https://" + owner + ".github.io/" + repo + "/";
+
+			let downloadFile = file => {
+				fetch(file.download_url)
+					.then(response => response.ok ? response.blob() : Promise.reject("Ошибка HTTP: " + response.status))
+					.then(blob => {
+						const fileURL = window.URL.createObjectURL(blob);
+						const link = document.createElement('a');
+						link.href = fileURL;
+						link.download = file.name;
+						document.body.appendChild(link);
+						link.click();
+						document.body.removeChild(link);
+						window.URL.revokeObjectURL(fileURL);
+						file.elm.querySelector("a").style.color = "#f00";
+					})
+					.catch(error => document.getElementById("info").innerHTML = error);
+			};
+
+			let createElement = (name, ...attr) => {
+				let elm = document.createElement(name);
+				for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+				return elm;
+			};
+
+			let addElmsToArr = (arr, parent_url) => {
+				for(let file of arr){
+					let elm = createElement("div");
+					elm.appendChild(document.createTextNode("name: "));
+					let a = createElement("a", ["href", file.download_url ? file.download_url: ""]);
+					a.appendChild(document.createTextNode(file.name));
+					if(file.type === "dir"){
+						if(file.arr === undefined)
+							file.arr = [{
+								arr: arr,
+								name: "..",
+								type: "dir",
+								html_url: parent_url
+							}];
+						a.addEventListener("click", event => {
+							event.preventDefault();
+							downloadDir(file);
+						});
+					}else
+						a.addEventListener("click", event => {
+							event.preventDefault();
+							downloadFile(file);
+						});
+					elm.appendChild(a);
+					elm.appendChild(document.createTextNode(file.type === "dir" ? " 📁": " size: " + file.size));
+					elm.appendChild(createElement("br"));
+					elm.appendChild(document.createTextNode("url: "));
+					let url = createElement("a", ["href", file.html_url], ["target", "_blank"]);
+					url.appendChild(document.createTextNode(file.html_url));
+					elm.appendChild(url);
+					if(file.name.endsWith(".html") || file.name.endsWith(".svg")){
+						let url_html = href_html + file.path;
+						let url = createElement("a", ["href", url_html], ["target", "_blank"]);
+						url.appendChild(document.createTextNode(url_html));
+						elm.appendChild(document.createTextNode(" open in browser: "));
+						elm.appendChild(url);
+					}
+					elm.appendChild(createElement("hr"));
+					file.elm = elm;
+				}
+				arr.sort((a, b) => {
+					if(a.type > b.type)return 1;
+					if(a.type < b.type)return -1;
+					return 0;
+				});
+			};
+
+			function downloadDir(dir){
+				let out = document.getElementById("out");
+				if(dir.arr[0].elm){// уже загружен отображаем.
+					out.innerHTML = '';
+					out.appendChild(createElement("hr"));
+					for(let file of dir.arr)out.appendChild(file.elm);
+					let a = document.getElementById("a");
+					a.href = dir.html_url;
+					a.innerHTML = dir.html_url;
+				}else{
+					document.getElementById("info").innerHTML = "загрузка...";
+					fetch(dir.url, {headers: {Authorization: token}})
+						.then(response => response.ok ? response.json() : Promise.reject("Ошибка HTTP: " + response.status))
+						.then(arr => {
+							for(let file of arr)dir.arr.push(file);
+							addElmsToArr(dir.arr, dir.html_url);
+							let out = document.getElementById("out");
+							out.innerHTML = '';
+							out.appendChild(createElement("hr"));
+							for(let file of dir.arr)out.appendChild(file.elm);
+							document.getElementById("info").innerHTML = "";
+							dir.arr[0].elm.querySelector("a").style.color = "#f00";
+							dir.elm.querySelector("a").style.color = "#f00";
+							let a = document.getElementById("a");
+							a.href = dir.html_url;
+							a.innerHTML = dir.html_url;
+						})
+						.catch(error => document.getElementById("info").innerHTML = error);
+				}
+			}
+			
+			window.onload = () => {
+				let a = document.getElementById("a");
+				a.href = href;
+				a.innerHTML = href;
+				fetch(path, {headers: {Authorization: token}})
+					.then(response => response.ok ? response.json() : Promise.reject("Ошибка HTTP: " + response.status))
+					.then(arr => {
+						addElmsToArr(arr, href);
+						let out = document.getElementById("out");
+						out.appendChild(createElement("hr"));
+						for(let file of arr)out.appendChild(file.elm);
+						document.getElementById("info").innerHTML = "";
+					})
+					.catch(error => document.getElementById("info").innerHTML = error);
+			};
+		</script>
+	</head>
+	<body>
+		<h1 class="center"><a href="https://github.com/rx200code/rx200" target="_blank">Репозиторий rx200</a></h1>
+		<br>
+		<a href="https://github.com/rx200code/rx200" id="a" target="_blank">https://github.com/rx200code/rx200</a>
+		<br>
+		<span id="info">загрузка...</span>
+		<br>
+		<span id="out"></span>
+	</body>
+</html>

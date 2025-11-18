@@ -1,0 +1,67 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>canvas text</title>
+<script type="text/javascript">
+// определяем размеры.
+const wgs_84_a = 6378137;
+const rad_90 = Math.PI / 2;
+const r_1 = Math.PI / 180;
+const width_WM = Math.PI * 2 * wgs_84_a;// 40075017 // 40075016.68557849 // ширена нулевого слайда в ВМ.
+const size_t = 256;
+let toRad = deg => deg * r_1;
+let toDeg = rad => rad / r_1;
+let x = 0;
+let y = 0;
+let from_wgs_84 = (lat, lon) => {// EPSG:1024 (lat, lon), (f, l), (широта, долгота).
+	let n = Math.tan(toRad(lat));
+	x = toRad(lon) * wgs_84_a;
+	y = Math.log(n + (n * n + 1) ** .5) * wgs_84_a;// x, y
+};
+let x2 = 0;
+let y2 = 0;
+let from_wgs_84_2 = (lat, lon) => {// EPSG:1024 (lat, lon), (f, l), (широта, долгота).
+	let n = Math.tan(toRad(lat));
+	x2 = (toRad(lon + 180)) * wgs_84_a;
+	y2 = (Math.PI * wgs_84_a) - Math.log(n + (n * n + 1) ** .5) * wgs_84_a;// x, y
+};
+window.onload = function(){
+	let text = "";
+	
+	let lat = 55;
+	let lon = 83;
+	text += "lat: "+lat+"<br>";
+	text += "lon: "+lon+"<br>";
+	from_wgs_84(lat, lon);
+	text += "x: "+x+"<br>";
+	text += "y: "+y+"<br>";
+	
+	let xE = x + (width_WM / 2);
+	let yE = width_WM - (y + (width_WM / 2))
+	
+	from_wgs_84_2(lat, lon);
+	text += "xE: "+xE+"<br>";
+	text += "x2: "+x2+"<br>";
+	
+	text += "yE: "+yE+"<br>";
+	text += "y2: "+y2+"<br>";
+	
+	
+	out(text);
+};
+
+let test = () => {
+	alert("test");
+};
+function out(text){
+	document.getElementById("out").innerHTML = text;
+}
+</script>
+</head>
+<body>
+<input type="button" value="test" onClick="test();">
+<br>
+<br><span id="out"></span>
+<br>
+	
+</body>
+</html>

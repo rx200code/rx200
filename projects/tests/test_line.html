@@ -1,0 +1,405 @@
+
+
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>test</title>
+<style>
+@import url('https://fonts.googleapis.com/css?family=Open+Sans&display=swap');
+
+*, *:before, *:after {
+	-webkit-box-sizing: border-box;
+	-moz-box-sizing: border-box;
+	box-sizing: border-box;
+}
+
+body {
+	margin: 0;
+	color: black;
+	font-size: 16px;
+	font-family: 'Open Sans', sans-serif;
+}
+
+img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+.wrapper {
+	max-width: 1400px;
+	margin: 0 auto;
+}
+
+.line:not(:first-child) {
+	margin-top: 50px;
+}
+
+.item {
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	flex: 1;
+}
+
+.item:not(:last-child) {
+	margin-right: 2%;
+}
+
+.item__img {
+	z-index: 2;
+}
+
+.item__img:not(:first-child) {
+	margin-left: 5px;
+}
+
+.line {
+	display: -webkit-flex;
+	display: -moz-flex;
+	display: -ms-flex;
+	display: -o-flex;
+	display: flex;
+	transition: opacity .3s ease-in-out;
+}
+
+.harmony {
+	z-index: 2;
+	position: absolute;
+	width: 10px;
+	background-color: red;
+ 	height: 80px;
+ 	left: 0;
+ 	top: 0;
+	transform: scale(1, 1) translateZ(0);
+	transform-origin: 0% 0%;
+}
+</style>
+
+</head>
+<body>
+<div class="wrapper">
+
+	<div class="line line__one">
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/500/250">
+			</div>
+		</div>
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/500/250">
+			</div>
+		</div>
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/500/250">
+			</div>
+		</div>
+
+	</div> <!-- .line__one -->
+
+	<div class="line line__two">
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/300/150">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/300/150">
+			</div>
+		</div>
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/300/150">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/300/150">
+			</div>
+		</div>
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/300/150">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/300/150">
+			</div>
+		</div>
+
+	</div> <!-- .line__two -->
+
+	<div class="line line__three">
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+		</div>
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+		</div>
+
+		<div class="item">
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+			<div class="item__img">
+				<img src="https://picsum.photos/200/100">
+			</div>
+		</div>
+
+	</div> <!-- .line__three -->
+
+
+</div> <!-- .wrapper -->
+<script type="text/javascript">
+//*
+let items = document.querySelectorAll('.item');
+
+let reqAnimFrame = (function() {
+    return requestAnimationFrame       ||
+           mozRequestAnimationFrame    ||
+           webkitRequestAnimationFrame ||
+           oRequestAnimationFrame      ||
+           msRequestAnimationFrame     ||
+    function(callback) {
+        setTimeout(callback, 1000 / 60);
+    }
+})();
+
+function animate({timing, draw, duration}) {
+
+  let start = performance.now();
+
+  reqAnimFrame(function animate(time) {
+    // timeFraction изменяется от 0 до 1
+    let timeFraction = (time - start) / duration;
+    if (timeFraction > 1) timeFraction = 1;
+
+    // вычисление текущего состояния анимации
+    let progress = timing(timeFraction);
+
+    draw(progress); // отрисовать её
+
+    if (timeFraction < 1) {
+      requestAnimationFrame(animate);
+    }
+
+  });
+}
+
+function createPath(from, to) {
+
+	function elemPosition(elem) {
+		let pos = {
+		    top: window.pageYOffset + elem.getBoundingClientRect().top,
+		    left: window.pageXOffset + elem.getBoundingClientRect().left,
+		    right: window.pageXOffset + elem.getBoundingClientRect().right,
+		    bottom: window.pageYOffset + elem.getBoundingClientRect().bottom
+		};
+		return pos;
+	}
+
+	function centerElem(elem) {
+		let width = elem.offsetWidth;
+		let height = elem.offsetHeight;
+		let centerX = width/2 + elemPosition(elem).left;
+		let centerY = height/2 + elemPosition(elem).top;
+		let pos = {
+			y: centerY,
+			x: centerX
+		};
+		return pos;
+	}
+
+	function render(childF, childT) {
+
+		let div = document.createElement('div');
+		div.classList.add('harmony');
+		document.body.append(div);
+
+		let start = {
+			x: centerElem(childF).x,
+			y: elemPosition(childF).bottom
+		}; // координаты начальной точки
+
+		let final = {
+			x: centerElem(childT).x,
+			y: elemPosition(childT).top
+		}; // координаты конечной точки
+
+
+		let height = window.getComputedStyle(div, null).height; // исходная высота прямой
+		height = Number(height.slice(0, height.length-2)); // исходная высота прямой
+		let d = Math.sqrt( Math.pow((final.x - start.x), 2) + Math.pow((final.y - start.y), 2) ); // длина прямой после анимации
+		let angle = Math.atan( (final.y-start.y) / (final.x-start.x) ) * 180 / Math.PI; // угол в градусах
+		let scale = d/height; // насколько масштабировать прямую по высоте
+
+
+		animate({
+		  duration: 5000,
+		  timing(timeFraction) {
+		    return timeFraction;
+		  },
+		  draw(progress) {
+		    div.style.transform = `
+          translate(${start.x-3.5}px, ${start.y}px)
+          
+		  rotate(${-(90-angle)}deg)
+		  scale(1, ${progress*scale})
+          
+          translateZ(0)`;
+		  }
+		});
+
+
+
+	}
+
+	let childFrom = from.children[0];
+	let childTo = to.children[0];
+
+	centerElem(childFrom);
+	render(childFrom, childTo);
+
+}
+
+window.addEventListener('load', () => {
+	createPath(items[0], items[4]);
+});//*/
+/*
+let items = document.querySelectorAll('.item');
+
+let reqAnimFrame = (function() {
+  return requestAnimationFrame       ||
+         mozRequestAnimationFrame    ||
+         webkitRequestAnimationFrame ||
+         oRequestAnimationFrame      ||
+         msRequestAnimationFrame     ||
+  function(callback) {
+    setTimeout(callback, 1000 / 60);
+  }
+})();
+
+function animate({timing, draw, duration}) {
+
+  let start = performance.now();
+
+  reqAnimFrame(function animate(time) {
+    // timeFraction изменяется от 0 до 1
+    let timeFraction = (time - start) / duration;
+    if (timeFraction > 1) timeFraction = 1;
+
+    // вычисление текущего состояния анимации
+    let progress = timing(timeFraction);
+
+    draw(progress); // отрисовать её
+
+    if (timeFraction < 1) {
+      requestAnimationFrame(animate);
+    }
+
+  });
+}
+
+function createPath(from, to) {
+
+  function elemPosition(elem) {
+    let pos = {
+      top: window.pageYOffset + elem.getBoundingClientRect().top,
+      left: window.pageXOffset + elem.getBoundingClientRect().left,
+      right: window.pageXOffset + elem.getBoundingClientRect().right,
+      bottom: window.pageYOffset + elem.getBoundingClientRect().bottom
+    };
+    return pos;
+  }
+
+	function centerElem(elem) {
+    let width = elem.offsetWidth;
+    let height = elem.offsetHeight;
+    let centerX = width/2 + elemPosition(elem).left;
+    let centerY = height/2 + elemPosition(elem).top;
+    let pos = {
+      y: centerY,
+      x: centerX
+    };
+    return pos;
+	}
+
+	function render(childF, childT) {
+
+		let div = document.createElement('div');
+		div.classList.add('harmony');
+		document.body.append(div);
+
+		let start = {
+			x: centerElem(childF).x,
+			y: elemPosition(childF).bottom
+		}; // координаты начальной точки
+
+		let final = {
+			x: centerElem(childT).x,
+			y: elemPosition(childT).top
+		}; // координаты конечной точки
+
+
+		let height = window.getComputedStyle(div, null).height; // исходная высота прямой
+		height = Number(height.slice(0, height.length-2)); // исходная высота прямой
+		let d = Math.sqrt( Math.pow((final.x - start.x), 2) + Math.pow((final.y - start.y), 2) ); // длина прямой после анимации
+		let angle = Math.atan( (final.y-start.y) / (final.x-start.x) ) * 180 / Math.PI; // угол в градусах
+		let scale = d/height; // насколько масштабировать прямую по высоте
+
+		animate({
+		  duration: 5000,
+		  timing(timeFraction) {
+		    return timeFraction;
+		  },
+		  draw(progress) {
+        div.style.left = `${start.x-3.5}px`;
+        div.style.top = `${start.y}px`;
+        div.style.transform = `rotate(${-(90-angle)}deg) translateZ(0)`;
+        div.style.height = `${d*progress}px`;
+		  }
+		});
+
+	}
+
+	let childFrom = from.children[0];
+	let childTo = to.children[0];
+
+	centerElem(childFrom);
+	render(childFrom, childTo);
+
+}
+
+window.addEventListener('load', () => {
+	createPath(items[0], items[4]);
+});//*/
+</script>
+</body>
+</html>
+

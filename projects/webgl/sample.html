@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>шаблон WebGL</title>
+<script id="shader-fs" type="x-shader/x-fragment">
+  void main(void) {
+    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+  }
+</script>
+<script id="shader-vs" type="x-shader/x-vertex">
+  attribute vec3 aVertexPosition;
+
+  uniform mat4 uMVMatrix;
+  uniform mat4 uPMatrix;
+
+  void main(void) {
+    gl_Position = uPMatrix * uMVMatrix * vec4(aVertexPosition, 1.0);
+  }
+</script>
+<script id="vertex-shader-2d" type="notjs">
+ 
+  // атрибут, который будет получать данные из буфера
+  attribute vec4 a_position;
+ 
+  // все шейдеры имеют функцию main
+  void main() {
+ 
+	// gl_Position - специальная переменная вершинного шейдера,
+	// которая отвечает за установку положения
+	gl_Position = a_position;
+  }
+ 
+</script>
+ 
+<script id="fragment-shader-2d" type="notjs">
+ 
+  // фрагментные шейдеры не имеют точности по умолчанию, поэтому нам необходимо её
+  // указать. mediump подойдёт для большинства случаев. Он означает "средняя точность"
+  precision mediump float;
+ 
+  void main() {
+	// gl_FragColor - специальная переменная фрагментного шейдера.
+	// Она отвечает за установку цвета.
+	gl_FragColor = vec4(1, 0, 0.5, 1); // вернёт красновато-фиолетовый
+  }
+ 
+</script>
+<script type="text/javascript">
+let createElement = (name, ...attr) => {
+	let elm = document.createElement(name);
+	for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+	return elm;
+};
+let error = (text) => {
+	info("ERROR: " + text);
+	//console.log("ERROR: " + text);
+};
+// Основные переменные.
+let width_canvas = 1200;
+let height_canvas = 700;
+let horizAspect = height_canvas / width_canvas;
+let gl, program, positionAttributeLocation, positionBuffer;
+
+function init(){
+	let canvas = createElement("canvas", ["width", width_canvas], ["height", height_canvas]);
+	//// инициализация контекста GL
+	try{
+		// Попытаться получить стандартный контекст. Если не получится, попробовать получить экспериментальный.
+		gl = canvas.getContext("webgl") || canvas.getContext("experimental-webgl");
+	}catch(e){
+		error(e);
+	}
+	// Если мы не получили контекст GL, завершить работу
+	if(!gl){
+		error("у вас не работает webgl");
+		return;
+	}
+	
+	//// продолжать только если WebGL доступен и работает
+	/*
+	if(gl){
+		gl.clearColor(0.0, 0.0, 0.0, 1.0); // установить в качестве цвета очистки буфера цвета чёрный, полная непрозрачность
+		gl.enable(gl.DEPTH_TEST); // включает использование буфера глубины
+		gl.depthFunc(gl.LEQUAL); // определяет работу буфера глубины: более ближние объекты перекрывают дальние
+		gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT); // очистить буфер цвета и буфер глубины.
+	}
+	//*/
+	
+	//gl.viewport(0, 0, canvas.width, canvas.height);
+	
+	//// Инициализация шейдеров
+	let vertexShaderSource = document.getElementById("vertex-shader-2d").text;
+	let fragmentShaderSource = document.getElementById("fragment-shader-2d").text;
+
+	let vertexShader = createShader(gl, gl.VERTEX_SHADER, vertexShaderSource);
+	let fragmentShader = createShader(gl, gl.FRAGMENT_SHADER, fragmentShaderSource);
+	
+	//// Связываем шейдеры с программой 
+	program = createProgram(gl, vertexShader, fragmentShader);
+	
+	//// получить ссылку на атрибут для только что созданной программы
+	positionAttributeLocation = gl.getAttribLocation(program, "a_position");
+	//// Создаём буфер
+	positionBuffer = gl.createBuffer();
+	//// Привязываем буфер
+	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+	//// Наполняем буфер
+	// три двумерных точки
+	/*
+	let positions = [
+		0, 0,
+		0, 0.5,
+		0.5, 0,
+	];
+	//*/
+	let positions = [
+		-1, -1,
+		-1, 1,
+		1, -1,
+	];
+	gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(positions), gl.STATIC_DRAW);
+	
+	document.getElementById("span_graphic").appendChild(canvas);
+}
+
+function createShader(gl, type, source){
+	let shader = gl.createShader(type);   // создание шейдера
+	gl.shaderSource(shader, source);      // устанавливаем шейдеру его программный код
+	gl.compileShader(shader);             // компилируем шейдер
+	let success = gl.getShaderParameter(shader, gl.COMPILE_STATUS);
+	if(success){                        // если компиляция прошла успешно - возвращаем шейдер
+		return shader;
+	}
+
+	error(gl.getShaderInfoLog(shader));
+	gl.deleteShader(shader);
+}
+
+function createProgram(gl, vertexShader, fragmentShader){
+	let program = gl.createProgram();
+	gl.attachShader(program, vertexShader);
+	gl.attachShader(program, fragmentShader);
+	gl.linkProgram(program);
+	let success = gl.getProgramParameter(program, gl.LINK_STATUS);
+	if(success){
+		return program;
+	}
+
+	console.log(gl.getProgramInfoLog(program));
+	gl.deleteProgram(program);
+}
+
+function drawScene(){
+	//webglUtils.resizeCanvasToDisplaySize(gl.canvas);
+	gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+	// очищаем canvas
+	gl.clearColor(0, 0, 0, 1);
+	gl.clear(gl.COLOR_BUFFER_BIT);
+	// говорим использовать нашу программу (пару шейдеров)
+	gl.useProgram(program);
+	gl.enableVertexAttribArray(positionAttributeLocation);
+	
+	// Привязываем буфер положений
+	gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+     
+	// Указываем атрибуту, как получать данные от positionBuffer (ARRAY_BUFFER)
+	let size = 2;          // 2 компоненты на итерацию
+	let type = gl.FLOAT;   // наши данные - 32-битные числа с плавающей точкой
+	let normalize = false; // не нормализовать данные
+	let stride = 0;        // 0 = перемещаться на size * sizeof(type) каждую итерацию для получения следующего положения
+	let offset = 0;        // начинать с начала буфера
+	gl.vertexAttribPointer(positionAttributeLocation, size, type, normalize, stride, offset);
+	
+	let primitiveType = gl.TRIANGLES;
+	let count = 3;
+	gl.drawArrays(primitiveType, offset, count);
+}
+window.onload = function(){
+	init();
+	//// Рендеринг сцены
+	drawScene();
+};
+
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function info(text){
+	document.getElementById("info").innerHTML=text;
+}
+</script>
+</head>
+<body>
+	<span id="span_graphic"></span>
+	<hr>
+	<span id="output"></span>
+	<hr>
+	<pre id="info"></pre>
+	<hr>
+</body>
+</html>

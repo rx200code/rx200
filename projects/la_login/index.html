@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>test</title>
+<style>
+.out_authentication{
+	color: red;
+}
+.background_block{
+	position: absolute;
+	background-color:#000;
+	opacity:0.5;
+	top:0px;
+	left:0px;
+	width:100%;
+	height:100%;
+}
+.center_span{
+	background-color: #FFF;
+	border-radius: 1em;
+	padding: 1em;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-right: -50%;
+	transform: translate(-50%, -50%);
+	text-align: center;
+}
+</style>
+<script type="text/javascript">
+/*
+RX200
+xxxxXXxxxx
+https://nsk-la-db:443/api/countries_vw
+*/
+let createElement = (name, ...attr) => {
+	let elm = document.createElement(name);
+	for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+	return elm;
+};
+let url = "https://nsk-la-db:443/";
+let path_log_in = "api/rpc/login";
+let token;
+let user_login;
+let authorization;
+let tag_authentication;
+//let storage = sessionStorage;
+let storage = localStorage;
+
+
+function init(){
+	document.getElementById("url").innerHTML=url;
+	token = storage.getItem("token");
+	user_login = storage.getItem("user_login");
+	tag_authentication = createElement("span");
+	let background_block = createElement("span", ["class", "background_block"]);
+	let log_in_menu = createElement("span", ["class", "center_span"]);
+	let input_login = createElement("input", ["type", "text"], ["placeholder", "Логин"]);
+	let input_password = createElement("input", ["type", "password"], ["placeholder", "Пароль"]);
+	
+	input_login.value = "";
+	input_password.value = "";
+	/* test
+	input_login.value = "RX200";
+	input_password.value = "xxxxXXxxxx";
+	//*/
+	let submit_log_in = createElement("input", ["type", "button"], ["value", "Войти"]);
+	let out_authentication = createElement("span", ["class", "out_authentication"]);
+	log_in_menu.appendChild(document.createTextNode("login:"));
+	log_in_menu.appendChild(createElement("br"));
+	log_in_menu.appendChild(input_login);
+	log_in_menu.appendChild(createElement("br"));
+	log_in_menu.appendChild(document.createTextNode("password:"));
+	log_in_menu.appendChild(createElement("br"));
+	log_in_menu.appendChild(input_password);
+	log_in_menu.appendChild(createElement("br"));
+	log_in_menu.appendChild(submit_log_in);
+	log_in_menu.appendChild(createElement("br"));
+	log_in_menu.appendChild(out_authentication);
+	tag_authentication.appendChild(background_block);
+	tag_authentication.appendChild(log_in_menu);
+	submit_log_in.onclick = () => {
+		let login = input_login.value;
+		if(input_login.value == ""){
+			out_authentication.innerHTML = "Введите логин.";
+			return;
+		}
+		if(input_password.value == ""){
+			out_authentication.innerHTML = "Введите пароль.";
+			return;
+		}
+		let xhr = new XMLHttpRequest();
+		xhr.open("POST", url + path_log_in);
+		xhr.responseType = 'json';
+		xhr.setRequestHeader("Content-Type", "application/json");
+		xhr.send("{ \"p_forum_name\": \"" + input_login.value + "\", \"p_div_code\":\"stat\", \"p_password\": \"" + input_password.value + "\" }");
+		xhr.onload = function(){
+		if (xhr.status != 200){
+				out_authentication.innerHTML = `Ошибка ${xhr.status}: ${xhr.statusText}`;
+			}else{
+				token = xhr.response.token;
+				storage.setItem("token", token);
+				user_login = input_login.value;
+				storage.setItem("user_login", user_login);
+				document.getElementById("user_login").innerHTML = "Вы вошли как: <b>" + user_login + "</b>";
+				/*
+				input_login.value = "";
+				input_password.value = "";
+				//*/
+				//* test
+				input_login.value = "RX200";
+				input_password.value = "xxxxXXxxxx";
+				//*/
+				out_authentication.innerHTML="";
+				document.body.removeChild(tag_authentication);
+				
+			}
+		};
+		xhr.onerror = function(){
+			out_authentication.innerHTML = "При запросе произошла ошибка.";
+		};
+	};
+}
+
+function exit_user(){
+	document.getElementById("user_login").innerHTML = "";
+	storage.removeItem("user_login");
+	user_login = null;
+	storage.removeItem("token");
+	token = null;
+	document.body.append(tag_authentication);
+}
+
+window.onload = function(){
+	init();
+	if(token){
+		authorization = "Bearer " + token;
+		if(user_login) document.getElementById("user_login").innerHTML = "Вы вошли как: <b>" + user_login + "</b>";
+	}else document.body.append(tag_authentication);
+}
+
+function request_get(){
+	let path = document.getElementById("path").value;
+	let xhr = new XMLHttpRequest();
+	xhr.open("GET", url + path);
+	xhr.setRequestHeader('Authorization', "Bearer " + token);
+	xhr.send();
+	xhr.onload = function() {
+		if (xhr.status != 200){
+			out(`Ошибка ${xhr.status}: ${xhr.statusText} <br>------------------<br>${xhr.response}`);
+			// if()document.body.append(tag_authentication);
+		}else{
+			out(xhr.response);
+		}
+	};
+	xhr.onerror = function(e) {
+		out("При запросе произошла ошибка.");
+	};
+}
+
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+
+</script>
+</head>
+<body>
+	<span id="user_login"></span> <input type="button" value="Выйти" onclick="exit_user()"><br>
+	<input type="button" value="GET" onclick="request_get()"> <span id="url"></span><input type="text" id="path" value="api/countries_vw">
+	<hr>
+	<span id="output"></span>
+</body>
+</html>

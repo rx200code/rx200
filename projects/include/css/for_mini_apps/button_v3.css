@@ -1,0 +1,150 @@
+:root{
+	--basic_color: #888; /*#0a0;*/
+	
+	--size: 1rem;
+	--size_width: calc(var(--size) * 6);
+	--size_height: calc(var(--size_width) * .4);
+	/**
+	--size_border: max(2px, calc(var(--size) / 16));
+	/**/
+	--size_offset: calc(var(--size) * .4);
+	--diffusion: calc(var(--size) * .1);
+	--hover_offset: calc(var(--size_offset) * .5);
+	--cof_diffusion_offset: 1;
+	--diffusion_offset_border: calc(var(--size) * .05);
+	--size_border: calc((var(--size_offset) - var(--hover_offset)) * var(--cof_diffusion_offset));
+	--size_border_offset: calc(var(--size_border) * .5);
+	
+}
+
+#pos{
+	position: absolute;
+	width: calc(var(--size_width) + var(--hover_offset));
+	height: calc(var(--size_height) + var(--hover_offset));
+	line-height: var(--size_height);
+	font-size: var(--size);
+	margin: 0px;
+	padding: 0px;
+	top: 200px;
+	left: 300px;
+}
+
+.button{
+	
+	/**
+	border-radius: 50% 50% 50% 50%;
+	/**/
+	
+	position: absolute;
+	width: var(--size_width);
+	height: var(--size_height);
+	line-height: var(--size_height);
+	font-size: var(--size);
+	margin: 0px;
+	padding: 0px;
+	
+	
+	text-align: center;
+	cursor: pointer;
+	
+	background-color: #ddd;
+	
+	color: #000;
+	/**
+	border: max(1px, calc(1rem / 16)) solid #0008;
+	text-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #aaa, 0px 0px calc(var(--size) * .07) #fff;
+	/**/
+	box-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #ddd, inset var(--size_offset) var(--size_offset) var(--diffusion) #f7f7f7;
+	text-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #aaa, 0px 0px calc(var(--size) * .07) #fff;
+	
+	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+.button::before{
+	content: "";
+	position: absolute;
+	top: var(--size_border_offset);
+	right: calc(var(--size_border) * -1);
+	height: 100%;
+	width: var(--size_border);
+	background-color: #1f907355;
+	transform: rotate(0deg) skewY(45deg);
+	/**
+	box-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #0008;
+	/**/
+	/**/
+	box-shadow: calc(var(--size_width) * -1) var(--size_width) 0 #1f907322, var(--size_offset) 0px var(--diffusion) #0002;
+	/**/
+	
+}
+
+.button::after{
+	content: "";
+	position: absolute;
+	bottom: calc(var(--size_border) * -1);
+	left: var(--size_border_offset);
+	height: var(--size_border);
+	width: 100%;
+	background-color: #1f907333;
+	transform: rotate(0deg) skewX(45deg);
+	/**
+	box-shadow: calc(var(--size_height) * -1) var(--size_height) 0 #0002;
+	/**/
+	box-shadow: var(--size_height) calc(var(--size_height) * -1) 0 #1f907311, 0px var(--size_offset) var(--diffusion) #0002;
+}
+
+#pos:hover{
+	.button{
+		/**
+		--size_offset: calc(var(--size) * .4 - var(--hover_offset) * 1.25);
+		/**/
+		--size_offset: calc(var(--size) * .4 - var(--hover_offset));
+		--diffusion: calc(var(--size) * .1 * (1 - var(--cof_diffusion_offset)));
+		transform: translate(var(--hover_offset), var(--hover_offset));
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

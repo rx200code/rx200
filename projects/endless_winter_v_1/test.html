@@ -1,0 +1,49 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>test</title>
+<script type="text/javascript">
+function test(){
+	let svgns = "http://www.w3.org/2000/svg";
+	let svg = document.getElementsByClassName('canvas-svg')[0];
+	let elm_g = document.getElementById("circle");
+	let CTM = svg.getScreenCTM();
+	let elm_g_pos_x = (elm_g.getBoundingClientRect().left - CTM.e) / CTM.a;
+	let path_x = document.createElementNS(svgns, "path");
+	path_x.setAttributeNS(null, "d", "M"+elm_g_pos_x+",0 v1000");
+	path_x.setAttributeNS(null, "fill", "transparent");
+	path_x.setAttributeNS(null, "stroke", "black");
+	svg.appendChild(path_x);
+	let elm_g_pos_y = (elm_g.getBoundingClientRect().top - CTM.f) / CTM.d;
+	let path_y = document.createElementNS(svgns, "path");
+	path_y.setAttributeNS(null, "d", "M0,"+elm_g_pos_y+" h1000");
+	path_y.setAttributeNS(null, "fill", "transparent");
+	path_y.setAttributeNS(null, "stroke", "black");
+	svg.appendChild(path_y);
+	let elm_g_pos_cx = elm_g_pos_x + elm_g.getAttributeNS(null, "r") * 1;
+	let path_cx = document.createElementNS(svgns, "path");
+	path_cx.setAttributeNS(null, "d", "M"+elm_g_pos_cx+",0 v1000");
+	path_cx.setAttributeNS(null, "fill", "transparent");
+	path_cx.setAttributeNS(null, "stroke", "black");
+	path_cx.setAttributeNS(null, "stroke-dasharray", "4");
+	svg.appendChild(path_cx);
+	let elm_g_pos_cy = elm_g_pos_y + elm_g.getAttributeNS(null, "r") * 1;
+	let path_cy = document.createElementNS(svgns, "path");
+	path_cy.setAttributeNS(null, "d", "M0,"+elm_g_pos_cy+" h1000");
+	path_cy.setAttributeNS(null, "fill", "transparent");
+	path_cy.setAttributeNS(null, "stroke", "black");
+	path_cy.setAttributeNS(null, "stroke-dasharray", "4");
+	svg.appendChild(path_cy);
+}
+window.onload = test;
+</script>
+</head>
+<body>
+<svg width="100%" height="100%" viewBox="0 0 1000 1000" preserveAspectRatio="xMidYMin slice" x="0" y="0" class="canvas-svg" tabindex="1">
+<g transform="translate(100 100)">
+     <g transform="translate(100 100)"> 
+          <circle id="circle" r="50" cx="25" cy="25" fill="yellow" />
+     </g>
+</g>
+<svg>
+</body>
+</html>

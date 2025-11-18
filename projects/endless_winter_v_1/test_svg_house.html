@@ -1,0 +1,923 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>домо редактор</title>
+<script type="text/javascript">
+var svgns = "http://www.w3.org/2000/svg";//Пространство имен SVG.
+var svg;
+var g_width = 1800;
+var g_height = 1400;
+var g_step_px = 100;
+var g_bg_color = "#fed";
+window.onload = function(){
+	svg = document.getElementById('grafika');
+	svg.setAttributeNS(null, "width", g_width);//Ширина
+	svg.setAttributeNS(null, "height", g_height);//Высота
+	svg.style['background-color'] = g_bg_color;//Устанавливаем фон
+	//Сетка.
+	let d_1 = "";
+	let d_2 = "";
+	for(let x = 0; x <= g_width; x += g_step_px){
+		if((x / g_step_px) & 1){
+			d_2 +="M"+x+",0 v"+g_height+" ";
+		}else{
+			d_1 +="M"+x+",0 v"+g_height+" ";
+		}
+	}
+	for(let y = 0; y <= g_height; y += g_step_px){
+		if((y / g_step_px) & 1){
+			d_2 +="M0,"+y+" h"+g_width+" ";
+		}else{
+			d_1 +="M0,"+y+" h"+g_width+" ";
+		}
+	}
+	let step_1 = document.createElementNS(svgns, "path");
+	step_1.setAttributeNS(null, "d", d_1);
+	step_1.setAttributeNS(null, "fill", "none");
+	step_1.setAttributeNS(null, "stroke", "#888");
+	step_1.setAttributeNS(null, "stroke-width", "1");
+	step_1.setAttributeNS(null, "stroke-dasharray", "4");
+	
+	let step_2 = document.createElementNS(svgns, "path");
+	step_2.setAttributeNS(null, "d", d_2);
+	step_2.setAttributeNS(null, "fill", "none");
+	step_2.setAttributeNS(null, "stroke", "#000");
+	step_2.setAttributeNS(null, "stroke-width", "1");
+	step_2.setAttributeNS(null, "stroke-dasharray", "4");
+	
+	let d_3 = "M0,0 H"+g_width+" V"+g_height+" H0 z M"+g_step_px+",0 V"+g_height+" M0,"+g_step_px+" H"+g_width+" M"+(g_width - (g_width % g_step_px || g_step_px))+",0 V"+g_height+" M0,"+(g_height - (g_height % g_step_px || g_step_px))+" H"+g_width;
+	
+	let step_3 = document.createElementNS(svgns, "path");
+	step_3.setAttributeNS(null, "d", d_3);
+	step_3.setAttributeNS(null, "fill", "none");
+	step_3.setAttributeNS(null, "stroke", "#000");
+	step_3.setAttributeNS(null, "stroke-width", "1");
+	
+	svg.appendChild(step_1);
+	svg.appendChild(step_2);
+	svg.appendChild(step_3);
+	
+	//Делаем элементы класса g над сеткой.
+	let g_layer = svg.getElementsByClassName('g');
+	for(let i = g_layer.length - 1; i >= 0; i--)svg.appendChild(g_layer[i]);
+	
+}
+</script>
+</head>
+<body>
+<!--
+l5,-50
+q-20,0 -40,-20-->
+<svg xmlns="http://www.w3.org/2000/svg" id="grafika">
+<defs> 
+	<linearGradient id="gradient_p">
+		<stop offset="0%" stop-color="#770"/>
+		<stop offset="50%" stop-color="#990"/>
+		<stop offset="51%" stop-color="#770"/>
+		<stop offset="100%" stop-color="#990"/>
+	</linearGradient>
+	<linearGradient id="gradient_p2" x1="0" x2="0" y1="0" y2="1">
+		<stop offset="0%" stop-color="#440"/>
+		<stop offset="100%" stop-color="#990"/>
+	</linearGradient>
+	<linearGradient id="gradient_p3">
+		<stop offset="0%" stop-color="#770"/>
+		<stop offset="10%" stop-color="#440"/>
+		<stop offset="50%" stop-color="#440"/>
+		<stop offset="51%" stop-color="#770"/>
+		<stop offset="100%" stop-color="#440"/>
+	</linearGradient>
+	<linearGradient id="gradient_p4" x1="0" x2="0" y1="0" y2="1">
+		<stop offset="0%" stop-color="#880"/>
+		<stop offset="100%" stop-color="#440"/>
+	</linearGradient>
+	<linearGradient id="gradient_p5">
+		<stop offset="0%" stop-color="#990"/>
+		<stop offset="25%" stop-color="#330"/>
+		<stop offset="50%" stop-color="#330"/>
+		<stop offset="51%" stop-color="#880"/>
+		<stop offset="100%" stop-color="#330"/>
+	</linearGradient>
+	<linearGradient id="gradient_p7">
+		<stop offset="0%" stop-color="#880"/>
+		<stop offset="70%" stop-color="#990"/>
+		<stop offset="71%" stop-color="#770"/>
+		<stop offset="85%" stop-color="#880"/>
+		<stop offset="100%" stop-color="#660"/>
+	</linearGradient>
+</defs>
+<g class="g" transform="translate(1300,200)">
+		
+	</g>
+<g class="g" transform="translate(900,1300)">
+		<path d="
+			M40,40
+			q10,5 20,0
+			v40
+			h-20
+			z
+			"
+		fill="#990"/>
+		<path d="
+			M0,80
+			q25,-10 40,-40
+			v40
+			z
+			M100,80
+			q-25,-10 -40,-40
+			v40
+			z
+			M40,46
+			h20
+			v4
+			h-20
+			z
+			"
+		fill="url(#gradient_p4)"/>
+		<path d="
+			M20,79 h10
+			M70,79 h10
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="6"/>
+		<path d="
+			M45,77 h10
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="8"/>
+		<path d="
+			M5,81 l-3,-4
+			M95,81 l3,-4
+			M46,82 l8,-3
+			M54,82 l-8,-3
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="2"/>
+	</g>
+<g class="g" transform="translate(1000,1000)">
+		<path d="
+			M10,10
+			q90,10 180,0
+			q-5,25 -3,45
+			l-20,2
+			l18,1
+			q0,20 2,25
+			q-89,-7 -178,-2
+			q4,-25 3,-50
+			l10,-3
+			l-9,-2
+			z
+			M10,215
+			q90,-5 180,0
+			q5,15 0,30
+			l-25,2
+			l24,1
+			q4,20 2,40
+			q-89,-7 -178,-2
+			q0,-20 3,-40
+			l15,-1
+			l-14,-1
+			q-9,-12 -7,-29
+			z
+			M40,130
+			q35,3 70,0
+			q4,37 4,57
+			l-40,-10
+			l-10,-15
+			l-7,13
+			l-20,-5
+			
+			z
+			"
+		fill="#753"/>
+		<path d="
+			M120,30
+			q0,20 10,40
+			z
+			M25,60
+			q30,-10 60,-30
+			z
+			M27,250
+			q40,12 80,12
+			z
+			"
+		fill="#333"/>
+		<path d="
+			M150,140
+			l23,37
+			m5,-20
+			l-38,2
+			m5,70
+			l3,-30
+			m17,25
+			l-5,13
+			M30,120
+			l1,40
+			m17,-15
+			l10,48
+			m70,-7
+			l7,-40
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="4"/>
+		<path d="
+			M0,0
+			q35,25 20,50
+			l40,-25
+			z
+			M200,0
+			q-10,5 -30,2
+			l7,25
+			z
+			M0,90
+			z
+			"
+		fill="url(#gradient_p2)"/>
+		<path d="
+			M0,300
+			q10,-20 5,-57
+			q30,30 50,25
+			q-25,17 -55,32
+			z
+			"
+		fill="url(#gradient_p4)"/>
+		<path d="
+			M197,9
+			l-2,-7
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="5"/>
+	</g>
+<g class="g" transform="translate(1000,600)">
+		<path d="
+			M10,10
+			q90,10 180,0
+			q-5,25 -3,45
+			l-20,2
+			l18,1
+			q0,20 2,25
+			q-89,-7 -178,-2
+			q4,-25 3,-50
+			l10,-3
+			l-9,-2
+			z
+			M10,215
+			q90,-5 180,0
+			q5,15 0,30
+			l-25,2
+			l24,1
+			q4,20 2,40
+			q-89,-7 -178,-2
+			q0,-20 3,-40
+			l15,-1
+			l-14,-1
+			q-9,-12 -7,-29
+			z
+			M10,90
+			q35,3 70,0
+			q4,57 0,113
+			q-35,-2 -70,0
+			q-7,-57 0,-113
+			z
+			"
+		fill="#753"/>
+		<path d="
+			M120,30
+			q0,20 10,40
+			z
+			"
+		fill="#333"/>
+		<path d="
+			M150,140
+			l37,15
+			m-5,-20
+			l-30,25
+			m10,5
+			l3,-30
+			m7,-5
+			l-5,13
+			m5,24
+			l-3,-12
+			M130,120
+			l1,40
+			m9,1
+			l2,-30
+			m-25,-15
+			l0,48
+			m7,-7
+			l2,-40
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="4"/>
+		<path d="
+			M0,120
+			l3,40
+			l30,40
+			v-130
+			z
+			"
+		fill="url(#gradient_p7)"/>
+		<path d="
+			M0,0
+			q7,60 0,120
+			q40,-90 80,-50
+			l-5,-30
+			q-50,-5 -75,-40
+			z
+			M200,0
+			q-10,5 -30,2
+			l7,25
+			z
+			"
+		fill="url(#gradient_p2)"/>
+		<path d="
+			M0,300
+			q7,-70 3,-140
+			q110,90 197,140
+			q-100,-10 -200,0
+			z
+			M27,250
+			q40,12 80,0
+			z
+			"
+		fill="url(#gradient_p4)"/>
+		<path d="
+			M27,250
+			q40,12 80,0
+			q-40,7 -80,0
+			z
+			"
+		fill="#440"/>
+		<path d="
+			M197,9
+			l-2,-7
+			M197,294
+			l-5,4
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="5"/>
+	</g>
+<g class="g" transform="translate(1000,200)">
+		<path d="
+			M10,10
+			q90,10 180,0
+			q-5,25 -3,45
+			l-20,2
+			l18,1
+			q0,20 2,25
+			q-89,-7 -178,-2
+			q4,-25 3,-50
+			l10,-3
+			l-9,-2
+			z
+			M10,215
+			q90,-5 180,0
+			q5,15 0,30
+			l-25,2
+			l24,1
+			q4,20 2,40
+			q-89,-7 -178,-2
+			q0,-20 3,-40
+			l15,-1
+			l-14,-1
+			q-9,-12 -7,-29
+			z
+			M10,90
+			q35,3 70,0
+			q4,57 0,113
+			q-35,-2 -70,0
+			q-7,-57 0,-113
+			z
+			"
+		fill="#753"/>
+		<path d="
+			M150,140
+			l37,15
+			m-5,-20
+			l-30,25
+			m10,5
+			l3,-30
+			m7,-5
+			l-5,13
+			m5,24
+			l-3,-12
+			m-58-30
+			l1,40
+			m9,1
+			l2,-30
+			m-8,-15
+			l0,48
+			m3,-7
+			l2,-40
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="4"/>
+		<path d="
+			M0,120
+			l3,40
+			l30,40
+			v-120
+			z
+			"
+		fill="url(#gradient_p7)"/>
+		<path d="
+			M0,0
+			q7,60 0,120
+			q110,-90 200,-120
+			q-100,5 -200,0
+			z
+			"
+		fill="url(#gradient_p2)"/>
+		<path d="
+			M0,300
+			q7,-70 3,-140
+			q110,90 197,140
+			q-100,-10 -200,0
+			z
+			"
+		fill="url(#gradient_p4)"/>
+		<path d="
+			M197,9
+			l-2,-7
+			M197,294
+			l-5,4
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="5"/>
+	</g>
+<g class="g" transform="translate(500,1300)">
+		<path d="
+			M5,80
+			l3,-42
+			q20,10 42,0
+			q22,10 42,0
+			l3,42
+			z
+			"
+		fill="url(#gradient_p4)"/>
+		<path d="
+			M17,79
+			c0,-20 25,-20 25,0
+			z
+			M58,79
+			c0,-20 25,-20 25,0
+			z
+			"
+		fill="url(#gradient_p5)"/>
+		
+		<path d="
+			M5,81 h90
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="8"/>
+		<path d="
+			M2,85 l6,-46
+			M50,85 v-46
+			M98,85 l-6,-46
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="2"/>
+		
+	</g>
+<g class="g" transform="translate(600,1000)">
+		<path d="
+			M8,20 h184
+			M11,30 l179,15
+			M9,57 l170,45
+			M10,100 l170,-30
+			M9,122 l170,-27
+			M10,140 l170,-20
+			M18,90 l153,70
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="15"/>
+		<path d="
+			M6,0
+			q47,10 94,0
+			q47,10 94,0
+			q-50,40 -94,10
+			l-15,17
+			l-12,-17
+			l-10,9
+			q-20,-15 -60,-10
+			z
+			"
+		fill="#550"/>
+		<path d="
+			M6,0
+			q47,10 94,0
+			q47,10 94,0
+			q-50,40 -94,10
+			l-15,17
+			l-12,-17
+			l-10,9
+			q-20,-15 -60,-10
+			z
+			"
+		fill="url(#gradient_p2)"
+		fill-opacity="0.75"/>
+		<path d="
+			M2,180 l45,-50
+			M100,180 l-93,17
+			M198,180 c-5,-10 -15,0 -9,8 
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="3"/>
+	</g>
+<g class="g" transform="translate(600,600)">
+		<path d="
+			M8,20 h184
+			M11,35 l179,5
+			M10,60 l178,7
+			M9,77 l183,6
+			M10,100 h180
+			M9,122 l179,-2
+			M10,140 h180
+			M8,160 l183,-5
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="15"/>
+		<path d="
+			M50,67
+			c0,-40 50,-40 50,0
+			v70
+			c0,40 -50,40 -50,0
+			z
+			M133,63
+			c5,-39 54,-37 50,10
+			l-15,65
+			c-4,38 -55,35 -49,-10
+			z
+			"
+		fill="url(#gradient_p3)"/>
+		<path d="
+			M158,100
+			q-3,20 -10,40
+			q3,-20 10,-40
+			z
+			M154,97
+			q-5,18 -12,35
+			q4,-18 12,-35
+			z
+			"
+		fill="#330"/>
+		<path d="
+			M6,0
+			q47,20 94,0
+			q47,20 94,0
+			q-57,65 -94,130
+			q-47,-5 -94,0
+			q5,-65 0,-130
+			z
+			M30,30
+			q5,20 40,70
+			l-16,-40
+			z
+			M50,20
+			q5,20 40,70
+			z
+			"
+		fill="url(#gradient_p)"/>
+		<path d="
+			M6,0
+			q47,20 94,0
+			q47,20 94,0
+			q-57,65 -94,130
+			q-47,-5 -94,0
+			q5,-65 0,-130
+			z
+			M30,30
+			q5,20 40,70
+			l-16,-40
+			z
+			M50,20
+			q5,20 40,70
+			z
+			"
+		fill="url(#gradient_p2)"
+		fill-opacity="0.75"/>
+		<path d="
+			M194,0
+			q-57,65 -94,130
+			l40,-45
+			z
+			M30,30
+			q18,20 40,70
+			l-16,-40
+			z
+			"
+		fill="#440"/>
+		<path d="
+			M7,130 l-5,50
+			M100,130 v50
+			M198,180 c-5,-10 -15,0 -9,8 
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="3"/>
+	</g>
+<g class="g" transform="translate(600,200)">
+		<path d="
+			M8,20 h184
+			M10,40 h180
+			M10,60 h180
+			M8,80 h184
+			M10,100 h180
+			M10,120 h180
+			M10,140 h180
+			M8,160 h184
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="15"/>
+		<path d="
+			M30,60
+			c0,-40 50,-40 50,0
+			v70
+			c0,40 -50,40 -50,0
+			z
+			M120,60
+			c0,-40 50,-40 50,0
+			v70
+			c0,40 -50,40 -50,0
+			z
+			"
+		fill="url(#gradient_p3)"/>
+		<path d="
+			M6,0
+			q47,20 94,0
+			q47,20 94,0
+			q-5,65 0,130
+			q-47,-5 -94,0
+			q-47,-5 -94,0
+			q5,-65 0,-130
+			z
+			"
+		fill="url(#gradient_p)"/>
+		<path d="
+			M6,0
+			q47,20 94,0
+			q47,20 94,0
+			q-5,65 0,130
+			q-47,-5 -94,0
+			q-47,-5 -94,0
+			q5,-65 0,-130
+			z
+			"
+		fill="url(#gradient_p2)"
+		fill-opacity="0.75"/>
+		<path d="
+			M7,130 l-5,50
+			M100,130 v50
+			M193,130 l5,50
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="3"/>
+	</g>
+<g class="g" transform="translate(100,1300)">
+		<path d="
+			M50,20
+			q-20,20 -40,20
+			l5,40
+			h35
+			z
+			"
+		fill="#990"/>
+		<path d="
+			M50,20
+			q20,20 40,20
+			l-5,40
+			h-35
+			z
+			"
+		fill="#770"/>
+		<path d="
+			M50,30
+			q-5,40 -20,50
+			h40
+			q-15,-10,-20,-50
+			z
+			"
+		fill="#550"/>
+		<path d="
+			M27,80 h10
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="8"/>
+	</g>
+<g class="g" transform="translate(100,900)">
+		<path d="
+			M300,50
+			q-40,60 -170,80
+			q20,50 -30,70
+			q20,50 -10,105
+			q50,0 100,10
+			l80,-50
+			q-20,-50 5,-120
+			z
+			"
+		fill="#990"/>
+		
+		<path d="
+			M150,140
+			q9,1 13,-11
+			q-6,12 3,13
+			q-1,5 -2,7
+			q-8,-9 -17,1
+			z
+			M240,240
+			q7,3 14,-8
+			q-9,11 3,14
+			q-4,10 -14,8
+			q-9,-6 -13,-4
+			z
+			M153,210
+			q-8,30 -10,70
+			z
+			M283,90
+			q-28,55 -70,120
+			z
+			"
+		fill="#330"/>
+		<path d="
+			M30,50 c20,-10 40,10 20,30
+			c-10,0 -15,-5 -5,-10
+			M10,200 q10,-10 20,0 q20,20 40,0
+			
+			M300,300 c1,-15 12,-12 15,7 q-5,10 -25,2
+			
+			M330,110 q20,-20 40,-25
+			M317,102 q-7,-8 -12,-10
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="3"/>
+		<path d="
+			M130,330 l50,20
+			m10,10 l-50,25
+			m30,10 l-10,-40
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="7"/>
+		<path d="
+			M337,330 l20,50
+			"
+		fill="none"
+		stroke="#753"
+		stroke-width="30"/>
+	</g>
+<g class="g" transform="translate(100,500)">
+		<path d="
+			M200,50
+			q-40,60 -80,80
+			q20,50 -20,70
+			q20,50 0,100
+			q50,0 100,10
+			z
+			"
+		fill="#990"/>
+		<path d="
+			M200,50
+			q50,50 100,50
+			q-20,50 0,100
+			q-20,50 0,100
+			q-50,0 -100,10
+			z
+			"
+		fill="#770"/>
+		<path d="
+			M150,140
+			q10,0 15,-10
+			q-5,10 2,15
+			q-2,3 -1,7
+			q-7,-5 -15,-1
+			z
+			M250,240
+			q8,0 12,-9
+			q-7,10 4,15
+			q-5,10 -12,8
+			q-8,-7 -12,-3
+			z
+			M153,210
+			q-8,30 -1,70
+			z
+			"
+		fill="#330"/>
+		<path d="
+			M200,50 v-40
+			m-170,40 c20,-10 40,10 20,30
+			c-10,0 -15,-5 -5,-10
+			
+			M100,200 h-90
+			m90,100 l-70,50
+			m270,-50 l70,50
+			m-70,-150 h90
+			m-90,-100 l70,-50
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="3"/>
+		<path d="
+			M130,330 l50,20
+			m-10,-20 l-50,25
+			m30,10 l-10,-40
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="7"/>
+		<path d="
+			M270,330 l20,50
+			"
+		fill="none"
+		stroke="#753"
+		stroke-width="30"/>
+	</g>
+<g class="g" transform="translate(100,100)">
+		<path d="
+			M200,50
+			q-50,50 -100,50
+			q20,50 0,100
+			q20,50 0,100
+			q50,0 100,10
+			z
+			"
+		fill="#990"/>
+		<path d="
+			M200,50
+			q50,50 100,50
+			q-20,50 0,100
+			q-20,50 0,100
+			q-50,0 -100,10
+			z
+			"
+		fill="#770"/>
+		<path d="
+			M200,50 v-40
+			m-100,90 l-70,-50
+			m70,150 h-90
+			m90,100 l-70,50
+			m270,-50 l70,50
+			m-70,-150 h90
+			m-90,-100 l70,-50
+			"
+		fill="none"
+		stroke="#433"
+		stroke-linecap="round"
+		stroke-width="3"/>
+		<path d="
+			M130,330 l50,20
+			m-10,-20 l-40,25
+			m30,10 l-10,-40
+			"
+		fill="none"
+		stroke="#753"
+		stroke-linecap="round"
+		stroke-width="7"/>
+		<path d="
+			M270,330 l-20,50
+			"
+		fill="none"
+		stroke="#753"
+		stroke-width="30"/>
+	</g>
+</svg><br>
+</body>
+</html>

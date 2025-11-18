@@ -1,0 +1,83 @@
+<Granule>
+    <GranuleUR>rlc_forest_fire_img.sep_23_98_a.jpg</GranuleUR>
+    <InsertTime>2004-01-07T00:00:00Z</InsertTime>
+    <LastUpdate>2004-01-07T00:00:00Z</LastUpdate>
+    <Collection>
+        <ShortName>rlc_forest_fire_img_694</ShortName>
+        <VersionId>1</VersionId>
+    </Collection>
+    <DataGranule>
+        <SizeMBDataGranule>0.606471</SizeMBDataGranule>
+        <DayNightFlag>BOTH</DayNightFlag>
+        <ProductionDateTime>2004-01-07T00:00:00Z</ProductionDateTime>
+    </DataGranule>
+    <Temporal>
+        <RangeDateTime>
+            <BeginningDateTime>1998-08-01T00:00:00Z</BeginningDateTime>
+            <EndingDateTime>1999-08-03T00:00:00Z</EndingDateTime>
+        </RangeDateTime>
+    </Temporal>
+    <Spatial>
+        <HorizontalSpatialDomain>
+            <Geometry>
+                <BoundingRectangle>
+                    <WestBoundingCoordinate>25</WestBoundingCoordinate>
+                    <NorthBoundingCoordinate>71</NorthBoundingCoordinate>
+                    <EastBoundingCoordinate>180</EastBoundingCoordinate>
+                    <SouthBoundingCoordinate>23.21</SouthBoundingCoordinate>
+                </BoundingRectangle>
+            </Geometry>
+        </HorizontalSpatialDomain>
+    </Spatial>
+    <MeasuredParameters>
+        <MeasuredParameter>
+            <ParameterName>FIRE OCCURRENCE</ParameterName>
+        </MeasuredParameter>
+    </MeasuredParameters>
+    <Platforms>
+        <Platform>
+            <ShortName>NOAA-9</ShortName>
+            <Instruments>
+                <Instrument>
+                    <ShortName>AVHRR</ShortName>
+                </Instrument>
+            </Instruments>
+        </Platform>
+    </Platforms>
+    <Campaigns>
+        <Campaign>
+            <ShortName>vegetation</ShortName>
+        </Campaign>
+    </Campaigns>
+    <Price>0</Price>
+    <OnlineAccessURLs>
+        <OnlineAccessURL>
+            <URL>https://daac.ornl.gov/daacdata/russian_land_cover/fire_images_russia/data/sep_23_98_a.jpg</URL>
+            <URLDescription>This link provides direct download access to the granule.</URLDescription>
+        </OnlineAccessURL>
+    </OnlineAccessURLs>
+    <OnlineResources>
+        <OnlineResource>
+            <URL>https://daac.ornl.gov/RLC/guides/RLC_forest_fire_images.html</URL>
+            <Description>ORNL DAAC Data Set Documentation</Description>
+            <Type>USERS GUIDE</Type>
+        </OnlineResource>
+        <OnlineResource>
+            <URL>https://dx.doi.org/10.3334/ORNLDAAC/694</URL>
+            <Description>Data set Landing Page DOI URL</Description>
+            <Type>DATA SET LANDING PAGE</Type>
+        </OnlineResource>
+        <OnlineResource>
+            <URL>https:/daac.ornl.gov/daacdata/russian_land_cover/fire_images_russia/comp/fire_image_index.csv</URL>
+            <Description>Data Set Documentation</Description>
+            <Type>GENERAL DOCUMENTATION</Type>
+        </OnlineResource>
+        <OnlineResource>
+            <URL>https:/daac.ornl.gov/daacdata/russian_land_cover/fire_images_russia/comp/RLC_forest_fire_images.pdf</URL>
+            <Description>Data Set Documentation</Description>
+            <Type>GENERAL DOCUMENTATION</Type>
+        </OnlineResource>
+    </OnlineResources>
+    <Orderable>false</Orderable>
+    <DataFormat>Not Provided</DataFormat>
+</Granule>

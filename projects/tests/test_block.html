@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+	<meta charset="UTF-8">
+	<title>BlockSize Demo</title>
+</head>
+<body>
+	
+	<div id="block"></div>
+<br>
+	<span id="output"></span>
+	<br>
+	<style>
+	#block{
+		width: 100px;
+		height: 100px;
+		position: absolute;
+		top: 100px;
+		left: 100px;
+		background-color: #eee;
+		border: 2px solid #ccc;
+                cursor: pointer;
+	}
+</style>
+
+<script>
+	var block = document.getElementById('block'),
+	size = 100,
+	dx = 2,
+	run = false;
+
+	block.addEventListener('click', function(e){
+		if(!run){
+			run = !run;
+			tick();
+		}else{
+			dx *= -1;
+		}
+	});
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+	function tick(){
+		setInterval(function(){
+			size += dx;// * (size / 100);
+			out(size);
+			block.style.width = block.style.height  = size + 'px';
+		}, 200)
+	};
+
+</script>
+</body>
+</html>

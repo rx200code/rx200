@@ -1,0 +1,12 @@
+{
+	"name": "test_api_vk",
+	"URL": "https://vk.com/app51748111",
+	"id_vk": "51748111",
+	"account_id_vk": "1477085",
+	"keys": {
+		"service_key": "xxxxXXxxxx",
+		"user_key": "vk1.xxxxXXxxxx",
+		"time_user_key": 0,
+		"group_key": ""
+	}
+}

@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>test</title>
+		<style>
+			
+		</style>
+		<script>
+			window.onload = () => {
+				
+			};
+			/*
+			{
+				"sign": "tVg78Xv6uscTGYDz9THlpvCuYiM_mhGQmRXOTHhdR0U",
+				"ts": 1759645290,
+				"payload": "test text"
+			}
+			/**/
+			
+			function concat_Uint8Array(buffer_1, buffer_2){
+				let arr_buffer = new Uint8Array(buffer_1.length + buffer_2.length);
+				arr_buffer.set(buffer_1, 0);
+				arr_buffer.set(buffer_2, buffer_1.length);
+				return arr_buffer;
+			}
+			function out_Uint8Array(arr_buffer){
+				let text_out = "";
+				for(let i = 0; i < arr_buffer.length; i++){
+					if(i % 16 === 0)text_out += "\n";
+					text_out += arr_buffer[i].toString(16) + ",";
+				}
+				return text_out;
+			}
+			function out_Uint8Array2(arr_buffer){
+				let text_out = "";
+				for(let i = 0; i < arr_buffer.length; i++){
+					if(i % 8 === 0)text_out += "\n";
+					text_out += arr_buffer[i].toString(2).padStart(8, '0') + ",";
+				}
+				return text_out;
+			}
+			function rotr(n, d){
+				return (n >>> d) | (n << (32 - d));
+			}
+			function sha256_arr(arr){
+				let blocks_size = (arr.length + 9) / 64 + 1 | 0;
+				let size = blocks_size * 16;
+				let arr_buffer = (new Array(size)).fill(0);
+
+				for(let i = 0; i < arr.length; i++){
+					arr_buffer[i / 4 | 0] |= arr[i] << ((3 - i % 4) << 3);
+				}
+
+				arr_buffer[arr.length / 4 | 0] |= 128 << ((3 - arr.length % 4) << 3);
+				arr_buffer[arr_buffer.length - 1] = arr.length * 8;
+
+				let arr_h = [
+					0x6A09E667,
+					0xBB67AE85,
+					0x3C6EF372,
+					0xA54FF53A,
+					0x510E527F,
+					0x9B05688C,
+					0x1F83D9AB,
+					0x5BE0CD19
+				];
+				let k = [
+					0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
+					0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
+					0xE49B69C1, 0xEFBE4786, 0x0FC19DC6, 0x240CA1CC, 0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA,
+					0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7, 0xC6E00BF3, 0xD5A79147, 0x06CA6351, 0x14292967,
+					0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13, 0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85,
+					0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3, 0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070,
+					0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5, 0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
+					0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
+				];
+
+				for(let j = 0; j < blocks_size; j++){
+					let w = [];
+					for(let i = 0; i < 16; i++){
+						w[i] = arr_buffer[i + (j * 16)];
+					}
+					for(let i = 16; i < 64; i++){
+						let s0 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ (w[i-15] >>> 3);
+						let s1 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ (w[i-2] >>> 10);
+						w[i] = w[i-16] + s0 + w[i-7] + s1;
+					}
+					let a = arr_h[0];
+					let b = arr_h[1];
+					let c = arr_h[2];
+					let d = arr_h[3];
+					let e = arr_h[4];
+					let f = arr_h[5];
+					let g = arr_h[6];
+					let h = arr_h[7];
+					
+					for(let i = 0; i < 64; i++){
+						let E0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+						let Ma = (a & b) ^ (a & c) ^ (b & c);
+						let t2 = E0 + Ma;
+						let E1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+						let Ch = (e & f) ^ ((~e) & g);
+						let t1 = h + E1 + Ch + k[i] + w[i];
+
+						h = g;
+						g = f;
+						f = e;
+						e = d + t1;
+						d = c;
+						c = b;
+						b = a;
+						a = t1 + t2;
+					}
+					arr_h[0] = arr_h[0] + a | 0;
+					arr_h[1] = arr_h[1] + b | 0;
+					arr_h[2] = arr_h[2] + c | 0;
+					arr_h[3] = arr_h[3] + d | 0;
+					arr_h[4] = arr_h[4] + e | 0;
+					arr_h[5] = arr_h[5] + f | 0;
+					arr_h[6] = arr_h[6] + g | 0;
+					arr_h[7] = arr_h[7] + h | 0;
+					
+				}
+
+				/**
+				alert(arr_h.map(num => 
+					(num >>> 24).toString(2).padStart(8, '0') + "," +
+					((num >>> 16) & 0xFF).toString(2).padStart(8, '0') + "," +
+					((num >>> 8) & 0xFF).toString(2).padStart(8, '0') + "," +
+					(num & 0xFF).toString(2).padStart(8, '0') + "\n"
+				));
+				/**/
+
+				let arr_out = [];
+				for(let i = 0; i < arr_h.length; i++){
+					arr_out[i * 4] = arr_h[i] >>> 24;
+					arr_out[i * 4 + 1] = (arr_h[i] >>> 16) & 0xFF;
+					arr_out[i * 4 + 2] = (arr_h[i] >>> 8) & 0xFF;
+					arr_out[i * 4 + 3] = arr_h[i] & 0xFF;
+				}
+				return arr_out;
+				
+			}
+			function hash_hmac_sha256_vk_2(msg, key){
+				let b = 64;
+				let arr_buffer = new Array(b);
+				
+				// 1
+
+				let arr_test = new Array(key.length);
+				for(let i = 0; i < arr_test.length; i++){
+					arr_test[i] = key.charCodeAt(i);
+				}
+
+				for(let i = 0; i < arr_buffer.length && i < arr_test.length; i++){
+					arr_buffer[i] = arr_test[i];
+				}
+				// 2
+				for(let i = 0; i < arr_buffer.length; i++){
+					arr_buffer[i] = arr_buffer[i] ^ 0x36;
+				}
+				// 3
+				let arr_buffer_msg = Array(msg.length);
+				for(let i = 0; i < arr_buffer_msg.length; i++){
+					arr_buffer_msg[i] = msg.charCodeAt(i);
+				}
+
+				let arr_buffer_2 = arr_buffer.concat(arr_buffer_msg);
+
+				// 4
+				let hashBuffer = sha256_arr(arr_buffer_2);
+				// 5
+				let arr_buffer_5 = new Array(b);
+				for(let i = 0; i < arr_buffer_5.length && i < arr_test.length; i++){
+					arr_buffer_5[i] = arr_test[i];
+				}
+				for(let i = 0; i < arr_buffer_5.length; i++){
+					arr_buffer_5[i] = arr_buffer_5[i] ^ 0x5c;
+				}
+				// 6
+				let arr_buffer_6 = arr_buffer_5.concat(hashBuffer);
+				// 7
+				let hashBuffer_2 = sha256_arr(arr_buffer_6);
+				
+
+				const binaryString = String.fromCodePoint(...hashBuffer_2);
+				let sign = btoa(binaryString).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+				
+				return sign;
+			}
+			function sha256_text(text){
+				let blocks_size = (text.length + 9) / 64 + 1 | 0;
+				let size = blocks_size * 16;
+				let arr_buffer = (new Array(size)).fill(0);
+
+				for(let i = 0; i < text.length; i++){
+					arr_buffer[i / 4 | 0] |= text.charCodeAt(i) << ((3 - i % 4) << 3);
+				}
+
+				arr_buffer[text.length / 4 | 0] |= 128 << ((3 - text.length % 4) << 3);
+				arr_buffer[arr_buffer.length - 1] = text.length * 8;
+
+				let arr_h = [
+					0x6A09E667,
+					0xBB67AE85,
+					0x3C6EF372,
+					0xA54FF53A,
+					0x510E527F,
+					0x9B05688C,
+					0x1F83D9AB,
+					0x5BE0CD19
+				];
+				let k = [
+					0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
+					0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
+					0xE49B69C1, 0xEFBE4786, 0x0FC19DC6, 0x240CA1CC, 0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA,
+					0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7, 0xC6E00BF3, 0xD5A79147, 0x06CA6351, 0x14292967,
+					0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13, 0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85,
+					0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3, 0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070,
+					0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5, 0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
+					0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
+				];
+
+				for(let j = 0; j < blocks_size; j++){
+					let w = [];
+					for(let i = 0; i < 16; i++){
+						w[i] = arr_buffer[i + (j * 16)];
+					}
+					for(let i = 16; i < 64; i++){
+						let s0 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ (w[i-15] >>> 3);
+						let s1 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ (w[i-2] >>> 10);
+						w[i] = w[i-16] + s0 + w[i-7] + s1;
+					}
+					let a = arr_h[0];
+					let b = arr_h[1];
+					let c = arr_h[2];
+					let d = arr_h[3];
+					let e = arr_h[4];
+					let f = arr_h[5];
+					let g = arr_h[6];
+					let h = arr_h[7];
+					
+					for(let i = 0; i < 64; i++){
+						let E0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+						let Ma = (a & b) ^ (a & c) ^ (b & c);
+						let t2 = E0 + Ma;
+						let E1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+						let Ch = (e & f) ^ ((~e) & g);
+						let t1 = h + E1 + Ch + k[i] + w[i];
+
+						h = g;
+						g = f;
+						f = e;
+						e = d + t1;
+						d = c;
+						c = b;
+						b = a;
+						a = t1 + t2;
+					}
+					arr_h[0] = arr_h[0] + a | 0;
+					arr_h[1] = arr_h[1] + b | 0;
+					arr_h[2] = arr_h[2] + c | 0;
+					arr_h[3] = arr_h[3] + d | 0;
+					arr_h[4] = arr_h[4] + e | 0;
+					arr_h[5] = arr_h[5] + f | 0;
+					arr_h[6] = arr_h[6] + g | 0;
+					arr_h[7] = arr_h[7] + h | 0;
+					
+				}
+
+				/**
+				alert(arr_h.map(num => 
+					(num >>> 24).toString(2).padStart(8, '0') + "," +
+					((num >>> 16) & 0xFF).toString(2).padStart(8, '0') + "," +
+					((num >>> 8) & 0xFF).toString(2).padStart(8, '0') + "," +
+					(num & 0xFF).toString(2).padStart(8, '0') + "\n"
+				));
+				/**/
+				return arr_h;
+				
+			}
+			function sha256(text){
+				let blocks_size = (text.length + 9) / 64 + 1 | 0;
+				let size = blocks_size * 64;
+				let buffer = new ArrayBuffer(size);
+				let bufferUint8 = new Uint8Array(buffer);
+				let bufferUint32 = new Uint32Array(buffer);
+				for(let i = 0; i < text.length; i++){
+					bufferUint8[i] = text.charCodeAt(i);
+				}
+				bufferUint8[text.length] = 128;
+
+				for(let i = 0; i < bufferUint32.length; i++)bufferUint32[i] = (bufferUint32[i] >>> 24) | ((bufferUint32[i] >>> 8) & 0xff00) | ((bufferUint32[i] << 8) & 0xff0000) | (bufferUint32[i] << 24);
+				
+				bufferUint32[bufferUint32.length - 1] = text.length * 8;
+				//bufferUint8[bufferUint8.length - 1] = text.length * 8;
+
+				
+
+				//
+				let arr_h = new Uint32Array([
+					0x6A09E667,
+					0xBB67AE85,
+					0x3C6EF372,
+					0xA54FF53A,
+					0x510E527F,
+					0x9B05688C,
+					0x1F83D9AB,
+					0x5BE0CD19
+				]);
+
+				let k = new Uint32Array([
+					0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
+					0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
+					0xE49B69C1, 0xEFBE4786, 0x0FC19DC6, 0x240CA1CC, 0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA,
+					0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7, 0xC6E00BF3, 0xD5A79147, 0x06CA6351, 0x14292967,
+					0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13, 0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85,
+					0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3, 0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070,
+					0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5, 0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
+					0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
+				]);
+				
+				for(let j = 0; j < blocks_size; j++){
+					let w = new Uint32Array(64);
+					for(let i = 0; i < 16; i++){
+						w[i] = bufferUint32[i + (j * 16)];
+					}
+					for(let i = 16; i < 64; i++){
+						let s0 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ (w[i-15] >>> 3);
+						let s1 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ (w[i-2] >>> 10);
+						w[i] = w[i-16] + s0 + w[i-7] + s1;
+					}
+					let a = arr_h[0];
+					let b = arr_h[1];
+					let c = arr_h[2];
+					let d = arr_h[3];
+					let e = arr_h[4];
+					let f = arr_h[5];
+					let g = arr_h[6];
+					let h = arr_h[7];
+					
+					for(let i = 0; i < 64; i++){
+						let E0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+						let Ma = (a & b) ^ (a & c) ^ (b & c);
+						let t2 = E0 + Ma;
+						let E1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+						let Ch = (e & f) ^ ((~e) & g);
+						let t1 = h + E1 + Ch + k[i] + w[i];
+
+						h = g;
+						g = f;
+						f = e;
+						e = d + t1;
+						d = c;
+						c = b;
+						b = a;
+						a = t1 + t2;
+					}
+					arr_h[0] = arr_h[0] + a;
+					arr_h[1] = arr_h[1] + b;
+					arr_h[2] = arr_h[2] + c;
+					arr_h[3] = arr_h[3] + d;
+					arr_h[4] = arr_h[4] + e;
+					arr_h[5] = arr_h[5] + f;
+					arr_h[6] = arr_h[6] + g;
+					arr_h[7] = arr_h[7] + h;
+					
+				}
+				
+				for(let i = 0; i < arr_h.length; i++)arr_h[i] = (arr_h[i] >>> 24) | ((arr_h[i] >>> 8) & 0xff00) | ((arr_h[i] << 8) & 0xff0000) | (arr_h[i] << 24);
+				
+
+				return new Uint8Array(arr_h.buffer);
+			}
+			function sha256Uint8(arrUint8){
+				let blocks_size = (arrUint8.length + 9) / 64 + 1 | 0;
+				let size = blocks_size * 64;
+				let buffer = new ArrayBuffer(size);
+				let bufferUint8 = new Uint8Array(buffer);
+				let bufferUint32 = new Uint32Array(buffer);
+				for(let i = 0; i < arrUint8.length; i++){
+					bufferUint8[i] = arrUint8[i];
+				}
+				bufferUint8[arrUint8.length] = 128;
+
+				for(let i = 0; i < bufferUint32.length; i++)bufferUint32[i] = (bufferUint32[i] >>> 24) | ((bufferUint32[i] >>> 8) & 0xff00) | ((bufferUint32[i] << 8) & 0xff0000) | (bufferUint32[i] << 24);
+				
+				bufferUint32[bufferUint32.length - 1] = arrUint8.length * 8;
+
+				//
+				let arr_h = new Uint32Array([
+					0x6A09E667,
+					0xBB67AE85,
+					0x3C6EF372,
+					0xA54FF53A,
+					0x510E527F,
+					0x9B05688C,
+					0x1F83D9AB,
+					0x5BE0CD19
+				]);
+
+				let k = new Uint32Array([
+					0x428A2F98, 0x71374491, 0xB5C0FBCF, 0xE9B5DBA5, 0x3956C25B, 0x59F111F1, 0x923F82A4, 0xAB1C5ED5,
+					0xD807AA98, 0x12835B01, 0x243185BE, 0x550C7DC3, 0x72BE5D74, 0x80DEB1FE, 0x9BDC06A7, 0xC19BF174,
+					0xE49B69C1, 0xEFBE4786, 0x0FC19DC6, 0x240CA1CC, 0x2DE92C6F, 0x4A7484AA, 0x5CB0A9DC, 0x76F988DA,
+					0x983E5152, 0xA831C66D, 0xB00327C8, 0xBF597FC7, 0xC6E00BF3, 0xD5A79147, 0x06CA6351, 0x14292967,
+					0x27B70A85, 0x2E1B2138, 0x4D2C6DFC, 0x53380D13, 0x650A7354, 0x766A0ABB, 0x81C2C92E, 0x92722C85,
+					0xA2BFE8A1, 0xA81A664B, 0xC24B8B70, 0xC76C51A3, 0xD192E819, 0xD6990624, 0xF40E3585, 0x106AA070,
+					0x19A4C116, 0x1E376C08, 0x2748774C, 0x34B0BCB5, 0x391C0CB3, 0x4ED8AA4A, 0x5B9CCA4F, 0x682E6FF3,
+					0x748F82EE, 0x78A5636F, 0x84C87814, 0x8CC70208, 0x90BEFFFA, 0xA4506CEB, 0xBEF9A3F7, 0xC67178F2
+				]);
+				
+				for(let j = 0; j < blocks_size; j++){
+					let w = new Uint32Array(64);
+					for(let i = 0; i < 16; i++){
+						w[i] = bufferUint32[i + (j * 16)];
+					}
+					for(let i = 16; i < 64; i++){
+						let s0 = rotr(w[i-15], 7) ^ rotr(w[i-15], 18) ^ (w[i-15] >>> 3);
+						let s1 = rotr(w[i-2], 17) ^ rotr(w[i-2], 19) ^ (w[i-2] >>> 10);
+						w[i] = w[i-16] + s0 + w[i-7] + s1;
+					}
+					let a = arr_h[0];
+					let b = arr_h[1];
+					let c = arr_h[2];
+					let d = arr_h[3];
+					let e = arr_h[4];
+					let f = arr_h[5];
+					let g = arr_h[6];
+					let h = arr_h[7];
+					
+					for(let i = 0; i < 64; i++){
+						let E0 = rotr(a, 2) ^ rotr(a, 13) ^ rotr(a, 22);
+						let Ma = (a & b) ^ (a & c) ^ (b & c);
+						let t2 = E0 + Ma;
+						let E1 = rotr(e, 6) ^ rotr(e, 11) ^ rotr(e, 25);
+						let Ch = (e & f) ^ ((~e) & g);
+						let t1 = h + E1 + Ch + k[i] + w[i];
+
+						h = g;
+						g = f;
+						f = e;
+						e = d + t1;
+						d = c;
+						c = b;
+						b = a;
+						a = t1 + t2;
+					}
+					arr_h[0] = arr_h[0] + a;
+					arr_h[1] = arr_h[1] + b;
+					arr_h[2] = arr_h[2] + c;
+					arr_h[3] = arr_h[3] + d;
+					arr_h[4] = arr_h[4] + e;
+					arr_h[5] = arr_h[5] + f;
+					arr_h[6] = arr_h[6] + g;
+					arr_h[7] = arr_h[7] + h;
+					
+				}
+				
+				for(let i = 0; i < arr_h.length; i++)arr_h[i] = (arr_h[i] >>> 24) | ((arr_h[i] >>> 8) & 0xff00) | ((arr_h[i] << 8) & 0xff0000) | (arr_h[i] << 24);
+				
+
+				return new Uint8Array(arr_h.buffer);
+			}
+			function hash_hmac_sha256_vk(msg, key){
+				let b = 64;
+				let sign = "";
+				let arr_buffer = new Uint8Array(b);
+				/**
+				for(let i = 0; i < arr_buffer.length && i < key.length; i++){
+					arr_buffer[i] = key.charCodeAt(i);
+				}
+				/**/
+				// 1
+
+				let arr_test = new Uint8Array(key.length);
+				for(let i = 0; i < arr_test.length; i++){
+					arr_test[i] = key.charCodeAt(i);
+				}
+
+				for(let i = 0; i < arr_buffer.length && i < arr_test.length; i++){
+					arr_buffer[i] = arr_test[i];
+				}
+				// 2
+				for(let i = 0; i < arr_buffer.length; i++){
+					arr_buffer[i] = arr_buffer[i] ^ 0x36;
+				}
+				// 3
+				let arr_buffer_msg = new Uint8Array(msg.length);
+				for(let i = 0; i < arr_buffer_msg.length; i++){
+					arr_buffer_msg[i] = msg.charCodeAt(i);
+				}
+
+				let arr_buffer_2 = concat_Uint8Array(arr_buffer, arr_buffer_msg);
+
+				// 4
+				let hashBuffer = sha256Uint8(arr_buffer_2);
+				// 5
+				let arr_buffer_5 = new Uint8Array(b);
+				for(let i = 0; i < arr_buffer_5.length && i < arr_test.length; i++){
+					arr_buffer_5[i] = arr_test[i];
+				}
+				for(let i = 0; i < arr_buffer_5.length; i++){
+					arr_buffer_5[i] = arr_buffer_5[i] ^ 0x5c;
+				}
+				// 6
+				let arr_buffer_6 = concat_Uint8Array(arr_buffer_5, hashBuffer);
+				// 7
+				let hashBuffer_2 = sha256Uint8(arr_buffer_6);
+				//alert(out_Uint8Array(hashBuffer_2));
+				//for(let i = 0; i < hashBuffer_2.length; i++)sign += String.fromCharCode(hashBuffer_2[i]);
+
+				//const utf8Bytes = Uint8Array.from(hashBuffer_2, (m) => m.codePointAt(0));
+				// Decode the Uint8Array back to a JavaScript string
+				//sign = new TextDecoder().decode(hashBuffer_2);
+				//alert(new TextDecoder().decode(hashBuffer_2));
+				//"tVg78Xv6uscTGYDz9THlpvCuYiM_mhGQmRXOTHhdR0U"
+				//"xydaNvYglKmYTgbQdFjwohCyUbwIopYOCX4qFxFYe08="
+				//alert(btoa(sign));
+				
+				//alert(out_Uint8Array(hashBuffer_2) + "\n\n" + sign);
+
+				//alert(out_Uint8Array(hashBuffer_2));
+
+				const binaryString = String.fromCodePoint(...hashBuffer_2);
+				sign = btoa(binaryString).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+				
+				return sign;
+				/**/
+
+				/**/
+				
+				
+
+				/**
+				for(let i = 0; i < msg.length; i++){
+					let code_msg = msg.charCodeAt(i);
+					let code_key = i < key.length ? key.charCodeAt(i): 0;
+					let code_out = code_msg ^ code_key;
+
+				}
+				/**/
+			}
+			async function digestMessage(message) {
+				const encoder = new TextEncoder();
+				const data = encoder.encode(message);
+				const hash = await window.crypto.subtle.digest("SHA-256", data);
+				return new Uint8Array(hash);
+			}
+			async function test(){
+				
+				//
+				let key = "sPntLaiCyKYd8QFhQ69w";
+				let hash_params = {
+					"app_id": "52910233",
+					"request_id": "test text",
+					"ts": "1759645290",
+					"user_id": "1477085"
+				};
+				let msg = (new URLSearchParams(hash_params)).toString();
+				
+				alert(atob("VGh1IEphbiAgMSAwMDowNjo0OCAxOTcw"));
+
+				//sha256_text("hello world");
+				//alert(hash_hmac_sha256_vk_2(msg, key));
+				// b5,58,3b,f1,7b,fa,ba,c7,13,19,80,f3,f5,31,e5,a6,f0,ae,62,23,3f,9a,11,90,99,15,ce,4c,78,5d,47,45,
+				//tVg78Xv6uscTGYDz9THlpvCuYiM_mhGQmRXOTHhdR0U
+				//tVg78Xv6uscTGYDz9THlpvCuYiM_mhGQmRXOTHhdR0U
+				//tVg78Xv6uscTGYDz9THlpvCuYiM_mhGQmRXOTHhdR0U
+
+
+				//hash_hmac_sha256_vk("The quick brown fox jumps over the lazy dog", "key");
+				//HMAC_SHA256("key", "The quick brown fox jumps over the lazy dog")
+				//f7bc83f430538424b13298e6aa6fb143ef4d59a14946175997479dbc2d1a3cd8
+				//f7,bc,83,f4,30,53,84,24,b1,32,98,e6,aa,6f,b1,43,ef,4d,59,a1,49,46,17,59,97,47,9d,bc,2d,1a,3c,d8,
+
+				
+				/**
+				let arr = new Uint8Array([0b01101000, 0b01100101, 0b01101100, 0b01101100, 0b01101111, 0b00100000, 0b01110111, 0b01101111, 0b01110010, 0b01101100, 0b01100100]);
+				alert(out_Uint8Array(sha256Uint8(arr)));
+				/**/
+				//alert(out_Uint8Array(sha256("")));
+				//alert(out_Uint8Array(await digestMessage("")));
+
+
+				
+				//alert(out_Uint8Array(await digestMessage(msg)));
+				//alert(out_Uint8Array(sha256(msg)));
+				//SHA256(msg)
+				// 
+				// 
+
+				//alert(out_Uint8Array(await digestMessage("hello world")));
+				//alert(out_Uint8Array(sha256("hello world")));
+				//SHA256("hello world")
+				// b9,4d,27,b9,93,4d,3e,8,a5,2e,52,d7,da,7d,ab,fa,c4,84,ef,e3,7a,53,80,ee,90,88,f7,ac,e2,ef,cd,e9,
+				// b9,4d,27,b9,93,4d,3e,8,a5,2e,52,d7,da,7d,ab,fa,c4,84,ef,e3,7a,53,80,ee,90,88,f7,ac,e2,ef,cd,e9,
+
+				
+				//SHA256("")0x e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+				// e3,b0,c4,42,98,fc,1c,14,9a,fb,f4,c8,99,6f,b9,24,27,ae,41,e4,64,9b,93,4c,a4,95,99,1b,78,52,b8,55,
+				// e3,b0,c4,42,98,fc,1c,14,9a,fb,f4,c8,99,6f,b9,24,27,ae,41,e4,64,9b,93,4c,a4,95,99,1b,78,52,b8,55,
+				
+				//alert(await hash_hmac_sha256_vk(msg, key));
+				
+
+				
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" />
+		<br>
+		<span id="out">out</span>
+		<br>
+	</body>
+</html>

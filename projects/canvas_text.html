@@ -1,0 +1,139 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+<title>canvas text</title>
+<script type="text/javascript">
+window.onload = function(){
+	let text = "";
+	
+	let size_px = 2 ** 9;// max 10; min 7.
+	
+	let width = size_px;
+	let height = size_px;
+	let color = "#000000";
+	//
+	let canvas = document.createElement('canvas');
+	canvas.width = width;
+	canvas.height = height;
+	//
+	document.body.append(canvas);
+	//
+	let c = canvas.getContext('2d'); 
+	// Фон.
+	c.fillStyle = color;
+	c.fillRect(0, 0, width, height);
+	
+	/// Рисуем текст.
+	// создаём массив кодов символов.
+	let arr_cods = [];
+	for(let i = 32; i < 127; i++)arr_cods.push(i);
+	arr_cods.push(1025);
+	for(let i = 1040; i <= 1103; i++)arr_cods.push(i);
+	arr_cods.push(1105);
+	
+	
+	let w_original = 1200;// Начальная ширина символа
+	let h_original = 2048;// Начальная высота символа
+	let ratio = w_original / h_original;// Отношение сторон.
+	
+	let s_c = width * height / arr_cods.length;// Площадь одного символа.
+	
+	let h_max = (s_c / ratio) ** .5;// максимальная высота символа
+	let w_max = h_max * ratio;// максимальная ширина символа
+	
+	let amount_w = Math.ceil(width / w_max);// количество по горизонатли символов.
+	
+	let w_final = width / amount_w;// Предварительный итоговый размер ширины символа.
+	let h_final = h_max * (w_final / w_max);// Предварительный итоговый размер высоты символа.
+	
+	let amount_h = Math.ceil(arr_cods.length / amount_w);// количество по вертикали символов.
+	
+	let h_preliminary = height / amount_h;// Предварительный размер высоты символа.
+	
+	if(h_preliminary < h_final){// если по высоте все невлезают то уменьшаем ещё
+		w_final *= h_preliminary / h_final;
+		h_final = h_preliminary;
+		amount_w = Math.floor(width / w_final);// количество по горизонатли символов.
+	}
+	
+	c.fillStyle = "#ffffff";
+	c.font = (h_final * .97)+'px monospace';
+	//c.font = (h_final * .97)+'px sans-serif';
+	c.textBaseline = "bottom";
+	//for(let i = 0; i < arr_cods.length; i++)c.fillText(String.fromCharCode(arr_cods[i]), (i % row) * w_char, Math.floor(i / row) * w_char + w_char);
+	// рисуем линии обрезки.
+	c.strokeStyle = "#00ffff";
+	c.lineWidth = .2;
+	for(let i = 0; i < arr_cods.length; i++){
+		let x = (i % amount_w) * w_final;
+		let y = Math.floor(i / amount_w) * h_final;
+		c.strokeRect(x, y, w_final, h_final);
+		c.fillText(String.fromCharCode(arr_cods[i]), x, y + h_final);
+	}
+	
+	
+	
+	text += "w_max = "+w_max+"<br>";
+	text += "h_max = "+h_max+"<br>";
+	text += "w_final = "+w_final+"<br>";
+	text += "h_final = "+h_final+"<br>";
+	text += "s_c = "+s_c+"<br>";
+	text += "s_f = "+(w_final * h_final)+"<br>";
+	
+	
+	text += String.fromCharCode(...arr_cods)+"<br>";
+	text += arr_cods.length+"<br>";
+	let row = Math.ceil(arr_cods.length ** .5);
+	text += row+"<br>";
+	let w_char = Math.floor(width / row);
+	text += w_char+"<br>";
+	
+	/// создаем файл изображения, по байту на пиксель.
+	let image_data = c.getImageData(0, 0, width, height);
+	let data = new Uint8Array(width * height);
+	
+	for(let i = 0; i < image_data.data.length; i += 4){
+		data[i / 4] = image_data.data[i];
+	}
+
+	
+	//download(data, "bytes_map_chars", "application/octet-stream");
+	
+	
+	
+	
+	out(text);
+	
+	//canvas_test.canvas.addEventListener("mousemove", canvas_test.dop_info);
+	
+	
+};
+let download = (data, filename, type) => {
+	let file = new Blob([data], {type: type});
+	let a = document.createElement("a"),
+		url = URL.createObjectURL(file);
+	a.href = url;
+	a.download = filename;
+	document.body.appendChild(a);
+	a.click();
+	setTimeout(() => {
+		document.body.removeChild(a);
+		window.URL.revokeObjectURL(url);  
+	}, 0);
+};
+
+let test = () => {
+	alert("test");
+};
+function out(text){
+	document.getElementById("out").innerHTML = text;
+}
+</script>
+</head>
+<body>
+<input type="button" value="test" onClick="test();">
+<br>
+<br><span id="out"></span>
+<br>
+	
+</body>
+</html>

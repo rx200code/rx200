@@ -1,0 +1,80 @@
+:root{
+	--basic_color: #888; /*#0a0;*/
+	
+	--size: 1rem;
+	--size_width: calc(var(--size) * 6);
+	--size_height: calc(var(--size_width) * .4);
+	--size_border: max(2px, calc(var(--size) / 16));
+	--size_offset: calc(var(--size) * .4);
+	--size_offset_inset: calc(var(--size_offset) - var(--size_border));
+	--diffusion: calc(var(--size) * .1);
+	--hover_offset: calc(var(--size_offset_inset) * .5);
+	
+}
+
+#pos{
+	position: absolute;
+	width: calc(var(--size_width) + var(--hover_offset));
+	height: calc(var(--size_height) + var(--hover_offset));
+	line-height: var(--size_height);
+	font-size: var(--size);
+	margin: 0px;
+	padding: 0px;
+	top: 200px;
+	left: 300px;
+}
+
+.button{
+	
+	
+	position: absolute;
+	width: var(--size_width);
+	height: var(--size_height);
+	line-height: var(--size_height);
+	font-size: var(--size);
+	margin: 0px;
+	padding: 0px;
+	
+	
+	text-align: center;
+	cursor: pointer;
+	
+	/**
+	border-radius: 50% 50% 50% 50%;
+	/**/
+	/**
+	border-radius: 20px 20px 0px 0px;
+	box-shadow: 0px 0px 10px #000;
+	/**/
+	background-color: #ddd;
+	
+	color: #000;
+	/**
+	border: max(1px, calc(1rem / 16)) solid #0008;
+	/**/
+	box-shadow: var(--size_offset) var(--size_offset) var(--diffusion) #ddd, inset var(--size_offset_inset) var(--size_offset_inset) var(--diffusion) #fff;
+	text-shadow: var(--size_offset_inset) var(--size_offset_inset) var(--diffusion) #aaa;
+	/**/
+	/**
+	text-shadow: var(--size_border) var(--size_border) 0px #fff, var(--size_offset_inset) var(--size_offset_inset) var(--diffusion) #ccc;
+	/**/
+	border-left: var(--size_border) solid #e2ede9;
+	border-right: var(--size_border) solid #1b5f4b;
+	border-top: var(--size_border) solid #dbe7e5;
+	border-bottom: var(--size_border) solid #1f9073;
+	/**/
+	
+	-webkit-touch-callout: none;
+	-webkit-user-select: none;
+	-khtml-user-select: none;
+	-moz-user-select: none;
+	-ms-user-select: none;
+	user-select: none;
+}
+#pos:hover{
+	.button{
+		--size_offset: calc(var(--size) * .4 - var(--hover_offset) * 1.25);
+		--size_offset_inset: calc(var(--size_offset) - var(--size_border));
+		transform: translate(var(--hover_offset), var(--hover_offset));
+	}
+}

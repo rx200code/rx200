@@ -1,0 +1,49 @@
+
+Активные подключения
+
+  Имя    Локальный адрес        Внешний адрес          Состояние
+  TCP    127.0.0.1:49890        DESKTOP-CMMDVJD:65001  ESTABLISHED
+  TCP    127.0.0.1:49921        DESKTOP-CMMDVJD:49946  ESTABLISHED
+  TCP    127.0.0.1:49946        DESKTOP-CMMDVJD:49921  ESTABLISHED
+  TCP    127.0.0.1:51702        DESKTOP-CMMDVJD:51703  ESTABLISHED
+  TCP    127.0.0.1:51703        DESKTOP-CMMDVJD:51702  ESTABLISHED
+  TCP    127.0.0.1:51704        DESKTOP-CMMDVJD:51705  ESTABLISHED
+  TCP    127.0.0.1:51705        DESKTOP-CMMDVJD:51704  ESTABLISHED
+  TCP    127.0.0.1:65001        DESKTOP-CMMDVJD:49890  ESTABLISHED
+  TCP    192.168.0.10:49752     20.54.36.229:https     ESTABLISHED
+  TCP    192.168.0.10:51730     55:https               ESTABLISHED
+  TCP    192.168.0.10:51821     li-in-f198:https       TIME_WAIT
+  TCP    192.168.0.10:51955     a96-16-49-206:https    CLOSE_WAIT
+  TCP    192.168.0.10:52103     95.163.84.37:https     TIME_WAIT
+  TCP    192.168.0.10:52104     194.55.244.186:https   TIME_WAIT
+  TCP    192.168.0.10:52105     37.18.16.16:https      TIME_WAIT
+  TCP    192.168.0.10:52127     storage:https          TIME_WAIT
+  TCP    192.168.0.10:52187     srv67-132-240-87:https  TIME_WAIT
+  TCP    192.168.0.10:52190     srv135-129-240-87:https  TIME_WAIT
+  TCP    192.168.0.10:52216     static:https           TIME_WAIT
+  TCP    192.168.0.10:52250     lo-in-f157:https       TIME_WAIT
+  TCP    192.168.0.10:52268     lt-in-f154:https       TIME_WAIT
+  TCP    192.168.0.10:52299     123:https              ESTABLISHED
+  TCP    192.168.0.10:52302     amc:https              ESTABLISHED
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:51717  [2606:4700::6810:f9f9]:https  ESTABLISHED
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:51719  [2606:4700::6810:f9f9]:https  ESTABLISHED
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:51962  la-in-f147:https       TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52029  la-in-f105:https       TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52035  lt-in-x5e:https        TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52053  lt-in-x5e:https        TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52070  static:https           TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52129  avatars:https          TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52136  lg-in-f138:https       TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52157  lq-in-x5e:https        TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52173  lo-in-x5e:http         TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52201  [2606:4700::6812:a80]:https  TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52218  yandex:https           ESTABLISHED
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52220  static:https           TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52229  bs:https               ESTABLISHED
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52231  avatars:https          ESTABLISHED
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52242  storage:https          TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52251  lo-in-x5e:http         TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52263  lr-in-f155:https       TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52276  la-in-f106:https       TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52286  lq-in-x5e:https        TIME_WAIT
+  TCP    [2a01:620:c138:cc01:896b:a2a1:177a:e348]:52301  mc:https               ESTABLISHED

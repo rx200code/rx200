@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<!-- 
+Создатель © feb7e9c4d5539ae0f1496cdb2aaee27c
+-->
+<title>ITRF</title>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+<script type="text/javascript">
+/*
+// ITRF 2008
+12319M001 Novossibirsk     GNSS NVSK   433605.577  3655558.530  5191286.701 0.001 0.001 0.001  1 00:000:00000 03:270:41605
+12319M001                                  -.0267       0.0049       0.0006 .0000 .0001 .0001
+12319M001 Novossibirsk     GNSS NVSK   433605.580  3655558.528  5191286.700 0.001 0.001 0.001  2 03:270:41605 00:000:00000
+12319M001                                  -.0267       0.0049       0.0006 .0000 .0001 .0001
+12367M001 NOVOSIBIRSK, SN  GNSS NOVJ   452288.549  3635913.142  5203396.792 0.001 0.001 0.001
+12367M001                                  -.0238       0.0026       0.0004 .0001 .0001 .0002
+
+// ITRF 2014
+12319M001 Novossibirsk     GNSS NVSK   433605.4443  3655558.5468  5191286.6947 0.0006 0.0006 0.0005
+12319M001                                  -.02640       0.00432       -.00018 .00003 .00003 .00003
+12367M002 NOVOSIBIRSK, SN  GNSS NOVM   452260.9553  3635877.4798  5203453.2167 0.0006 0.0006 0.0006  1 00:000:00000 12:104:00000
+12367M002                                  -.02622       0.00264       -.00078 .00004 .00005 .00006
+12367M002 NOVOSIBIRSK, SN  GNSS NOVM   452260.9625  3635877.5774  5203453.3522 0.0006 0.0007 0.0007  2 12:104:00000 00:000:00000
+12367M002                                  -.02557       -.00049       -.00624 .00005 .00008 .00011
+
+*/
+
+
+let toRad = deg => deg * Math.PI / 180;
+let toDeg = rad => rad / Math.PI * 180;
+let d_360 = d => (d %= 360) < 0 ? d + 360: d;
+let f_dd_mm_ss = n => {
+	n = d_360(n);
+	let text = "";
+	let degrees = n | 0;
+	text += (degrees < 10 ? "0"+degrees: degrees)+"°";
+	let minutes = (n - degrees) * 60 | 0;
+	text += (minutes < 10 ? "0"+minutes: minutes)+"'";
+	let seconds = n * 3600 % 60;
+	text += (seconds < 10 ? "0"+seconds: seconds)+'"';
+	return text;
+};
+let crs = {};
+crs.ell = {
+	wgs_84:{a:6378137,_f:298.257223563,epsg:7030},
+	k_1940:{a:6378245,_f:298.3,epsg:7024},//Krassowsky_1940
+	gsk_2011:{a:6378136.5,_f:298.2564151,epsg:1025},
+	grs_1980:{a:6378137,_f:298.257222101,epsg:7019},
+	pz_90:{a:6378136,_f:298.257839303,epsg:7054}
+};
+for(let key in crs.ell){
+	let ell = crs.ell[key];
+	ell.f = 1 / ell._f;
+	ell.b = ell.a - ell.a * ell.f;
+	ell.e_2 = 2 * ell.f - ell.f ** 2;
+	ell.e = ell.e_2 ** .5;
+	ell.e_4 = ell.e ** 4;
+	ell.e_6 = ell.e ** 6;
+	ell._e_2 = ell.e_2 / (1 - ell.e_2);
+}
+function b(){
+	let X = document.getElementById("text_X").value * 1;
+	let Y = document.getElementById("text_Y").value * 1;
+	let Z = document.getElementById("text_Z").value * 1;
+	let t = document.getElementById("text_t").value * 1;
+	let arr_c = itrf2008_to_gda94([X, Y, Z], t);
+	document.getElementById("text_Xt").value = arr_c[0];
+	document.getElementById("text_Yt").value = arr_c[1];
+	document.getElementById("text_Zt").value = arr_c[2];
+	/*
+	let arr_c = xyz_to_lbh([X, Y, Z], crs.ell.grs_1980);
+	let L = toDeg(arr_c[0]);
+	let B = toDeg(arr_c[1]);
+	let h = arr_c[2];
+	document.getElementById("text_L").value = f_dd_mm_ss(L);
+	document.getElementById("text_B").value = f_dd_mm_ss(B);
+	document.getElementById("text_h").value = h;
+	//*/
+	
+}
+function itrf2008_to_gda94(c, t){
+	let X = c[0];
+	let Y = c[1];
+	let Z = c[2];
+	
+	let mm = 1000;
+	let ms = 1000;
+	
+	let tX = -84.68 / mm;
+	let tY = -19.42 / mm;
+	let tZ = 32.01 / mm;
+	let rX = toRad(-0.4254 / 3600 / ms);
+	let rY = toRad(2.2578 / 3600 / ms);
+	let rZ = toRad(2.4015 / 3600 / ms);
+	let M = 0.00971;
+	let t_0 = 1994;
+	///
+	let qtX = 1.42 / mm;
+	let qtY = 1.34 / mm;
+	let qtZ = .9 / mm;
+	let qrX = toRad(1.5461 / 3600 / ms);
+	let qrY = toRad(1.182 / 3600 / ms);
+	let qrZ = toRad(1.1551 / 3600 / ms);
+	let qM = 0.000109;
+	
+	tX = tX + (qtX * (t - t_0));
+	tY = tY + (qtY * (t - t_0));
+	tZ = tZ + (qtZ * (t - t_0));
+	rX = rX + (qrX * (t - t_0));
+	rY = rY + (qrY * (t - t_0));
+	rZ = rZ + (qrZ * (t - t_0));
+	M = M + (qM * (t - t_0));
+	
+	M = 1 + M * 10 ** -6;
+	
+	
+	
+	let Xt = M * (X + rZ * Y - rY * Z) + tX;
+	let Yt = M * (-rZ * X + Y + rX * Z) + tY;
+	let Zt = M * (rY * X - rX * Y + Z) + tZ;
+	
+	return [Xt, Yt, Zt];
+}
+function xyz_to_lbh(c, el){
+	let X = c[0];
+	let Y = c[1];
+	let Z = c[2];
+	let p = (X ** 2 + Y ** 2) ** 0.5;
+	let q = Math.atan2(Z * el.a, p * el.b);
+	let zt = el.e_2 / (1 - el.e_2);
+	
+	let L = Math.atan2(Y, X);
+	let B = Math.atan2(Z + zt * el.b * Math.sin(q) ** 3, p - el.e_2 * el.a * Math.cos(q) ** 3);
+	
+	let v = el.a / (1 - el.e_2 * Math.sin(B) ** 2) ** .5;
+	let h = (p / Math.cos(B)) - v;
+	
+	return [L, B, h];
+	
+}
+function to_xyz(c, el){
+	let L = c[0];
+	let B = c[1];
+	let h = c[2] || 0;
+	let v = el.a / (1 - el.e_2 * Math.sin(B) ** 2) ** .5;
+	let X = (v + h) * Math.cos(B) * Math.cos(L);
+	let Y = (v + h) * Math.cos(B) * Math.sin(L);
+	let Z = ((1 - el.e_2) * v + h) * Math.sin(B);
+	return [X, Y, Z];
+}
+function out(text){
+	document.getElementById("output").innerHTML=text;
+}
+function wgs84_to_pz90_11_to_sk_42(c){
+	let X = c[0];
+	let Y = c[1];
+	let Z = c[2];
+	// to PZ90.11
+	let cof_1 = 1;
+	let tX = -.013 * cof_1;
+	let tY = .106 * cof_1;
+	let tZ = .022 * cof_1;
+	let rX = toRad(-.0023 * cof_1 / 3600);
+	let rY = toRad(.00354 * cof_1 / 3600 );
+	let rZ = toRad(-.00421 * cof_1 / 3600);
+	let M = -.008 * cof_1;
+	
+	M = 1 + M * 10 ** -6;
+	let Xt = M * (X - rZ * Y + rY * Z) + tX;
+	let Yt = M * (rZ * X + Y - rX * Z) + tY;
+	let Zt = M * (-rY * X + rX * Y + Z) + tZ;
+	// to SK 42
+	let cof_2 = 1;
+	let tX2 = -23.557 * cof_2;
+	let tY2 = 140.844 * cof_2;
+	let tZ2 = 79.778 * cof_2;
+	let rX2 = toRad(.0023 * cof_2 / 3600);
+	let rY2 = toRad(.34646 * cof_2 / 3600);
+	let rZ2 = toRad(.79421 * cof_2 / 3600);
+	let M2 = .228 * cof_2;
+	
+	M2 = 1 + M2 * 10 ** -6;
+	let Xt2 = M2 * (Xt - rZ2 * Yt + rY2 * Zt) + tX2;
+	let Yt2 = M2 * (rZ2 * Xt + Yt - rX2 * Zt) + tY2;
+	let Zt2 = M2 * (-rY2 * Xt + rX2 * Yt + Zt) + tZ2;
+	return [Xt2, Yt2, Zt2];
+}
+function wgs84_to_sk_42(c){
+	let X = c[0];
+	let Y = c[1];
+	let Z = c[2];
+	
+	let tX = -23.57;
+	let tY = 140.95;
+	let tZ = 79.8;
+	let rX = 0;
+	let rY = toRad(.35 / 3600);
+	let rZ = toRad(.79 / 3600);
+	let M = .22;
+	
+	M = 1 + M * 10 ** -6;
+	let Xt = M * (X + rZ * Y - rY * Z) + tX;
+	let Yt = M * (-rZ * X + Y + rX * Z) + tY;
+	let Zt = M * (rY * X - rX * Y + Z) + tZ;
+	return [Xt, Yt, Zt];
+}
+function wgs84_to_sk_42_v4(c){
+	let X = c[0];
+	let Y = c[1];
+	let Z = c[2];
+	
+	//let arr_et = [23.92, -141.27, -80.9, 0.0, -0.35, -0.82, -0.12];// EPSG:1267
+	let arr_et = [23.57, -140.95, -79.8, 0.0, -0.35, -0.79, -0.22];// EPSG:5044
+	arr_et = arr_et.map(n => n * -1);
+	
+	let tX = arr_et[0];
+	let tY = arr_et[1];
+	let tZ = arr_et[2];
+	let rX = toRad(arr_et[3] / 3600);
+	let rY = toRad(arr_et[4] / 3600);
+	let rZ = toRad(arr_et[5] / 3600);
+	let M = arr_et[6];
+	
+	M = 1 + M * 10 ** -6;
+	let Xt = M * (X - rZ * Y + rY * Z) + tX;
+	let Yt = M * (rZ * X + Y - rX * Z) + tY;
+	let Zt = M * (-rY * X + rX * Y + Z) + tZ;
+	return [Xt, Yt, Zt];
+}
+function wgs84_to_sk_42_v2(c){
+	let X = c[0];
+	let Y = c[1];
+	let Z = c[2];
+	
+	let tX = -23.92;
+	let tY = 141.27;
+	let tZ = 80.9;
+	let rX = -0;
+	let rY = toRad(.35 / 3600 );
+	let rZ = toRad(.82 / 3600);
+	let M = .12;
+	
+	M = 1 + M * 10 ** -6;
+	let Xt = M * (X + rZ * Y - rY * Z) + tX;
+	let Yt = M * (-rZ * X + Y + rX * Z) + tY;
+	let Zt = M * (rY * X - rX * Y + Z) + tZ;
+	return [Xt, Yt, Zt];
+}
+function wgs84_to_sk_42_v3(c){
+	let X = c[0];
+	let Y = c[1];
+	let Z = c[2];
+	
+	let tX = -23.57;
+	let tY = 140.95;
+	let tZ = 79.8;
+	let rX = toRad(-0 / 3600 );
+	let rY = toRad(0.35 / 3600 );
+	let rZ = toRad(0.79 / 3600);
+	let M = .22;
+	
+	M = 1 + M * 10 ** -6;
+	let Xt = M * (X + rZ * Y - rY * Z) + tX;
+	let Yt = M * (-rZ * X + Y + rX * Z) + tY;
+	let Zt = M * (rY * X - rX * Y + Z) + tZ;
+	return [Xt, Yt, Zt];
+}
+</script>
+</head>
+<body>
+X:<input id="text_X" type="text" value="-3789470.710"><br>
+Y:<input id="text_Y" type="text" value="4841770.404"><br>
+Z:<input id="text_Z" type="text" value="-1690893.952"><br>
+t:<input id="text_t" type="text" value="2013.90"><br>
+<input type="button" value="Перевести в картографические" onClick="b()"><hr>
+L:<input id="text_L" type="text" value="1"><br>
+B:<input id="text_B" type="text" value="1"><br>
+h:<input id="text_h" type="text" value="1"><hr>
+Xt:<input id="text_Xt" type="text" value="1"><br>
+Yt:<input id="text_Yt" type="text" value="1"><br>
+Zt:<input id="text_Zt" type="text" value="1"><hr>
+<span id="output"></span>
+<script type="text/javascript">
+/// Преобразование координат из WGS 84(G1150) в любую русскую СК например ПЗ 90.11 или ГСК 2011 а из них уже хоть в СК 95 хоть в СК 42, промежуточная ITRF.
+
+let text = "<h3>Задача: преобразовать координаты WGS 84 в ПЗ 90.11 или любую русскую СК.</h3><br>";
+let L_wgs84 = 83;
+let B_wgs84 = 55;
+text += "Координаты в WGS 84<br>L: <b>"+L_wgs84+"</b><br>B: <b>"+B_wgs84+"</b><br>h: неопределено, тоесть <b>0</b><br>";
+L_wgs84 = toRad(L_wgs84);
+B_wgs84 = toRad(B_wgs84);
+text += "<b>Шаг 1.</b> Переводим в X, Y, Z<br>";
+let arr_wgs84_XYZ = to_xyz([L_wgs84, B_wgs84], crs.ell.wgs_84);
+text += "X: <b>"+arr_wgs84_XYZ[0]+"</b><br>Y: <b>"+arr_wgs84_XYZ[1]+"</b><br>Z: <b>"+arr_wgs84_XYZ[2]+"</b><br>";
+text += "<b>Шаг 2.</b> Переводим в ПЗ 90.11 после в СК 42 по ГОСТ 32453-2017<br>";
+let arr_sk42_XYZ = wgs84_to_pz90_11_to_sk_42(arr_wgs84_XYZ);
+text += "X: <b>"+arr_sk42_XYZ[0]+"</b><br>Y: <b>"+arr_sk42_XYZ[1]+"</b><br>Z: <b>"+arr_sk42_XYZ[2]+"</b><br>";
+text += "<b>Шаг 3.</b> Переводим в L, B, h<br>";
+let arr_c = xyz_to_lbh(arr_sk42_XYZ, crs.ell.k_1940);
+text += "L: <b>"+toDeg(arr_c[0])+"</b><br>B: <b>"+toDeg(arr_c[1])+"</b><br>h: <b>"+arr_c[2]+"</b><br>";
+/*
+text += "<b>Пункт MDVJ</b> в L, B, h<br>";
+let arr_mdvj = xyz_to_lbh([2845456.0813, 2160954.2453, 5265993.2296], crs.ell.wgs_84);
+text += "L: <b>"+toDeg(arr_mdvj[0])+"</b><br>B: <b>"+toDeg(arr_mdvj[1])+"</b><br>h: <b>"+arr_mdvj[2]+"</b><br>";
+//*/
+/*
+wgs_84:{a:6378137,_f:298.257223563,epsg:7030},
+k_1940:{a:6378245,_f:298.3,epsg:7024},//Krassowsky_1940
+gsk_2011:{a:6378136.5,_f:298.2564151,epsg:1025},
+grs_1980:{a:6378137,_f:298.257222101,epsg:7019},
+pz_90:{a:6378136,_f:298.257839303,epsg:7054}
+//*/
+
+
+
+
+
+
+
+
+
+
+
+out(text);
+</script>
+</body>
+</html>
