@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Web Mercator</title>
+		<script>
+			/** ОБЩИЕ СВЕДЕНИЯ О WEB MERCATOR
+			EPSG:3857 (Web Mercator / Pseudo-Mercator): Проектируемая (прямоугольная) система координат, использующая проекцию Меркатора на сферу.
+			Применяется большинством популярных онлайн-карт (Google Maps, OpenStreetMap, Bing Maps, Яндекс.Карты) для отображения тайлов.
+			Единицы измерения — метры.
+			Вариант проекции Меркатора на сферу (т.н. "Сферический Меркатор" или "Псевдо-Меркатор"), но с использованием параметров эллипсоида WGS 84 в качестве базового датума.
+			Радиус, Полуось a=6378137 метров. Такая же и полуось b.
+			+proj=merc +a=6378137 +b=6378137 +lat_ts=0.0 +lon_0=0.0 +x_0=0.0 +y_0=0 +k=1.0 +units=m +nadgrids=@null +wktext +no_defs +type=crs
+			/**/
+			
+			/** ОПИСАНИЕ ЭТОГО ДОКУМЕНТА, ЭТАЛОННЫЕ, ОПТИМИЗИРОВАННЫЕ, АЛГОРИТМЫ.
+			Далее приведены алгоритмы перевода широты и долготы в тайлы(tile - плитка) Веб Меркаторя, и обратно.
+			Отдельно для:
+			Широты(latitude, lat) в Y
+			и
+			Долготы(longitude, lon) в X
+			Учитывая уровень зума(zoom, z)
+			X и Y по сути равнозначны X тайла и Y тайла, можно представить, что тайл это пиксель.
+			/**/
+			
+			// Константы PI
+			const rad_180 = Math.PI;
+			const rad_1 = rad_180 / 180;
+			const rad_45 = rad_180 / 4;
+			const rad_90 = rad_180 / 2;
+			const rad_360 = rad_180 * 2;
+			
+			// Функции перевода радиан в градусы и обратно.
+			let toRad = deg => deg * rad_1;
+			let toDeg = rad => rad / rad_1;
+			
+			// Начальные координаты, широты и долготы.
+			let lat = 55;// Широта
+			let lon = 83;// Долгота
+			let lat_rad = toRad(lat);// Широта в радианах
+			//let lon_rad = toRad(lon);// Долгота в радианах, долгота в радианах в целом ненужна, так как можно обойтись и в градусах.
+			let zoom = 17;// уровень зума
+			
+			// минимальные и максимальные значения для широты, долготы и зума.
+			const lat_min = -85.0511287;//Более точное значение -85.0511287798065822585;
+			const lat_max = 85.0511287;//Более точное значение 85.0511287798065822585;
+			const lon_min = -180;
+			const lon_max = 180;
+			const zoom_min = 0;
+			const zoom_max = 18;
+			
+			// Координаты тайла в X, Y для заданного размера тайла.
+			let x = 95755.37777777779;
+			let y = 41457.793801346335;
+			let tile = 256;// int
+			
+			// минимальные и максимальные значения для x, y, tile.
+			const x_min = 0;
+			const y_min = 0;
+			const tile_min = 1;
+			let x_max = 131071;// 2 ** 17 - 1;// (1 << zoom) - 1;
+			let y_max = 131071;
+			
+			// Дополнительные константы для вычислений.
+			/** ПОЛОВИНА ДЛИНЫ ВЕБ МЕРКАТОРА В ПИКСЕЛЯХ *
+			// Размер тайла tile = 256;// 2 в 8 степени // тоесть:
+			let log2_tile = Math.log2(tile);// Math.log(tile) / Math.LN2;// log2_tile = 8 при размере тайла 256
+			// длина вебмеркатора в пикселях равна, размер тайла умножить на количество тайлов.
+			// количество тайлов равно, двум в степени уровня зума.
+			// Так как размер тайла можно представить тоже в степени двойки, мы можем просто сложить степени двойки, размера тайла и уровня зума.
+			// половина этого размер, это просто на одну степень меньше, (zoom + log2_tile - 1)
+			let length_WM = 2 ** (zoom + log2_tile);
+			let half_length_WM = length_WM / 2;// что равно 2 ** (zoom + log2_tile - 1);// или, 1 << (zoom + 7);// получаем степень двойки побитова сдвигая единицу.
+			// В побитовом сдвиге есть исключение мы не можем получить 0.5, 2 в -1 степени, это может понадобится если мы принимаем тайлы за пиксели и уровень зума равен нулю.
+			// Поэтому более правильно считать так: half_length_WM = 2 ** (zoom + log2_tile - 1);// а не так half_length_WM = 1 << (zoom + log2_tile - 1);
+			// Для случая где мы тайл принимаем за пиксель, тоесть, tile = 1, log2_tile = 0, zoom = 0, тоесть half_length_WM = 0.5;// half_length_WM = 2 ** (zoom + log2_tile - 1);// half_length_WM = 2 ** -1;
+			/**/
+			let half_length_WM = 1 << (zoom - 1);// половина длины Веб меркатора в тайлах(tile = 1), Math.log2(tile) = 0;
+			let radius_WM = half_length_WM / rad_180;// Радиус веб меркатора, если считать длину в количестве тайлов на сторону.
+			
+			/** ОСНОВНЫЕ ФУНКЦИИ ПЕРЕВОДА КООРДИНАТ *
+			// Используются самые быстрые.
+			// Но для полноты картины ниже приведены и более медленные.
+			let getY = () => (1 - Math.log(Math.tan(lat_rad) + 1 / Math.cos(lat_rad)) / Math.PI) * half_length_WM;
+			let getY = () => {
+				let x = Math.tan(lat_rad);
+				return half_length_WM - radius_WM * Math.log(x + (x * x + 1) ** .5);
+			};
+			// для x, так как используется долгота в радианах.
+			let getX = () => half_length_WM + lon_rad * radius_WM;//другой вариант без перевода долготы в радианы getX = () => (lon / 180 + 1) * half_length_WM;
+			/**/
+			let getY = () => half_length_WM - radius_WM * Math.log(Math.tan(rad_45 + lat_rad / 2));// получает Y Веб Меркатора исходя из широты в радианах.
+			let getLatRad = () => 2 * Math.atan(Math.exp((half_length_WM - y) / radius_WM)) - rad_90;// обратная getY()
+			let getX = () => (lon / 180 + 1) * half_length_WM;// не используем lon_rad, так как достаточно и lon в градусах.
+			let getLon = () => (x / half_length_WM - 1) * 180;// обратная getX()
+			
+			// Функция инпутов, для выделения при клике.
+			let elm_target;
+			let input_click = e => {
+				if(elm_target !== e.target){
+					elm_target = e.target;
+					e.target.select();
+				}
+			};
+			let elm_lat, elm_lon, elm_zoom, elm_x, elm_y, elm_tile, elm_img, elm_point;
+			let img_top, img_left;
+			window.onload = () => {
+				// Настраиваем инпуты HTML
+				elm_lat = document.getElementById("lat");
+				elm_lat.value = lat;
+				elm_lat.onclick = input_click;
+				elm_lat.onchange = e => {
+					if(Number.isNaN(e.target.valueAsNumber))e.target.valueAsNumber = lat;
+					else if(e.target.valueAsNumber < lat_min)e.target.valueAsNumber = lat_min;
+					else if(e.target.valueAsNumber > lat_max)e.target.valueAsNumber = lat_max;
+					lat = e.target.valueAsNumber;
+					lat_rad = toRad(lat);
+					elm_y.value = y = getY();
+					view_WM();
+				};
+				
+				elm_lon = document.getElementById("lon");
+				elm_lon.value = lon;
+				elm_lon.onclick = input_click;
+				elm_lon.onchange = e => {
+					if(Number.isNaN(e.target.valueAsNumber))e.target.valueAsNumber = lon;
+					else if(e.target.valueAsNumber < lon_min)e.target.valueAsNumber = lon_min;
+					else if(e.target.valueAsNumber > lon_max)e.target.valueAsNumber = lon_max;
+					lon = e.target.valueAsNumber;
+					elm_x.value = x = getX();
+					view_WM();
+				};
+				
+				elm_zoom = document.getElementById("zoom");
+				elm_zoom.value = zoom;
+				elm_zoom.onclick = input_click;
+				elm_zoom.onchange = e => {
+					if(Number.isNaN(e.target.valueAsNumber))e.target.valueAsNumber = zoom;
+					else if(e.target.valueAsNumber < zoom_min)e.target.valueAsNumber = zoom_min;
+					else if(e.target.valueAsNumber > zoom_max)e.target.valueAsNumber = zoom_max;
+					zoom = e.target.valueAsNumber;
+					x_max = y_max = (1 << zoom) - 1;//2 ** zoom - 1;
+					half_length_WM = 2 ** (zoom - 1);
+					radius_WM = half_length_WM / rad_180;
+					elm_x.value = x = getX();
+					elm_y.value = y = getY();
+					view_WM();
+				};
+				
+				elm_x = document.getElementById("x");
+				elm_x.value = x;
+				elm_x.onclick = input_click;
+				elm_x.onchange = e => {
+					if(Number.isNaN(e.target.valueAsNumber))e.target.valueAsNumber = x;
+					else if(e.target.valueAsNumber < x_min)e.target.valueAsNumber = x_min;
+					else if(e.target.valueAsNumber >= x_max + 1)e.target.valueAsNumber = x_max;
+					x = e.target.valueAsNumber;
+					elm_lon.value = lon = getLon();
+					view_WM();
+				};
+				
+				elm_y = document.getElementById("y");
+				elm_y.value = y;
+				elm_y.onclick = input_click;
+				elm_y.onchange = e => {
+					if(Number.isNaN(e.target.valueAsNumber))e.target.valueAsNumber = y;
+					else if(e.target.valueAsNumber < y_min)e.target.valueAsNumber = y_min;
+					else if(e.target.valueAsNumber >= y_max + 1)e.target.valueAsNumber = y_max;
+					y = e.target.valueAsNumber;
+					elm_lat.value = lat = toDeg(getLatRad());
+					view_WM();
+				};
+				
+				elm_tile = document.getElementById("tile");
+				elm_tile.value = tile;
+				elm_tile.onclick = input_click;
+				elm_tile.onchange = e => {
+					if(Number.isNaN(e.target.valueAsNumber))e.target.valueAsNumber = tile;
+					else if(e.target.valueAsNumber < tile_min)e.target.valueAsNumber = tile_min;
+					tile = e.target.valueAsNumber;
+					view_WM();
+				};
+				
+				elm_img = document.getElementById("img_out");
+				
+				img_rect = elm_img.getBoundingClientRect();
+				img_top = img_rect.top;
+				img_left = img_rect.left;
+				
+				elm_point = document.getElementById("point");
+				
+				elm_point.style.left = Math.round(x % 1 * tile + img_left) + 'px';
+				elm_point.style.top = Math.round(y % 1 * tile + img_top) + 'px';
+				
+			};
+			
+			// Функции визуализации.
+			function view_WM(){
+				elm_img.src = "https://tile.openstreetmap.org/" + zoom + "/" + (x | 0) + "/" + (y | 0) + ".png";
+				elm_point.style.left = Math.round(x % 1 * tile + img_left) + 'px';
+				elm_point.style.top = Math.round(y % 1 * tile + img_top) + 'px';
+				out(elm_img.src);
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="number" lang="en" size="17" id="lat" value="55" /> lat
+		<br>
+		<input type="number" lang="en" size="17" id="lon" min="-180" value="83" /> lon
+		<br>
+		<input type="number" lang="en" size="17" id="zoom" min="0" value="17" /> zoom
+		<hr>
+		<input type="number" lang="en" size="17" id="x" min="0" value="95755.37777777779" /> X
+		<br>
+		<input type="number" lang="en" size="17" id="y" min="0" value="41457.793801346335" /> Y
+		<br>
+		<input type="number" lang="en" size="17" id="tile" min="0" value="256" /> tile
+		<hr>
+		<img id="img_out" src="https://tile.openstreetmap.org/17/95755/41457.png" width="256" height="256" alt="tile.png">
+		<span id="point" style="position: absolute; margin: 0; padding: 0; padding: 0; width: 0px; height: 0px; outline: solid 2px #F00;" ></span>
+		<hr>
+		<span id="out"></span>
+	</body>
+</html>
