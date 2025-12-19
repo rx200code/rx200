@@ -17,11 +17,11 @@ let deg_WM = half_length_WM / 180;// Один градус долготы Веб
 // Функции перевода в Веб меркатор в тайлах и обратно. функции для работы с радианами заканчиваются на Rad.
 const toYRad = lat_rad => half_length_WM - radius_WM * Math.log(Math.tan(lat_rad / 2 + rad_45));// получает Y Веб Меркатора исходя из широты в радианах(lat_rad).
 const toY = lat => half_length_WM - radius_WM * Math.log(Math.tan(lat / deg_2rad + rad_45));// получает Y Веб Меркатора исходя из широты в градусах(lat).
-const toLatRad = y => Math.atan(Math.exp((half_length_WM - y) / radius_WM)) * 2 - rad_90;// обратная toYrad()
+const toLatRad = y => Math.atan(Math.exp((half_length_WM - y) / radius_WM)) * 2 - rad_90;// обратная toYRad()
 const toLat = y => Math.atan(Math.exp((half_length_WM - y) / radius_WM)) * deg_2rad - 90;// обратная toY()
 const toXRad = lon_rad => lon_rad * radius_WM + half_length_WM;// получает X Веб Меркатора исходя из долготы в радианах(lon_rad).
 const toX = lon => lon * deg_WM + half_length_WM;// получает X Веб Меркатора исходя из долготы в градусах(lon).
-const toLonRad = x => x / radius_WM - rad_180;// обратная toXrad()
+const toLonRad = x => x / radius_WM - rad_180;// обратная toXRad()
 const toLon = x => x / deg_WM - 180;// обратная toX()
 
 /* ДЛЯ СПРАВКИ *
