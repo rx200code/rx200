@@ -29,6 +29,7 @@
 			const rad_45 = rad_180 / 4;
 			const rad_90 = rad_180 / 2;
 			const rad_360 = rad_180 * 2;
+			const deg_2rad = 360 / rad_180;// 2 градуса в радианах
 			
 			// Функции перевода радиан в градусы и обратно.
 			let toRad = deg => deg * rad_1;
@@ -77,6 +78,7 @@
 			/**/
 			let half_length_WM = 1 << (zoom - 1);// половина длины Веб меркатора в тайлах(tile = 1), Math.log2(tile) = 0;
 			let radius_WM = half_length_WM / rad_180;// Радиус веб меркатора, если считать длину в количестве тайлов на сторону.
+			let deg_WM = half_length_WM / 180;// Один градус долготы Веб меркатора в тайлах.
 			
 			/** ОСНОВНЫЕ ФУНКЦИИ ПЕРЕВОДА КООРДИНАТ *
 			// Используются самые быстрые.
@@ -91,8 +93,12 @@
 			/**/
 			let getY = () => half_length_WM - radius_WM * Math.log(Math.tan(rad_45 + lat_rad / 2));// получает Y Веб Меркатора исходя из широты в радианах.
 			let getLatRad = () => 2 * Math.atan(Math.exp((half_length_WM - y) / radius_WM)) - rad_90;// обратная getY()
-			let getX = () => (lon / 180 + 1) * half_length_WM;// не используем lon_rad, так как достаточно и lon в градусах.
-			let getLon = () => (x / half_length_WM - 1) * 180;// обратная getX()
+			let getLat = () => deg_2rad * Math.atan(Math.exp((half_length_WM - y) / radius_WM)) - 90;// обратная getY()
+			let getX = () => lon * deg_WM + half_length_WM;// не используем lon_rad, так как достаточно и lon в градусах.
+			let getLon = () => x / deg_WM - 180;// обратная getX()
+			let getLonRad = () => x / radius_WM - rad_180;// обратная getX()
+			
+			
 			
 			// Функция инпутов, для выделения при клике.
 			let elm_target;
@@ -142,6 +148,7 @@
 					x_max = y_max = (1 << zoom) - 1;//2 ** zoom - 1;
 					half_length_WM = 2 ** (zoom - 1);
 					radius_WM = half_length_WM / rad_180;
+					deg_WM = half_length_WM / 180;
 					elm_x.value = x = getX();
 					elm_y.value = y = getY();
 					view_WM();
@@ -167,7 +174,7 @@
 					else if(e.target.valueAsNumber < y_min)e.target.valueAsNumber = y_min;
 					else if(e.target.valueAsNumber >= y_max + 1)e.target.valueAsNumber = y_max;
 					y = e.target.valueAsNumber;
-					elm_lat.value = lat = toDeg(getLatRad());
+					elm_lat.value = lat = getLat();
 					view_WM();
 				};
 				
