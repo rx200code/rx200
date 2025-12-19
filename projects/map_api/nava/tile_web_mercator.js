@@ -24,4 +24,10 @@ const toX = lon => lon * deg_WM + half_length_WM;// получает X Веб М
 const toLonRad = x => x / radius_WM - rad_180;// обратная toXrad()
 const toLon = x => x / deg_WM - 180;// обратная toX()
 
-
+/* ДЛЯ СПРАВКИ *
+const lat_min = -85.0511287;//Более точное значение -85.0511287798065822585;
+const lat_max = 85.0511287;//Более точное значение 85.0511287798065822585;
+const lon_min = -180;
+const lon_max = 180;
+const zoom_min = 0;
+/**/
