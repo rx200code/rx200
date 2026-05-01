@@ -1,0 +1,24 @@
+.rx_map{
+	position: relative;
+	background-color: #3366CC;
+	overflow: hidden;
+}
+.rx_map img{
+	position: absolute;
+	border-width: 0px;
+	padding: 0px;
+	margin: 0px;
+	background-color: #888;
+}
+.rx_test{
+	position: absolute;
+	border-width: 0px;
+	padding: 0px;
+	margin: 0px;
+	width: 5px;
+	height: 5px;
+	background-color: #3366CC;
+}
+
+
+
