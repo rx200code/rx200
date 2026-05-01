@@ -1,0 +1,22 @@
+// ССЫЛКИ НА БИБЛИОТЕКИ
+
+/** Leaflet - Самая популярная легковесная библиотека для интерактивных карт на тайлах. Идеальна для большинства задач, работает на мобильных и десктопных устройствах, имеет много плагинов. **/
+https://leafletjs.com/
+
+// Вики
+https://ru.wikipedia.org/wiki/Leaflet
+
+// Репозиторий
+https://github.com/Leaflet/Leaflet
+https://github.com/Leaflet/Leaflet/blob/main/CHANGELOG.md
+
+
+
+/** OpenLayers - мощная библиотека с открытым исходным кодом для работы с различными источниками данных **/
+https://openlayers.org/
+
+// Вики
+https://ru.wikipedia.org/wiki/OpenLayers
+
+// Репозиторий
+https://github.com/openlayers/openlayers

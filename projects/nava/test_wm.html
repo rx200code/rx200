@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>test WM</title>
+		<script>
+			/**
+			https://www.politerm.com/zuludoc/tile_projections.html
+			
+			EPSG:3395 – WGS 84/World Mercator на сфероиде. Эта проекция используется такими сервисами как Космоснимки, Яндекс Карты, Карты mail.ru (спутник) и другими;
+			EPSG:3857 – WGS 84/Pseudo-Mercator (Spherical Mercator) на сфере. Эта проекция используется такими сервисами как Google, Virtual Earth, Maps-For-Free, Wikimapia, OpenStreetMap, Роскосмос, Навител, Nokia и др.
+			
+			// другая проекция
+			В случае широты/долготы, как правило, используется проекция EPSG:4326 – WGS 84.
+			/**/
+			
+			
+			// для справки https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+			
+			const rad_90 = Math.PI / 2;
+			const rad_45 = Math.PI / 4;
+			const rad_360 = Math.PI * 2;
+			
+			const wgs_84_a = 6378137;// Радиус земли в wgs_84
+			const width_WM = rad_360 * wgs_84_a;// 40075017 // 40075016.68557849 // ширена нулевого слайда в ВМ. // Длина окружности земли в wgs_84
+			const size_t = 256;
+			
+			
+			const max_zoom = 18;
+			const min_zoom = 0;
+			
+			var zoom_tiles = [];
+			var zoom_tiles_2 = [];
+			var zoom_tiles_a = [];
+			var zoom_pixels = [];
+			
+			var zoom_t = [];
+			var zoom_r = [];
+			
+			var zoom_t_2 = [];
+			var zoom_r_2 = [];
+			
+
+			/*
+			https://tile.openstreetmap.org/zoom/x/y.png
+			//*/
+
+			for(let i = min_zoom; i <= max_zoom; i++){
+				zoom_tiles[i] = 2 ** i;
+				zoom_tiles_2[i] = zoom_tiles[i] / 2;
+				zoom_tiles_a[i] = zoom_tiles[i] / rad_360;
+				zoom_pixels[i] = zoom_tiles[i] * size_t;
+				
+				let n = 2 ** (i - 1);
+				zoom_t[i] = n;
+				zoom_r[i] = n / Math.PI;
+				
+				
+				n = 1 << (i + 7);//n = 2 ** (i + 7);// степень пиксилей учитывая что тайл 256 = 2 в 8 степени.
+				zoom_t_2[i] = n;
+				zoom_r_2[i] = n / Math.PI;
+				
+			}
+			
+			
+			
+			let d_360 = d => (d %= 360) < 0 ? d + 360: d;
+			let r_360 = r => (r %= rad_360) < 0 ? r + rad_360: r;
+			let r_1 = Math.PI / 180;
+			let toRad = deg => deg * r_1;
+			let toDeg = rad => rad / r_1;
+			//
+			// 'https://a.tile.openstreetmap.org/17/95755/41457.png'
+			let lat = 55;//85.0511287798065822585;//85.0511287
+			let lat_rad = toRad(lat);
+			let latRad = toRad(lat);
+			let lon = 83;
+			let zoom = 17;
+			
+			//let power_t = Math.log(size_t) / Math.LN2;//Math.log(x) / Math.LN2 // Math.log2(256)
+			//n = 2 ** (zoom + power_t - 1);
+			let z_cof_t = 1 << (zoom + 7);//n = 2 ** (zoom + 7);// степень пиксилей учитывая что тайл 256 = 2 в 8 степени.
+			let z_cof_r = z_cof_t / Math.PI;
+			
+			let latToY = () => {
+				let x = Math.tan(lat_rad);
+				return wgs_84_a * Math.log(x + (x * x + 1) ** .5);
+			};
+			
+			let latToY_2 = () => {// Похоже самая быстрая.
+				return  wgs_84_a * Math.log(Math.tan(rad_45 + lat_rad / 2));
+			};
+			
+			let latToY_3 = () => {
+				return wgs_84_a * Math.asinh(Math.tan(lat_rad));
+			};
+			
+			let latToY_4 = () => {// Похоже самая быстрая.
+				return zoom_tiles_a[zoom] *  Math.log(Math.tan(rad_45 + lat_rad / 2));
+			};
+			
+			/**
+			The following is identical to the well-known Web Mercator projection.
+			Reproject the coordinates to the Spherical Mercator projection (from EPSG:4326 to EPSG:3857):
+				x = lon
+				y = arsinh(tan(lat)) = log[tan(lat) + sec(lat)]
+				(lat and lon are in radians)
+
+			Transform range of x and y to 0 – 1 and shift origin to top left corner:
+				x = [1 + (x / π)] / 2
+				y = [1 − (y / π)] / 2
+			Calculate the number of tiles across the map, n, using 2zoom
+			Multiply x and y by n. Round results down to give tilex and tiley.
+			/**/
+			
+			/**
+			lon - долгота в десятичных градусах (от -180 до 180)
+			lat - широта в десятичных градусах (от -85.06 до 85.06, так как проекция не покрывает полюса)
+			R - радиус Земли для проекции (обычно принимается как 6378137 метров) 
+			
+			lon_rad = lon * Math.PI / 180
+			lat_rad = lat * Math.PI / 180
+			
+			
+			X = R * lon_rad
+			Y = R * Math.log(Math.tan(Math.PI / 4 + lat_rad / 2))
+			/**/
+			/**
+			lat_rad = 2 * Math.atan(Math.exp(y / R)) - Math.PI / 2;
+			/**/
+			/** EPSG:7030 *
+			let a = 6378137;
+			let _f = 298.257223563;
+			let f = 1 / _f;
+			let b = a - a * f;
+			let e_2 = 2 * f - f ** 2;
+			let e = e_2 ** .5;
+			alert(e);
+			/**/
+			/** Мой код яндекса *
+crs.ell = {
+	wgs_84:{a:6378137,_f:298.257223563},// EPSG:7030
+	k_1940:{a:6378245,_f:298.3},// EPSG:7024 Krassowsky_1940
+};
+	ell.f = 1 / ell._f;
+	ell.b = ell.a - ell.a * ell.f;
+	ell.e_2 = 2 * ell.f - ell.f ** 2;
+	ell.e = ell.e_2 ** .5;
+	ell.e_4 = ell.e ** 4;
+	ell.e_6 = ell.e ** 6;
+	ell.e_8 = ell.e ** 6;
+	ell._e_2 = ell.e_2 / (1 - ell.e_2);
+			// Меркатор Яндекса.
+let to_M = c => {
+	let f = rad_90 - 2 * Math.atan(Math.E ** (-c[1] / crs.ell.wgs_84.a));
+	let x = Math.tan(f);
+	return [c[0], Math.log((x + (x * x + 1) ** .5) * ((1 - crs.ell.wgs_84.e * Math.sin(f)) / (1 + crs.ell.wgs_84.e * Math.sin(f))) ** (crs.ell.wgs_84.e / 2)) * crs.ell.wgs_84.a];
+};
+let from_M = c => {
+	let X = Math.PI / 2 - 2 * Math.atan(Math.E ** (c[1] / crs.ell.wgs_84.a));
+	let f = X + Math.sin(2 * X) * (crs.ell.wgs_84.e_2 / 2 + 5 * crs.ell.wgs_84.e_4 / 24 + crs.ell.wgs_84.e_6 / 12 + 13 * crs.ell.wgs_84.e_8 / 360) + Math.sin(4 * X) * (7 * crs.ell.wgs_84.e_4 / 48 + 29 * crs.ell.wgs_84.e_6 / 240 + 811 * crs.ell.wgs_84.e_8 / 11520) + Math.sin(6 * X) * (7 * crs.ell.wgs_84.e_6 / 120 + 81 * crs.ell.wgs_84.e_8 / 1120) + Math.sin(8 * X) * (4279 * crs.ell.wgs_84.e_8 / 161280);
+	let x = Math.tan(f);
+	return [c[0], Math.log(x + (x * x + 1) ** .5) * -crs.ell.wgs_84.a];
+};
+			
+			/**/
+			/** Код от Яндекса. *
+			// Доступные проекции и соответствующие значения эксцентриситетов.
+var projections = [{
+        name: 'wgs84Mercator',
+        eccentricity: 0.0818191908426
+    }, {
+        name: 'sphericalMercator',
+        eccentricity: 0
+    }], 
+    
+    // Для вычисления номера нужного тайла следует задать параметры:
+    // - уровень масштабирования карты;
+    // - географические координаты объекта, попадающего в тайл;
+    // - проекцию, для которой нужно получить тайл. 
+    params = {
+        z: 0,
+        geoCoords: [55.733776, 37.587936],
+        projection: projections[0]
+   };
+   
+// Функция для перевода географических координат объекта 
+// в глобальные пиксельные координаты.    
+function fromGeoToPixels (lat, long, projection, z) {
+    var x_p, y_p,
+        pixelCoords,
+        tilenumber = [],
+        rho,
+        pi = Math.PI,
+        beta,   
+        phi,
+        theta,
+        e = projection.eccentricity;
+ 
+    rho = Math.pow(2, z + 8) / 2;
+    beta = lat * pi / 180;
+    phi = (1 - e * Math.sin(beta)) / (1 + e * Math.sin(beta));
+    theta = Math.tan(pi / 4 + beta / 2) * Math.pow(phi, e / 2);
+    
+    x_p = rho * (1 + long / 180);
+    y_p = rho * (1 - Math.log(theta) / pi);
+    
+    return [x_p, y_p];
+}
+
+// Функция для расчета номера тайла на основе глобальных пиксельных координат.
+function fromPixelsToTileNumber (x, y) {
+    return [
+        Math.floor(x / 256),
+        Math.floor(y / 256)
+    ];
+}
+
+// Переведем географические координаты объекта в глобальные пиксельные координаты.
+pixelCoords = fromGeoToPixels(
+    params.geoCoords[0],
+    params.geoCoords[1],
+    params.projection,
+    params.z
+);
+
+// Посчитаем номер тайла на основе пиксельных координат.
+tileNumber = fromPixelsToTileNumber(pixelCoords[0], pixelCoords[1]);
+			/**/
+			
+			/** Формула для питона от ИИ *
+			python
+
+import math
+
+def forward_mercator_ellipsoidal(lon, lat):
+    # Параметры WGS 84
+    a = 6378137.0         # Большая полуось (радиус)
+    f_inv = 298.257223563 # Обратное сжатие
+    f = 1 / f_inv
+    e_squared = 2 * f - f**2 # Квадрат эксцентриситета
+    e = math.sqrt(e_squared) # Первый эксцентриситет (прим. 0.08181919)
+
+    # Перевод градусов в радианы
+    phi = math.radians(lat)
+    lambda_ = math.radians(lon)
+
+    # Вычисление X (аналогично сферическому)
+    x = a * lambda_
+
+    # Вычисление Y с поправкой на эксцентриситет
+    # Используется изометрическая широта (isometric latitude)
+    
+    # Сложный член, учитывающий эксцентриситет
+    e_term = (1.0 - e * math.sin(phi)) / (1.0 + e * math.sin(phi))
+    
+    y = a * math.log(math.tan(math.pi / 4.0 + phi / 2.0) * (e_term**(e/2.0)))
+    
+    return x, y
+//
+python
+
+import math
+
+def forward_mercator_wgs84(lon, lat):
+    # Параметры WGS 84 (EPSG:7030)
+    a = 6378137.0         
+    f_inv = 298.257223563 
+    f = 1 / f_inv
+    e_squared = 2 * f - f**2 
+    e = math.sqrt(e_squared) 
+
+    # Перевод градусов в радианы
+    phi = math.radians(lat)
+    lambda_ = math.radians(lon)
+
+    # X координата
+    x = a * lambda_
+
+    # Y координата (улучшенная, эллипсоидальная)
+    # Используется изометрическая широта M(phi)
+    
+    # Расчет поправочного коэффициента (1 - e*sin(phi)) / (1 + e*sin(phi))
+    e_term = (1.0 - e * math.sin(phi)) / (1.0 + e * math.sin(phi))
+    
+    # Итоговая формула Y
+    y = a * math.log(math.tan(math.pi / 4.0 + phi / 2.0) * (e_term**(e/2.0)))
+    
+    return x, y		
+			/**/
+			
+			window.onload = () => {
+				
+			};
+			
+			
+			let f_test_1 = latRad => (1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) * zoom_tiles_2[zoom];
+			let f_test_2 = latRad => zoom_tiles[zoom] - ((zoom_tiles_a[zoom] * Math.log(Math.tan(rad_45 + latRad / 2))) + zoom_tiles_2[zoom]);
+			let f_test_3 = latRad => zoom_t[zoom] - (zoom_r[zoom] * Math.log(Math.tan(rad_45 + latRad / 2)));
+			let f_test_4 = latRad => z_cof_t - z_cof_r * Math.log(Math.tan(rad_45 + latRad / 2));// Самая быстрая.
+			
+			let f_test_4_f = y => 2 * Math.atan(Math.exp((z_cof_t - y) / z_cof_r)) - rad_90;
+			
+			function test(){
+				
+				let text = "";
+				
+				let center_y = latToY();
+				text += "center_y: " + center_y + "<br>";
+				let center_y_t = width_WM - (center_y + (width_WM / 2));
+				text += "center_y_t: " + center_y_t + "<br>";
+				
+				let w_tile_WM = width_WM / (2 ** zoom);
+				let tile_y = Math.floor(center_y_t / w_tile_WM);
+				text += "tile_y: " + tile_y + "<br>";
+				
+				let center_y_2 = latToY_2();
+				text += "center_y_2: " + center_y_2 + "<br>";
+				
+				let center_y_3 = latToY_3();
+				text += "center_y_3: " + center_y_3 + "<br>";
+				
+				let center_y_4 = latToY_4();
+				text += "center_y_4: " + center_y_4 + "<br>";
+				
+				//							(############## latToY_4 #############)
+				// y = zoom_tiles[zoom] - ( ((zoom_tiles[zoom] / rad_360;) * (yyy)) + (zoom_tiles[zoom] / 2));
+				
+				let center_y_4_t = zoom_tiles[zoom] - (center_y_4 + (zoom_tiles[zoom] / 2));
+				text += "center_y_4_t: " + center_y_4_t + "<br>";
+				
+				// сравнение
+				/**/
+				const tileY_3 = Math.floor(
+					zoom_tiles[zoom] - ((zoom_tiles_a[zoom] * Math.log(Math.tan(Math.PI / 4 + latRad / 2))) + zoom_tiles[zoom - 1])
+				);
+				text += "tileY_3: " + tileY_3 + "<br>";
+				
+				const tileY_2 = Math.floor(
+					(1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * Math.pow(2, zoom)
+				);
+				text += "tileY_2: " + tileY_2 + "<br>";
+				
+				const tileY_1 = Math.floor(
+					Math.pow(2, zoom) - ((Math.pow(2, zoom) / (Math.PI * 2) * Math.log(Math.tan(Math.PI / 4 + latRad / 2))) + (Math.pow(2, zoom - 1)))
+				);
+				text += "tileY_1: " + tileY_1 + "<br>";
+				/**/
+				
+				/**
+				zoom_tiles[zoom] - ((zoom_tiles_a[zoom] * Math.log(Math.tan(Math.PI / 4 + latRad / 2))) + zoom_tiles[zoom - 1])
+				(1 - Math.log(Math.tan(latRad) + 1 / Math.cos(latRad)) / Math.PI) / 2 * zoom_tiles[zoom]
+				/**/
+				
+				
+				text += "f_test_1(rad55): " + f_test_1(toRad(lat)) + "<br>";
+				text += "f_test_2(rad55): " + f_test_2(toRad(lat)) + "<br>";
+				text += "f_test_3(rad55): " + f_test_3(toRad(lat)) + "<br>";
+				text += "f_test_4(rad55): " + f_test_4(toRad(lat)) + "<br>";
+				text += "f_test_x(rad55): " + (f_test_3(toRad(lat)) * 256) + "<br>";
+				
+				text += "f_test_4_f: " + toDeg(f_test_4_f(f_test_4(toRad(lat)))) + "<br>";
+				
+				/**
+				let min = toRad(-85.05);
+				let max = toRad(85.05);
+				let i_offset = .00001;
+				
+				let counter = 0;
+				let start = 0;
+				let sum = 0;
+				let end = 0;
+				let timeTaken = 0;
+				let i = min;
+				
+				i = min;
+				for(; i < max; i += i_offset)counter++;
+				text += "counter: " + counter + "<br>";
+				
+				
+				sum = 0;
+				i = min;
+				start = performance.now();
+				for(; i < max; i += i_offset){
+					sum += f_test_1(i);
+				}
+				end = performance.now();
+				timeTaken = end - start;
+				text += "timeTaken_1: " + timeTaken + "<br>";
+				text += "sum: " + sum + "<br>";
+				
+				sum = 0;
+				i = min;
+				start = performance.now();
+				for(; i < max; i += i_offset){
+					sum += f_test_2(i);
+				}
+				end = performance.now();
+				timeTaken = end - start;
+				text += "timeTaken_2: " + timeTaken + "<br>";
+				text += "sum: " + sum + "<br>";
+				/**/
+				
+				
+				
+				out(text);
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" /> <span id="info">info</span>
+		<br>
+		<span id="out"></span>
+		<br>
+		
+	</body>
+</html>

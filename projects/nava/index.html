@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>template HTML5</title>
+		<link rel="icon" type="image/x-icon" href="url" />
+		<link rel="stylesheet" href="url">
+		<style>
+			#map{
+				/**
+				overflow: hidden;
+				/**/
+				/**/
+				position: absolute;
+				/**/
+				background-color: #888;
+				border: solid 2px #000;
+				width: 80%;
+				height: 80%;
+				left: 200px;
+				top: 100px;
+				margin: 0;
+				/**
+				padding: 100px;
+				/**/
+			}
+			#map > img{
+				/**
+				position: relative;
+				vertical-align: bottom;
+				padding: 0;
+				/**/
+			}
+			
+		</style>
+		<script src="nava.js"></script>
+		<script>
+			
+			window.onload = () => {
+				
+				nava.init(document.getElementById("map"));
+				
+				let elm_input_a = document.getElementById("out_a");
+				elm_input_a.onclick = function(){this.select();};
+				elm_input_a.value = 0;
+				elm_input_a.onchange = () => {nava.setAngleDeg(elm_input_a.value * 1);};
+			}
+			
+			
+			
+			function test(){
+				
+				out("test");
+			}
+			
+			function out(...attr){
+				let text = "";
+				let dilimiter = " | ";
+				for(let t of attr)text += t + dilimiter;
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" /> <span id="info">info</span>
+		<br>
+		<span id="out"></span>
+		<br>
+		<input type="text" id="out_a" value="0" />
+		<br>
+		<div id="map"/>
+		
+	</body>
+</html>

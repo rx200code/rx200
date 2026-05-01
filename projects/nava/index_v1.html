@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>template HTML5</title>
+		<link rel="icon" type="image/x-icon" href="url" />
+		<link rel="stylesheet" href="url">
+		<style>
+			#map{
+				/**
+				overflow: hidden;
+				/**/
+				position: absolute;
+				background-color: #888;
+				border: solid 2px #000;
+				width: 1200px;
+				height: 700px;
+				left: 100px;
+				top: 100px;
+				margin: 0;
+			}
+			#map > img{
+				position: relative;
+				vertical-align: bottom;
+				padding: 0;
+			}
+			
+		</style>
+		<script src="nava.js"></script>
+		<script>
+			const rad_90 = Math.PI / 2;
+			const rad_360 = Math.PI * 2;
+			let d_360 = d => (d %= 360) < 0 ? d + 360: d;
+			let r_360 = r => (r %= rad_360) < 0 ? r + rad_360: r;
+			let r_1 = Math.PI / 180;
+			let toRad = deg => deg * r_1;
+			let toDeg = rad => rad / r_1;
+			let createElementNS = (name, ...attr) => {
+				let elm = document.createElementNS("http://www.w3.org/2000/svg", name);
+				for(let arr_set of attr)elm.setAttributeNS(null, arr_set[0], arr_set[1]);
+				return elm;
+			};
+			let createElement = (name, ...attr) => {
+				let elm = document.createElement(name);
+				for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+				return elm;
+			};
+			let m_down = (e, f, f2) => {
+				e.preventDefault();
+				let onMouseUp = e => {
+					if(f2 !== undefined)f2(e);
+					document.removeEventListener('mouseup', onMouseUp);
+					document.removeEventListener('mousemove', f);
+				};
+				document.addEventListener('mousemove', f);
+				document.addEventListener('mouseup', onMouseUp);
+			};
+			let create_input_a = (f, a = 0) => {
+				let w = 140;
+				let w_2 = w / 2;
+				let r = w_2 - 2;
+				let elm = createElementNS("svg", ["style", "margin: -9px 0px 0px 0px; width: "+(w * 2)+"px; height: "+w+"px; float: right;"]);
+				elm.appendChild(createElementNS("circle", ["cx", w_2], ["cy", w_2], ["r", r], ["fill", "none"], ["stroke", "#000"], ["pointer-events", "none"]));
+				let arrow = createElementNS("path", ["d", "M"+w_2+","+w_2+"v-"+r], ["fill", "none"], ["stroke", "#555"], ["pointer-events", "none"]);
+				elm.appendChild(arrow);
+				let arrow_r = createElementNS("path", ["fill", "none"], ["stroke", "#ff5050"], ["pointer-events", "none"]);
+				elm.appendChild(arrow_r);
+				let w_x, w_y;
+				let text = createElementNS("text", ["x", w + 2], ["y", w_2 + 3], ["font-size", 14], ["pointer-events", "none"]);
+				text.textContent = "0";
+				elm.appendChild(text);
+				elm.onmousemove = e => {
+					let a = Math.atan2(e.offsetX - w_2, w_2 - e.offsetY);
+					text.textContent = Math.round(toDeg(a));
+					arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				elm.onmouseleave = e => {
+					arrow_r.setAttributeNS(null, "d", "");
+					text.textContent = Math.round(toDeg(a));
+				};
+				elm.onmousedown = e => {
+					w_x = w_2 - e.offsetX + e.pageX;w_y = w_2 - e.offsetY + e.pageY;
+					m_down(e, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+						f(a);
+					}, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "");
+						arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));f(a);
+					});
+				};
+				elm.f_a = _a => {
+					a = _a;
+					text.textContent = Math.round(toDeg(a));
+					arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				return elm;
+			};
+			
+
+			
+
+			var nava_map;
+			window.onload = () => {
+				let elm_input_a = document.getElementById("out_a");
+				elm_input_a.onclick = function(){this.select();};
+				elm_input_a.value = 0;
+				
+				let elm_a = create_input_a((a) => {
+					out_a(toDeg(a));
+					
+				});
+				
+				elm_input_a.onchange = function(){elm_a.f_a(toRad(this.value));};
+				
+
+				document.body.appendChild(elm_a);
+				
+				// Подключаем библиотеку nava.js
+				nava_map = new nava.Map();
+				
+				nava_map.setViewElm("map");
+				nava_map.setRadA(1);
+				
+				
+			}
+			function out_a(n){
+				document.getElementById("out_a").value = n;
+			}
+			
+			const SIZE_T = 256;
+			
+			const canvas = createElement("canvas", ["width", SIZE_T], ["height", SIZE_T]);
+			const ctx = canvas.getContext("2d");
+			ctx.strokeStyle = "#000";
+			ctx.fillStyle = "#fff";
+			ctx.font = "28px serif";
+			ctx.textAlign = "center";
+			ctx.textBaseline = "middle";
+			
+			function getSrcBlobBase64(url){
+				
+				let numbers = url.match(/\d+/g);
+				let y = numbers.pop();
+				let x = numbers.pop();
+				let z = numbers.pop();
+				
+				ctx.clearRect(0, 0, SIZE_T, SIZE_T);
+				//ctx.fillRect(0, 0, SIZE_T, SIZE_T);
+				ctx.strokeRect(0, 0, SIZE_T, SIZE_T);
+				
+				
+				ctx.setLineDash([4, 16]);
+				
+				ctx.moveTo(0, 0);
+				ctx.lineTo(SIZE_T, SIZE_T);
+				ctx.moveTo(SIZE_T, 0);
+				ctx.lineTo(0, SIZE_T);
+				ctx.stroke();
+				
+				ctx.setLineDash([0, 0]);
+				
+				
+				ctx.fillText(x, SIZE_T / 2, 50);
+				ctx.fillText(y, SIZE_T - 50, SIZE_T / 2);
+				ctx.fillText(z, 50, SIZE_T / 2);
+				
+				
+				return canvas.toDataURL();
+			}
+			
+			
+			function test(){
+				let img = new Image(SIZE_T, SIZE_T);
+				img.src = getSrcBlobBase64('https://a.tile.openstreetmap.org/17/95754/41456.png');
+				document.getElementById("map").appendChild(img);
+				
+				
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" /> <span id="info">info</span>
+		<br>
+		<span id="out"></span>
+		<input type="text" id="out_a" value="0" />
+		<br>
+		<div id="map"/>
+		
+	</body>
+</html>

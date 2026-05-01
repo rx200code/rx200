@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>rotation WM</title>
+		<style>
+			#map{
+				/**/
+				overflow: hidden;
+				/**/
+				position: absolute;
+				background-color: #888;
+				outline: solid 2px #000;
+				width: 1200px;
+				height: 700px;
+				left: 100px;
+				top: 100px;
+				margin: 0;
+			}
+			#map > img{
+				position: absolute;
+				/**
+				vertical-align: bottom;
+				/**/
+				padding: 0;
+				margin: 0;
+				/**
+				outline: solid 2px #F00;
+				opacity: .5;
+				/**/
+				transform-origin: top left;
+			}
+			#map > canvas{
+				position: absolute;
+				/**
+				vertical-align: bottom;
+				/**/
+				padding: 0;
+				margin: 0;
+				/**/
+				outline: solid 2px #F00;
+				/**/
+				/**
+				opacity: .5;
+				/**/
+				/**
+				transform-origin: top left;
+				/**/
+			}
+			
+			#point_center{
+				position: absolute;
+				margin: 0;
+				padding: 0;
+				width: 0px;
+				height: 0px;
+				outline: solid 2px #F00;
+			}
+			#point_rot{
+				position: absolute;
+				margin: 0;
+				padding: 0;
+				width: 0px;
+				height: 0px;
+				outline: solid 2px #00F;
+			}
+			#point_out{
+				position: absolute;
+				margin: 0;
+				padding: 0;
+				width: 0px;
+				height: 0px;
+				outline: solid 2px #0F0;
+			}
+			
+		</style>
+		<script>
+			// Константы PI
+			const rad_180 = Math.PI;
+			const rad_1 = rad_180 / 180;
+			const rad_45 = rad_180 / 4;
+			const rad_90 = rad_180 / 2;
+			const rad_360 = rad_180 * 2;
+			
+			// Функции перевода радиан в градусы и обратно.
+			let toRad = deg => deg * rad_1;
+			let toDeg = rad => rad / rad_1;
+			
+			// Функции создания элементов HTML для вращения.
+			let createElementNS = (name, ...attr) => {
+				let elm = document.createElementNS("http://www.w3.org/2000/svg", name);
+				for(let arr_set of attr)elm.setAttributeNS(null, arr_set[0], arr_set[1]);
+				return elm;
+			};
+			let createElement = (name, ...attr) => {
+				let elm = document.createElement(name);
+				for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+				return elm;
+			};
+			let m_down = (e, f, f2) => {
+				e.preventDefault();
+				let onMouseUp = e => {
+					if(f2 !== undefined)f2(e);
+					document.removeEventListener('mouseup', onMouseUp);
+					document.removeEventListener('mousemove', f);
+				};
+				document.addEventListener('mousemove', f);
+				document.addEventListener('mouseup', onMouseUp);
+			};
+			let create_input_a = (f, a = 0) => {
+				let w = 140;
+				let w_2 = w / 2;
+				let r = w_2 - 2;
+				let elm = createElementNS("svg", ["style", "margin: -9px 0px 0px 0px; width: "+(w * 2)+"px; height: "+w+"px; float: right;"]);
+				elm.appendChild(createElementNS("circle", ["cx", w_2], ["cy", w_2], ["r", r], ["fill", "none"], ["stroke", "#000"], ["pointer-events", "none"]));
+				let arrow = createElementNS("path", ["d", "M"+w_2+","+w_2+"v-"+r], ["fill", "none"], ["stroke", "#555"], ["pointer-events", "none"]);
+				elm.appendChild(arrow);
+				let arrow_r = createElementNS("path", ["fill", "none"], ["stroke", "#ff5050"], ["pointer-events", "none"]);
+				elm.appendChild(arrow_r);
+				let w_x, w_y;
+				let text = createElementNS("text", ["x", w + 2], ["y", w_2 + 3], ["font-size", 14], ["pointer-events", "none"]);
+				text.textContent = "0";
+				elm.appendChild(text);
+				elm.onmousemove = e => {
+					let a = Math.atan2(e.offsetX - w_2, w_2 - e.offsetY);
+					text.textContent = Math.round(toDeg(a));
+					arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				elm.onmouseleave = e => {
+					arrow_r.setAttributeNS(null, "d", "");
+					text.textContent = Math.round(toDeg(a));
+				};
+				elm.onmousedown = e => {
+					w_x = w_2 - e.offsetX + e.pageX;w_y = w_2 - e.offsetY + e.pageY;
+					m_down(e, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+						f(a);
+					}, e => {
+						a = Math.atan2(e.pageX - w_x, w_y - e.pageY);
+						text.textContent = Math.round(toDeg(a));
+						arrow_r.setAttributeNS(null, "d", "");
+						arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));f(a);
+					});
+				};
+				elm.f_a = _a => {
+					a = _a;
+					text.textContent = Math.round(toDeg(a));
+					arrow.setAttributeNS(null, "d", "M"+w_2+","+w_2+"l"+(Math.sin(a) * r)+","+(Math.cos(a) * -r));
+				};
+				return elm;
+			};
+			
+			const tile_size = 256;
+			
+			const canvas_img = createElement("canvas", ["width", tile_size], ["height", tile_size]);
+			const ctx_img = canvas_img.getContext("2d");
+			ctx_img.strokeStyle = "#000";
+			ctx_img.fillStyle = "#fff";
+			ctx_img.font = "28px serif";
+			ctx_img.textAlign = "center";
+			ctx_img.textBaseline = "middle";
+			
+			function getSrcBlobBase64(url){
+				return url;
+				let numbers = url.match(/\d+/g);
+				let y = numbers.pop();
+				let x = numbers.pop();
+				let z = numbers.pop();
+				
+				ctx_img.clearRect(0, 0, tile_size, tile_size);
+				//ctx_img.fillRect(0, 0, tile_size, tile_size);
+				ctx_img.strokeRect(0, 0, tile_size, tile_size);
+				
+				ctx_img.setLineDash([4, 16]);
+				
+				ctx_img.moveTo(0, 0);
+				ctx_img.lineTo(tile_size, tile_size);
+				ctx_img.moveTo(tile_size, 0);
+				ctx_img.lineTo(0, tile_size);
+				ctx_img.stroke();
+				
+				ctx_img.setLineDash([0, 0]);
+				
+				ctx_img.fillText(x, tile_size / 2, 50);
+				ctx_img.fillText(y, tile_size - 50, tile_size / 2);
+				ctx_img.fillText(z, 50, tile_size / 2);
+				
+				return canvas_img.toDataURL();
+			}
+
+			// Начальные константы переменные карты.
+			// Начальные координаты, широты и долготы.
+			// 55.75129695471873, 37.622515241667436 // Москва
+			let lat = 55;// Широта
+			let lon = 83;// Долгота
+			let lat_rad = toRad(lat);// Широта в радианах
+			//let lon_rad = toRad(lon);// Долгота в радианах, долгота в радианах в целом ненужна, так как можно обойтись и в градусах.
+			let zoom = 14;// уровень зума
+			
+			let half_length_WM = 1 << (zoom - 1);// половина длины Веб меркатора в тайлах(tile = 1), Math.log2(tile) = 0;
+			let radius_WM = half_length_WM / rad_180;// Радиус веб меркатора, если считать длину в количестве тайлов на сторону.
+			
+			// Функции перевода в Веб меркатор и обратно.
+			let getY = lat_rad => half_length_WM - radius_WM * Math.log(Math.tan(rad_45 + lat_rad / 2));// получает Y Веб Меркатора исходя из широты в радианах.
+			let getLatRad = y => 2 * Math.atan(Math.exp((half_length_WM - y) / radius_WM)) - rad_90;// обратная getY()
+			let getX = lon => (lon / 180 + 1) * half_length_WM;// не используем lon_rad, так как достаточно и lon в градусах.
+			let getLon = x => (x / half_length_WM - 1) * 180;// обратная getX()
+			
+			// минимальные и максимальные значения для широты, долготы и зума.
+			const lat_min = -85.0511287;//Более точное значение -85.0511287798065822585;
+			const lat_max = 85.0511287;//Более точное значение 85.0511287798065822585;
+			const lon_min = -180;
+			const lon_max = 180;
+			const zoom_min = 0;
+			const zoom_max = 18;
+			
+			// Координаты центра в X, Y для заданного размера тайла.
+			let center_x = getX(lon);
+			let center_y = getY(lat_rad);
+			
+			let tile = 256;// int
+			// Координаты точки вращения.
+			let rot_x = center_x;// Правая сторона тайла.
+			let rot_y = center_y;// Верх тайла.
+			
+			// минимальные и максимальные значения для x, y, tile.
+			const x_min = 0;
+			const y_min = 0;
+			const tile_min = 1;
+			let x_max = 2 ** zoom - 1;//131071;// 2 ** 17 - 1;// (1 << zoom) - 1;
+			let y_max = x_max;
+			
+			let a_map = 0;
+			let sin_a_map = Math.sin(a_map);
+			let cos_a_map = Math.cos(a_map);
+
+			const arr_s = ["a.","b.","c.",""];
+			const MASK = 3;
+			//"https://tile.openstreetmap.org/17/95755/41457.png"
+			//"https://" + arr_s[(x ^ y) & MASK] + "tile.openstreetmap.org/" + zoom + "/" + x + "/" + y + ".png";
+			//index = (x ^ y ^ zoom) & MASK;
+			//let count_arr_s = 0;// arr_s[count_arr_s % arr_s.length]
+			//"https://" + arr_s[++count_arr_s % arr_s.length] + ".tile.openstreetmap.org/" + zoom + "/" + x + "/" + y + ".png";
+			
+			let elm_view, elm_point_center, elm_point_rot, elm_point_out;
+			let top_elm_view, left_elm_view, width_elm_view, height_elm_view, center_x_elm_view, center_y_elm_view, rot_x_elm_view, rot_y_elm_view;
+			let center_x_elm_view_absolute, center_y_elm_view_absolute, rot_x_elm_view_absolute, rot_y_elm_view_absolute;
+			let canvas, ctx, size_elm_canvas, canvas_center_xy, canvas_x_offset, canvas_y_offset;
+			window.onload = () => {
+				let elm_input_a = document.getElementById("out_a");
+				elm_input_a.onclick = function(){this.select();};
+				elm_input_a.value = 0;
+				
+				let elm_a = create_input_a((a) => {
+					
+					rot_map(a);
+					out_a(toDeg(a));
+					
+				});
+				
+				elm_input_a.onchange = function(){elm_a.f_a(toRad(this.value));};
+				
+				document.body.appendChild(elm_a);
+				
+				/** Насальная загрузка карты */
+				
+				elm_view = document.getElementById("map");
+				// определяем размеры окна просмотра карты.
+				let rect_elm_view = elm_view.getBoundingClientRect();
+				top_elm_view = rect_elm_view.top;
+				left_elm_view = rect_elm_view.left;
+				width_elm_view = rect_elm_view.width;
+				height_elm_view = rect_elm_view.height;
+				center_x_elm_view = width_elm_view / 2;
+				center_y_elm_view = height_elm_view / 2;
+				rot_x_elm_view = center_x_elm_view + ((rot_x - center_x) * tile);
+				rot_y_elm_view = center_y_elm_view + ((rot_y - center_y) * tile);
+				
+				center_x_elm_view_absolute = left_elm_view + center_x_elm_view;
+				center_y_elm_view_absolute = top_elm_view + center_y_elm_view;
+				
+				rot_x_elm_view_absolute = left_elm_view + rot_x_elm_view;
+				rot_y_elm_view_absolute = top_elm_view + rot_y_elm_view;
+				
+				out(rot_x_elm_view_absolute +" | "+rot_y_elm_view_absolute);
+				
+				elm_point_center = document.getElementById("point_center");
+				elm_point_center.style.left = Math.round(center_x_elm_view_absolute) + 'px';
+				elm_point_center.style.top = Math.round(center_y_elm_view_absolute) + 'px';
+				
+				elm_point_rot = document.getElementById("point_rot");
+				elm_point_rot.style.left = Math.round(rot_x_elm_view_absolute) + 'px';
+				elm_point_rot.style.top = Math.round(rot_y_elm_view_absolute) + 'px';
+				
+				elm_point_out = document.getElementById("point_out");
+				elm_point_out.style.left = center_x_elm_view_absolute + 'px';
+				elm_point_out.style.top = center_y_elm_view_absolute + 'px';
+				
+				////////
+				size_elm_canvas = Math.ceil((width_elm_view ** 2 + height_elm_view ** 2) ** .5);
+				canvas_center_xy = size_elm_canvas / 2;
+				canvas_x_offset = canvas_center_xy - center_x_elm_view;
+				canvas_y_offset = canvas_center_xy - center_y_elm_view;
+				canvas = createElement("canvas", ["width", size_elm_canvas], ["height", size_elm_canvas]);
+				elm_view.appendChild(canvas);
+				
+				canvas.style.left = -canvas_x_offset + 'px';
+				canvas.style.top = -canvas_y_offset + 'px';
+				
+				ctx = canvas.getContext("2d");
+				//ctx.fillStyle = "#fff";
+				//ctx.clearRect(0, 0, width_elm_view, height_elm_view);
+				//ctx.fillRect(0, 0, width_elm_view, height_elm_view);
+				
+				
+				
+				
+				
+				// заполняем тайлами. Из псевдо сервера.
+				let left_wm = center_x - center_x_elm_view / tile;
+				let right_wm = left_wm + width_elm_view / tile;
+				let top_wm = center_y - center_y_elm_view / tile;
+				let bottom_wm = top_wm + height_elm_view / tile;
+				
+				for(let y = top_wm | 0; y < bottom_wm; y++)
+					for(let x = left_wm | 0; x < right_wm; x++){
+						let img = new Image(tile_size, tile_size);
+						img.src = getSrcBlobBase64("https://" + arr_s[(x ^ y) & MASK] + "tile.openstreetmap.org/" + zoom + "/" + x + "/" + y + ".png");
+						//img.src = "https://" + arr_s[(x ^ y) & MASK] + "tile.openstreetmap.org/" + zoom + "/" + x + "/" + y + ".png";
+						/**
+						img.style.left = (((x - center_x) * tile) + center_x_elm_view) + "px";
+						img.style.top = (((y - center_y) * tile) + center_y_elm_view) + "px";
+						elm_view.appendChild(img);
+						/**/
+						let dx = (((x - center_x) * tile) + center_x_elm_view) + canvas_x_offset | 0;
+						let dy = (((y - center_y) * tile) + center_y_elm_view) + canvas_y_offset | 0;
+						img.onload = () => ctx.drawImage(img, dx, dy );
+						
+					}
+				
+				// Устанавливаем функцию задающую точку вращения по клику
+				elm_view.onclick = e => {
+					let view_x = e.clientX - (left_elm_view + center_x_elm_view);
+					let view_y = e.clientY - (top_elm_view + center_y_elm_view);
+					
+					let view_x_a = view_x * cos_a_map - view_y * sin_a_map;
+					let view_y_a = view_x * sin_a_map + view_y * cos_a_map;
+					
+					elm_point_rot.style.left = e.clientX + 'px';
+					elm_point_rot.style.top = e.clientY + 'px';
+					
+					rot_x = center_x + view_x_a / tile;
+					rot_y = center_y + view_y_a / tile;
+					//rot_x = center_x + view_x / tile;
+					//rot_y = center_y + view_y / tile;
+					//rot_x_elm_view = center_x_elm_view + ((rot_x - center_x) * tile);
+					//rot_y_elm_view = center_y_elm_view + ((rot_y - center_y) * tile);
+					rot_x_elm_view = e.clientX - left_elm_view;
+					rot_y_elm_view = e.clientY - top_elm_view;
+					
+					rot_x_elm_view_absolute = left_elm_view + rot_x_elm_view;
+					rot_y_elm_view_absolute = top_elm_view + rot_y_elm_view;
+					
+					out(rot_x_elm_view + " | " + view_x_a + " || " + view_y + " | " + view_y_a);
+				};
+				
+			}
+			
+			function rot_map(a){
+				let a_offset = a - a_map;
+				
+				// 1. Находим радиус.
+				let radius = ((center_x - rot_x) ** 2 + (center_y - rot_y) ** 2) ** .5;
+				// 2. Находим новое положение центра.
+				let temp_x = rot_x - center_x;
+				let temp_y = rot_y - center_y;
+				let sin_a_offset = Math.sin(-a_offset);
+				let cos_a_offset = Math.cos(-a_offset);
+				let rotated_x = temp_x * cos_a_offset - temp_y * sin_a_offset;
+				let rotated_y = temp_x * sin_a_offset + temp_y * cos_a_offset;
+				
+				//let center_x_test = radius * sin_a_offset;
+				//let center_y_test = radius * -cos_a_offset;
+				
+				elm_point_out.style.left = Math.round(rot_x_elm_view_absolute - rotated_x * tile) + 'px';
+				elm_point_out.style.top = Math.round(rot_y_elm_view_absolute - rotated_y * tile) + 'px';
+				
+				/** НАЧИНАЕМ РАСЧЕТЫ ОТНОСИТЕЛЬНО НОВОГО ЦЕНТРА. */
+				a_map = a;
+				// Устанавливаем положение нового центра
+				center_x = rot_x - rotated_x;
+				center_y = rot_y - rotated_y;
+				
+				
+				///////// СТАРЫЙ АЛГОРИТМ //////////
+				// дополнение
+				let hf_pi = rad_90;
+				let a_view = -a;
+				let win_out_w = width_elm_view / tile;
+				let win_out_h = height_elm_view / tile;
+				let point_radius = (win_out_w ** 2 + win_out_h ** 2) ** .5 / 2;
+				let point_a = hf_pi - Math.atan(win_out_h / win_out_w);
+				let tile_size = 1;
+				
+				
+				
+				let size_left_border, size_right_border;// относительно координат плиток, размер левой и правой стороны дисплея 
+				let a_relative;// угол поворота экрана, относительно верхнего угла дисплея, относительно координат плиток
+
+				// определяем верхний угол.
+				//*
+				let x, y;// координаты верхнего угла дисплея, относительно координат плиток
+				if(a_view >= 0){// определяем соответствующие значения относительно верхнего угла дисплея
+					if(a_view <= hf_pi){
+						a_relative = a_view;
+						size_left_border = win_out_h;
+						size_right_border = win_out_w;
+						x = center_x + point_radius * Math.sin(a_view - point_a);
+						y = center_y - point_radius * Math.cos(a_view - point_a);
+					}else{
+						a_relative = a_view - hf_pi;
+						size_left_border = win_out_w;
+						size_right_border = win_out_h;
+						x = center_x - point_radius * Math.sin(a_view + point_a);
+						y = center_y + point_radius * Math.cos(a_view + point_a);
+					}
+				}else{
+					if(a_view >= -hf_pi){
+						a_relative = a_view + hf_pi;
+						size_left_border = win_out_w;
+						size_right_border = win_out_h;
+						x = center_x + point_radius * Math.sin(a_view + point_a);
+						y = center_y - point_radius * Math.cos(a_view + point_a);
+					}else{
+						a_relative = a_view + Math.PI;
+						size_left_border = win_out_h;
+						size_right_border = win_out_w;
+						x = center_x - point_radius * Math.sin(a_view - point_a);
+						y = center_y + point_radius * Math.cos(a_view - point_a);
+					}
+				}
+				
+				// определяем left right в ряде
+				let sin_a = Math.sin(a_relative);
+				let cos_a = Math.cos(a_relative);
+				let tan_a = sin_a / cos_a;
+				
+				// относительно координат плиток
+				let shift_y_tile = tile_size - y % tile_size;// смещение верхнего угла дисплея относительно плитки по оси y
+				let shift_x_tile = x % tile_size;// смещение верхнего угла дисплея относительно плитки по оси x
+
+				let max_left_shift_w = size_left_border * sin_a;// размер левой стороны дисплея по оси x
+				let max_left_shift_h = size_left_border * cos_a;// размер левой стороны дисплея по оси y
+				let max_right_shift_w = size_right_border * cos_a;// размер правой стороны дисплея по оси x
+				let max_right_shift_h = size_right_border * sin_a;// размер правой стороны дисплея по оси y
+
+				let max_h = max_left_shift_h + max_right_shift_h;// высота дисплея по оси y
+				let tile_y = y / tile_size | 0;// ряд верхней плитки дисплея.
+				let tile_bottom = Math.ceil((max_h - shift_y_tile) / tile_size) + tile_y;// ряд нижней плитки дисплея.
+				
+				//let tile_x = x / tile_size | 0;
+				let x_min = x - max_left_shift_w;// минимальная координата дисплея по оси x
+				let x_max = x + max_right_shift_w;// максимальная координата дисплея по оси x
+				let l = tile_size * tan_a;// смещение по оси x на один ряд с левой стороны
+				let l_1 = shift_y_tile * tan_a;// смещение по оси x на один ряд, относительно верхнего угла дисплея с левой стороны
+				let r_2 = tan_a === 0 ? Infinity: (tile_size - (y + max_left_shift_h) % tile_size) / tan_a;// смещение по оси x на один ряд, относительно левого угла дисплея с левой стороны в право
+
+				let r = tan_a === 0 ? Infinity: tile_size / tan_a;// смещение по оси x на один ряд с правой стороны
+				let r_1 = tan_a === 0 ? Infinity: shift_y_tile / tan_a;// смещение по оси x на один ряд, относительно верхнего угла дисплея с правой стороны
+				let l_2 = (tile_size - (y + max_right_shift_h) % tile_size) * tan_a;// смещение по оси x на один ряд, относительно правого угла дисплея с правой стороны в лево
+
+				let l_pos = x - l_1;// левая позиция в ряде.
+				let r_pos = x + r_1;// правая позиция в ряде.
+
+				
+				let l_shift = -l;// смещение левой позиции в ряде, относительно позиции в предыдущем ряде.
+				let r_shift = r;// смещение правой позиции в ряде, относительно позиции в предыдущем ряде.
+				let flag_l = false;// флаг достижения левого края дисплея и смены направления
+				let flag_r = false;// флаг достижения правого края дисплея и смены направления
+				if(l_pos < x_min){// если достигнут левый край экрана
+					l_pos = x_min;
+					l_shift = r_2;
+					flag_l = true;
+				}
+				if(r_pos > x_max){// если достигнут правый край экрана
+					r_pos = x_max;
+					r_shift = -l_2;
+					flag_r = true;
+				}
+
+				if(l_pos < x_min)l_pos = x_min;
+				if(r_pos > x_max)r_pos = x_max;
+				// определяем плиток с лева и права.
+				let left_tile_xx = l_pos / tile_size | 0;// номер левой плитки
+				let right_tiles_xx = r_pos / tile_size | 0;// номер правой плитки
+				
+				// выводим тайлы
+				
+				//elm_view.innerHTML = ''; // Удаляем предыдущие.
+				
+				////// ПЕРЕДЕЛАТЬ Добавить холст, на нем сформировать изображение и только потом перенести на новый. Чтоб небыло швоф. Или другои способом убрать швы.
+				ctx.clearRect(0, 0, size_elm_canvas, size_elm_canvas);
+				canvas.style.transform = "rotate(" + a_map + "rad)";
+				/*
+				ДОБАВИТЬ, вместо стиралки и врашение относительно центра.
+				добавить вращения относительно точки, потом заполнение и востановление.
+				возможно понадобится дополнительный канвас буфер
+				
+				*/
+				
+				
+				
+				//ctx.save();
+				//ctx.translate(rot_x_elm_view | 0, rot_y_elm_view | 0);
+				//ctx.rotate(a_map);
+				
+				
+				
+				
+				
+				
+				
+				for(let t_x = left_tile_xx; t_x <= right_tiles_xx; t_x++)test_append_elm(t_x, tile_y, a_map);
+
+				for(let t_y = tile_y + 1; t_y <= tile_bottom; t_y++){
+					
+					l_pos += l_shift;
+					r_pos += r_shift;
+					
+					if(flag_l){
+						l_shift = r;
+						flag_l = false;
+					}
+					if(flag_r){
+						r_shift = -l;
+						flag_r = false;
+					}
+
+					if(l_pos < x_min){// если достигнут левый край экрана
+						l_pos = x_min;
+						l_shift = r_2;
+						flag_l = true;
+					}
+					if(r_pos > x_max){// если достигнут правый край экрана
+						r_pos = x_max;
+						r_shift = -l_2;
+						flag_r = true;
+					}
+
+					// определяем плиток с лева и права.
+					
+					let left_tile = l_pos / tile_size | 0;// номер левой плитки
+					let right_tiles = r_pos / tile_size | 0;// номер правой плитки
+
+					for(let t_x = left_tile; t_x <= right_tiles; t_x++)test_append_elm(t_x, t_y, a_map);
+					
+				}
+				
+				
+				///////// КОНЕЦ СТАРОГО АЛГОРИТМА //////////
+				
+				
+				/** КОНЕЦ РАСЧЕТОВ ОТНОСИТЕЛЬНО ЦЕНТРА */
+				sin_a_map = Math.sin(-a_map);
+				cos_a_map = Math.cos(-a_map);
+			}
+			function test_append_elm(x, y, a){
+				let img = new Image(tile, tile);
+				img.src = getSrcBlobBase64("https://" + arr_s[(x ^ y) & MASK] + "tile.openstreetmap.org/" + zoom + "/" + x + "/" + y + ".png");
+				//img.src = "https://" + arr_s[(x ^ y) & MASK] + "tile.openstreetmap.org/" + zoom + "/" + x + "/" + y + ".png";
+				/**
+				let temp_x = x - rot_x;
+				let temp_y = y - rot_y;
+				let sin_a_offset = Math.sin(a);
+				let cos_a_offset = Math.cos(a);
+				let rotated_x = temp_x * cos_a_offset - temp_y * sin_a_offset;
+				let rotated_y = temp_x * sin_a_offset + temp_y * cos_a_offset;
+				
+				let style_left = rot_x_elm_view + rotated_x * tile;
+				let style_top = rot_y_elm_view + rotated_y * tile;
+				/**/
+				/**
+				img.style.left = Math.round(style_left) + 'px';
+				img.style.top = Math.round(style_top) + 'px';
+				img.style.transform = "rotate(" + a + "rad)";
+				elm_view.appendChild(img);
+				/**/
+				
+				let temp_x = x - center_x;
+				let temp_y = y - center_y;
+				
+				let dx = temp_x * tile + canvas_x_offset + center_x_elm_view | 0;
+				let dy = temp_y * tile + canvas_y_offset + center_y_elm_view | 0;
+				
+				//let dx = style_left | 0;
+				//let dy = style_top | 0;
+				//let dx = style_left;
+				//let dy = style_top;
+				img.onload = () => {
+					//ctx.save();
+					//ctx.translate(dx, dy);
+					//ctx.rotate(a);
+					ctx.drawImage(img, dx, dy);
+					//ctx.restore();
+				};
+				
+				out(rot_x_elm_view_absolute +" | "+rot_y_elm_view_absolute);
+			}
+			
+			function out_a(n){
+				document.getElementById("out_a").value = n;
+			}
+			
+			function test(){
+				rot_map();
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" /> <span id="info">info</span>
+		<br>
+		<span id="out"></span>
+		<br>
+		<input type="text" id="out_a" value="0" />
+		<br>
+		<div id="map"></div>
+		<span id="point_center" ></span>
+		<span id="point_rot" ></span>
+		<span id="point_out" ></span>
+		
+	</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>template HTML5</title>
+		<link rel="icon" type="image/x-icon" href="url" />
+		<link rel="stylesheet" href="url">
+		<style>
+			#map{
+				/**
+				overflow: hidden;
+				/**/
+				/**/
+				position: absolute;
+				/**/
+				background-color: #888;
+				border: solid 2px #000;
+				width: 80%;
+				height: 80%;
+				left: 200px;
+				top: 100px;
+				margin: 0;
+				/**
+				padding: 100px;
+				/**/
+				touch-action: none;
+			}
+			
+			
+		</style>
+		<script>
+			
+			window.onload = () => {
+				let view = document.getElementById("map");
+				const activePointers = new Map();
+				view.oncontextmenu = e => e.preventDefault();
+				view.onpointerdown = e => {
+					view.setPointerCapture(e.pointerId);
+					activePointers.set(e.pointerId, e);
+					out(e.pointerId, e.isPrimary, e.offsetX, e.offsetY, "DOWN");
+					
+				};
+				view.onpointermove = e => {
+					
+					
+					if(activePointers.has(e.pointerId)){
+						// Обновляем позицию конкретного пальца
+						activePointers.set(e.pointerId, e);
+						
+						out(e.pointerId, e.isPrimary, e.offsetX, e.offsetY, "MOVE");
+						// Если активны 2 пальца — реализуем мультитач-логику
+						if(activePointers.size === 2){
+							const pointers = Array.from(activePointers.values());
+							// Пример: расчет расстояния между точками pointers[0] и pointers[1]
+							out(
+								pointers[0].pointerId, pointers[0].isPrimary, pointers[0].offsetX, pointers[0].offsetY, "MOVE",
+								pointers[1].pointerId, pointers[1].isPrimary, pointers[1].offsetX, pointers[1].offsetY
+							);
+						}
+					}
+					
+					
+					
+				};
+				view.onpointerup = e => {
+					activePointers.delete(e.pointerId);
+					out(e.pointerId, e.isPrimary, e.offsetX, e.offsetY, "UP");
+				};
+				view.onpointercancel = e => {
+					activePointers.delete(e.pointerId);
+					out(e.pointerId, e.isPrimary, e.offsetX, e.offsetY, "CANCEL");
+					alert(123);
+				};
+				
+				
+				
+				
+				
+			}
+			
+			
+			
+			function test(){
+				
+				out("test");
+			}
+			
+			function out(...attr){
+				let text = "";
+				let dilimiter = " | ";
+				for(let t of attr)text += t + dilimiter;
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" /> <span id="info">info</span>
+		<br>
+		<span id="out"></span>
+		<br>
+		<input type="text" id="out_a" value="0" />
+		<br>
+		<div id="map"/>
+		
+	</body>
+</html>
