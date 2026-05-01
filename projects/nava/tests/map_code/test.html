@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>map</title>
+		<link rel="icon" type="image/x-icon" href="url" />
+		<link rel="stylesheet" href="url">
+		<style>
+			#map{
+				width: 1000px;
+				height: 500px;
+			}
+			input[type="range"]{
+				width: 1000px;
+			}
+		</style>
+		<script src="./tests/test.js"></script>
+		<script>
+			window.onload = () => {
+				document.getElementById("lat").value = 55;
+				document.getElementById("lon").value = 83;
+				document.getElementById("zoom").value = 17;
+				document.getElementById("lat").oninput = setting;
+				document.getElementById("lon").oninput = setting;
+				document.getElementById("zoom").oninput = setting;
+				setting();
+			};
+			function setting(){
+				from_wm(
+					document.getElementById("lat").value * 1,
+					document.getElementById("lon").value * 1,
+					document.getElementById("zoom").value * 1,
+				);
+			}
+			function test(){
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<input type="button" onclick="test()" value="test" />
+		<br>lat: <input type="range" id="lat" value="55" min="-90" max="90" />
+		<br>lon: <input type="range" id="lon" value="83" min="-180" max="180" />
+		<br>zoom: <input type="range" id="zoom" value="17" min="0" max="21" />
+		<br>
+		<span id="out">out</span>
+		<br>
+		<div id="map">map</div>
+	</body>
+</html>
