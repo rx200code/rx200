@@ -1,0 +1,803 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>noise</title>
+		<style>
+			#test_noise{
+				/**
+				position: relative;
+				/**/
+				position: fixed;
+				padding: 0;
+				margin: 0;
+				background-color: #888;
+				border: solid 2px #000;
+				width: 700px;
+				height: 550px;
+				float: left;
+			}
+			h3{
+				margin: 0;
+			}
+			#simplex_scale_factor{
+				width: 150px;
+			}
+			#block{
+				margin-left: 710px;
+			}
+		</style>
+		<script src="noise.js"></script>
+		<script>
+			// Вспомогательные функции
+			let createElement = (name, ...attr) => {
+				let elm = document.createElement(name);
+				for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+				return elm;
+			};
+			// Константы переменные.
+			let container;
+			let canvas;
+			let ctx;
+			let innerWidth, innerHeight;
+			let mouse_x, mouse_y;
+			let view_w = 512;
+			let view_h = 512;
+			let max_view_wh = 8192;
+			let min_view_wh = 1;
+			let view_x;
+			let view_y;
+			let view_z = 1;
+			let view_canvas = createElement('canvas');
+			let view_ctx = view_canvas.getContext('2d');
+			let view_data;
+			let buf_32;
+			let fix_seed = seed;
+			let noise_scale = 64.0;
+			let mod_warpWorley2D_v = 128;
+			let mod_warpWorley2D = 1 / (noise_scale / mod_warpWorley2D_v);
+			let mod_WW2D_octaves_1 = 3;
+			let mod_WW2D_octaves_2 = 4;
+			// Берем любые большие некратные числа в качестве смещения
+			let noise_offset_x = 10003.37;
+			let noise_offset_y = 20007.81;
+			// для выходного значения шума, корректировки. (value + out_plus) * out_mul
+			let out_plus = 0;
+			let out_mul = 1;
+			let out_plus_2 = 0;
+			// Настройки для Фрактального шума Перлина
+			let fractal_perlin_octaves = 5;
+			let fractal_perlin_persistence = .5;
+			let fractal_perlin_lacunarity = 2.0;
+			// Моды для Value Noise.
+			let mod_1_mul = 10;
+			let mod_1_div = 10;
+			let mod_2_intensity = 3.5;// Интенсивность искажения (warp intensity).
+			let mod_2_lacunarity = 2.2;// Частота второй октавы (lacunarity).
+			let mod_2_persistence_1 = 1;// Амплитуда 1 октавы (persistence).
+			let mod_2_persistence_2 = .35;// Амплитуда 2 октавы (persistence).
+			let mod_3_intensity = 5;    // Сила закручивания лавы
+			let mod_3_lacunarity = 1;   // Масштаб вихрей (частота карты деформации)
+			let mod_4_frequency = 7;// Плотность колец (частота)
+			let mod_4_distortion = 3;// Сила искривления колец шумом
+
+
+			function init_input_n(elm, _f, v, max = 0x7FFFFFFF, min = -0x80000000, step = 1){
+				elm.value = v;
+				elm.setAttribute("max", max);
+				elm.setAttribute("min", min);
+				elm.setAttribute("step", step);
+				elm.onchange = e => {//elm.onblur
+					v = isNaN(e.target.valueAsNumber) ? min : e.target.valueAsNumber;
+					if(v < min)e.target.value = v = min;
+					else if(v > max)e.target.value = v = max;
+
+					_f(v);
+				};
+			}
+			function init_view_canvas(){
+				view_canvas.width = view_w;
+				view_canvas.height = view_h;
+				view_data = view_ctx.createImageData(view_w, view_h);
+				buf_32 = new Uint32Array(view_data.data.buffer);
+				for(let i = 0; i < buf_32.length; i++)buf_32[i] = 0xFF000000;
+				initCellularAutomata(view_w, view_h);// хоть сюда и нелогично инициализацию ставить но тут пока лучше.
+			}
+			function init_view(){
+				init_view_canvas();
+				init_input_n(
+					document.getElementById('view_w'),
+					v => {
+						view_w = v | 0;
+						// логика
+						init_view_canvas();
+						view_ctx.putImageData(view_data, 0, 0, 0, 0, view_w, view_h);
+						drawScene();
+					},
+					view_w,
+					max_view_wh,
+					min_view_wh
+				);
+				init_input_n(
+					document.getElementById('view_h'),
+					v => {
+						view_h = v | 0;
+						// логика
+						init_view_canvas();
+						view_ctx.putImageData(view_data, 0, 0, 0, 0, view_w, view_h);
+						drawScene();
+					},
+					view_h,
+					max_view_wh,
+					min_view_wh
+				);
+				init_input_n(
+					document.getElementById('seed'),
+					v => {
+						seed = v >>> 0;
+					},
+					seed,
+					0xFFFFFFFF,
+					0
+				);
+
+				init_input_n(
+					document.getElementById('noise_scale'),
+					v => {
+						noise_scale = v;
+					},
+					noise_scale,
+					0xFFFFFFFF,
+					0
+				);
+				init_input_n(
+					document.getElementById('noise_offset_x'),
+					v => {
+						noise_offset_x = v;
+					},
+					noise_offset_x
+				);
+				init_input_n(
+					document.getElementById('noise_offset_y'),
+					v => {
+						noise_offset_y = v;
+					},
+					noise_offset_y
+				);
+				init_input_n(
+					document.getElementById('fractal_perlin_octaves'),
+					v => {
+						fractal_perlin_octaves = v;
+					},
+					fractal_perlin_octaves,
+					8,
+					1
+				);
+				init_input_n(
+					document.getElementById('fractal_perlin_persistence'),
+					v => {
+						fractal_perlin_persistence = v;
+					},
+					fractal_perlin_persistence,
+					2.0,
+					0.1,
+					0.05
+				);
+				init_input_n(
+					document.getElementById('fractal_perlin_lacunarity'),
+					v => {
+						fractal_perlin_lacunarity = v;
+					},
+					fractal_perlin_lacunarity,
+					32,
+					-32,
+					0.5
+				);
+				init_input_n(
+					document.getElementById('simplex_scale_factor'),
+					v => {
+						simplex_scale_factor = v;
+					},
+					simplex_scale_factor,
+					10000,
+					-10000,
+					10
+				);
+				init_input_n(
+					document.getElementById('out_plus'),
+					v => {
+						out_plus = v;
+					},
+					out_plus
+				);
+				init_input_n(
+					document.getElementById('out_mul'),
+					v => {
+						out_mul = v;
+					},
+					out_mul
+				);
+				init_input_n(
+					document.getElementById('out_plus_2'),
+					v => {
+						out_plus_2 = v;
+					},
+					out_plus_2
+				);
+				init_input_n(
+					document.getElementById('mod_1_mul'),
+					v => {
+						mod_1_mul = v;
+					},
+					mod_1_mul
+				);
+				init_input_n(
+					document.getElementById('mod_1_div'),
+					v => {
+						mod_1_div = v;
+					},
+					mod_1_div
+				);
+				init_input_n(
+					document.getElementById('mod_2_intensity'),
+					v => {
+						mod_2_intensity = v;
+					},
+					mod_2_intensity
+				);
+				init_input_n(
+					document.getElementById('mod_2_lacunarity'),
+					v => {
+						mod_2_lacunarity = v;
+					},
+					mod_2_lacunarity,
+					2147483647,
+					-2147483648,
+					.5
+				);
+				init_input_n(
+					document.getElementById('mod_2_persistence_1'),
+					v => {
+						mod_2_persistence_1 = v;
+					},
+					mod_2_persistence_1,
+					2147483647,
+					-2147483648,
+					.5
+				);
+				init_input_n(
+					document.getElementById('mod_2_persistence_2'),
+					v => {
+						mod_2_persistence_2 = v;
+					},
+					mod_2_persistence_2,
+					2147483647,
+					-2147483648,
+					.5
+				);
+				init_input_n(
+					document.getElementById('mod_3_intensity'),
+					v => {
+						mod_3_intensity = v;
+					},
+					mod_3_intensity
+				);
+				init_input_n(
+					document.getElementById('mod_3_lacunarity'),
+					v => {
+						mod_3_lacunarity = v;
+					},
+					mod_3_lacunarity
+				);
+				init_input_n(
+					document.getElementById('mod_4_frequency'),
+					v => {
+						mod_4_frequency = v;
+					},
+					mod_4_frequency
+				);
+				init_input_n(
+					document.getElementById('mod_4_distortion'),
+					v => {
+						mod_4_distortion = v;
+					},
+					mod_4_distortion
+				);
+				init_input_n(
+					document.getElementById('grid_side_size_WN'),
+					v => {
+						grid_side_size_WN = v;
+						max_dist = grid_side_size_WN * Math.SQRT2;
+					},
+					grid_side_size_WN
+				);
+				init_input_n(
+					document.getElementById('mod_warpWorley2D'),
+					v => {
+						mod_warpWorley2D = v == 0 ? 0: 1 / ( v / mod_warpWorley2D_v);
+					},
+					noise_scale
+				);
+				init_input_n(
+					document.getElementById('mod_WW2D_octaves_1'),
+					v => {
+						mod_WW2D_octaves_1 = v;
+					},
+					mod_WW2D_octaves_1,
+					7,
+					1
+				);
+				init_input_n(
+					document.getElementById('mod_WW2D_octaves_2'),
+					v => {
+						mod_WW2D_octaves_2 = v;
+					},
+					mod_WW2D_octaves_2,
+					7,
+					1
+				);
+
+
+
+				
+
+				out_f_WM = arr_out_f[document.getElementById('worley_mode').value];
+				document.getElementById('worley_mode').addEventListener('change', (e) => {
+					out_f_WM = arr_out_f[e.target.value];
+				});
+				//view_ctx.putImageData(view_data, 0, 0, 0, 0, view_w, view_h);
+			}
+			window.onload = () => {
+				init_view();
+				container = document.getElementById("test_noise");
+				innerWidth = container.clientWidth;
+				innerHeight = container.clientHeight;
+
+				view_x = (innerWidth - view_w) / 2 | 0;
+				view_y = (innerHeight - view_h) / 2 | 0;
+				
+				canvas = createElement('canvas', ['style', 'width:100%;height:100%;display:block;']);
+				canvas.width = innerWidth;
+				canvas.height = innerHeight;
+
+				container.innerHTML = '';
+				container.appendChild(canvas);
+
+				ctx = canvas.getContext('2d');
+				ctx.imageSmoothingEnabled = false;// Отключаем сглаживание
+
+				let offsetX, offsetY, isDragging = false;
+
+				canvas.addEventListener('mousedown', (e) => {
+					isDragging = true;
+					offsetX = e.clientX;
+					offsetY = e.clientY;
+					
+				});
+
+				canvas.addEventListener('dblclick', (e) => {
+					view_x = (innerWidth - view_w) / 2 | 0;
+					view_y = (innerHeight - view_h) / 2 | 0;
+					drawScene();
+				});
+
+				canvas.addEventListener('mousemove', (e) => {
+					if (!isDragging) return;
+
+					view_x += e.movementX;
+					view_y += e.movementY;
+					drawScene();
+				});
+
+				canvas.addEventListener('mouseup', () => {
+					isDragging = false;
+				});
+				canvas.addEventListener('mouseleave', () => {
+					isDragging = false;
+				});
+
+				canvas.addEventListener('wheel', (e) => {
+					e.preventDefault();
+					//view_z *= e.deltaY < 0 ? .9: 1.1;
+					let temp_z = view_z;
+					view_z += e.deltaY < 0 ? 1: -1;
+					if(view_z < 1)view_z = 1;
+					else if(view_z > 20)view_z = 20;
+
+					let offsetX = e.offsetX - view_x;
+					let offsetY = e.offsetY - view_y;
+
+					temp_z = view_z / temp_z;
+
+					offsetX *= temp_z;
+					offsetY *= temp_z;
+
+					view_x = e.offsetX - offsetX;
+					view_y = e.offsetY - offsetY;
+
+					drawScene();
+				}, { passive: false });
+
+				//perlin();
+				g_noise_white(random_noise)
+				info("Холст: " + view_w + " x " + view_h + ".");
+			};
+
+			function drawScene(){
+				ctx.fillStyle = '#888';//'#87CEFA';
+				ctx.fillRect(0, 0, innerWidth, innerHeight);
+
+				ctx.drawImage(view_canvas, 0, 0, view_w, view_h, view_x, view_y, view_w * view_z, view_h * view_z);
+			}
+
+			
+			
+
+			// Шум
+			function g_noise(f_noise){
+				const fl_1 = document.getElementById('fix_fractal_scale_factor').checked;
+				const fl_2 = document.getElementById('fix_mod_1').checked;
+				for(let x = 0; x < view_w; x++){
+					for(let y = 0; y < view_h; y++){
+						// Сдвигаем координаты на случайные большие числа, чтобы уйти от точки (0,0)
+						// И слегка подмешиваем одну координату в другую для имитации микро-поворота
+						const nx = (x / noise_scale) + noise_offset_x;
+						const ny = (y / noise_scale) + noise_offset_y;
+						let c = f_noise(nx, ny);
+						if(fl_2)c = Math.floor(c * mod_1_mul) / mod_1_div;
+						c *= 0xFF;
+						c += out_plus;
+						c *= out_mul;
+						c += out_plus_2;
+						if(fl_1){
+							if(c > 0xFF)c = 0xFF;
+							else if(c < 0)c = 0;
+						}else c &= 0xFF;
+						buf_32[y * view_w + x] = 0xFF000000 | (c << 16) | (c << 8) | c;
+					}
+				}
+				view_ctx.putImageData(view_data, 0, 0, 0, 0, view_w, view_h);
+				drawScene();
+			}
+			// Фрактальный шум
+			function fractal_noise(f_noise){
+				const fl_1 = document.getElementById('fix_fractal_scale_factor').checked;
+				const fl_2 = document.getElementById('fix_mod_1').checked;
+				for(let x = 0; x < view_w; x++){
+					for(let y = 0; y < view_h; y++){
+						const nx = (x / noise_scale) + noise_offset_x;
+						const ny = (y / noise_scale) + noise_offset_y;
+
+						let c = fractal2D(f_noise, nx, ny, fractal_perlin_octaves, fractal_perlin_persistence, fractal_perlin_lacunarity);
+						if(fl_2)c = Math.floor(c * mod_1_mul) / mod_1_div;
+						c *= 0xFF;
+						c += out_plus;
+						c *= out_mul;
+						c += out_plus_2;
+						if(fl_1){
+							if(c > 0xFF)c = 0xFF;
+							else if(c < 0)c = 0;
+						}else c &= 0xFF;
+						buf_32[y * view_w + x] = 0xFF000000 | (c << 16) | (c << 8) | c;
+					}
+				}
+				view_ctx.putImageData(view_data, 0, 0, 0, 0, view_w, view_h);
+				drawScene();
+			}
+			// 0. White Noise, Белый шум, просто шум.
+			function g_noise_white(_f){
+				g_noise(_f);
+				out("White Noise, сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+			function fractal_g_noise_white(_f){
+				fractal_noise(_f);
+				out("Фрактальный, White Noise, сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+			// 1. Базовый шум Перлина
+			function perlin(){
+				fix_seed = seed;
+				init_permutation();
+				g_noise(noise2D);
+				if(document.getElementById('fix_seed').checked)seed = fix_seed;
+				document.getElementById('seed').value = seed;
+				out("Базовый шум Перлина, сгенерированный при seed: " + fix_seed);
+			}
+			
+			function fractal_perlin(){
+				fix_seed = seed;
+				init_permutation();
+				fractal_noise(noise2D);
+				if(document.getElementById('fix_seed').checked)seed = fix_seed;
+				document.getElementById('seed').value = seed;
+				out("Фрактальный шум Перлина, сгенерированный при seed: " + fix_seed);
+			}
+
+			// 2. Симплексный шум Перлина
+			function perlin_simplex(){
+				fix_seed = seed;
+				init_permutation();
+				g_noise(simplex2D);
+				if(document.getElementById('fix_seed').checked)seed = fix_seed;
+				document.getElementById('seed').value = seed;
+				out("Симплексный шум Перлина, сгенерированный при seed: " + fix_seed);
+			}
+			function fractal_perlin_simplex(){
+				fix_seed = seed;
+				init_permutation();
+				fractal_noise(simplex2D);
+				if(document.getElementById('fix_seed').checked)seed = fix_seed;
+				document.getElementById('seed').value = seed;
+				out("Фрактальный Симплексный шум Перлина, сгенерированный при seed: " + fix_seed);
+			}
+			
+			// 3. Симплексный шум openSimplex2F
+			function g_openSimplex2F(){
+				g_noise(openSimplex2F_v2);
+				out("Симплексный шум openSimplex2F, сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+			function fractal_g_openSimplex2F(){
+				fractal_noise(openSimplex2F_v2);
+				out("Фрактальный Симплексный шум openSimplex2F, сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+
+			// 4. Value Noise (Шум значений)
+			// Текстура древесины (Концентрические кольца)(при смещении 0 в noise_offset_x и noise_offset_y)
+			let mod_4_getInfiniteValueNoise = (nx, ny) => {
+				/**
+				Правдоподобный срез дерева получается при значениях:
+				noise_scale = 4, noise_offset_x = -40, noise_offset_y = -40;
+				mod_4_frequency = 2, mod_4_distortion = 2;
+				//*/
+				// просто интересные варианты.
+				//let dx = (nx - noise_offset_x) * noise_scale + view_w / 2;
+				//let dy = (ny - noise_offset_y) * noise_scale + view_h / 2;
+				//let dx = (nx - noise_offset_x) - view_w / noise_scale / 2;
+				//let dy = (ny - noise_offset_y) - view_h / noise_scale / 2;
+				//let dist = Math.sqrt(dx * dx + dy * dy);
+				// Находим расстояние от центра экрана (или любой точки)
+				//let dist = Math.sqrt(nx * nx + ny * ny);
+				// Искажаем расстояние шумом и пускаем по синусу для создания колец
+				return (Math.sin(Math.sqrt(nx * nx + ny * ny) * mod_4_frequency + getInfiniteValueNoise(nx, ny) * mod_4_distortion) + 1.0) * 0.5;
+			};
+			// Эффект жидкой лавы или облаков (Domain Warping)
+			let mod_3_getInfiniteValueNoise = (nx, ny) => {
+				// Масштабируем входные координаты частотой lacunarity
+				let mapX = nx * mod_3_lacunarity;
+				let mapY = ny * mod_3_lacunarity;
+				// 1. Получаем псевдослучайный сдвиг для X и Y
+				let distortX = getInfiniteValueNoise(mapX, mapY);
+				let distortY = getInfiniteValueNoise(mapX + 5.2, mapY + 1.3); // сдвиг, чтобы направления не совпадали
+				// 2. Считаем финальный шум по искаженным координатам
+				return getInfiniteValueNoise(nx + distortX * mod_3_intensity, ny + distortY * mod_3_intensity);
+			};
+			// Эффект мрамора.
+			let mod_2_getInfiniteValueNoise = (nx, ny) => {
+				let qx = getInfiniteValueNoise(nx, ny) * mod_2_persistence_1
+					+ getInfiniteValueNoise(nx * mod_2_lacunarity, ny * mod_2_lacunarity) * mod_2_persistence_2;
+				// Вручную считаем две октавы шума для искажения оси Y (вектор q.y)
+				// Сдвигаем координаты на +5.2 и +1.3, чтобы направления искажений X и Y не совпадали
+				let qy = getInfiniteValueNoise(nx + 5.2, ny + 1.3) * mod_2_persistence_1
+					+ getInfiniteValueNoise((nx + 5.2) * mod_2_lacunarity, (ny + 1.3) * mod_2_lacunarity) * mod_2_persistence_2;
+				// Считаем финальный шум, передавая в него искаженные координаты.
+				// Множитель 4.0 задает силу закручивания вихрей.
+				return getInfiniteValueNoise(nx + qx * mod_2_intensity, ny + qy * mod_2_intensity);
+			};
+			//let mod_1_getInfiniteValueNoise = (nx, ny) => Math.floor(getInfiniteValueNoise(nx, ny) * mod_1_mul) / mod_1_div;
+			function g_getInfiniteValueNoise(_f){
+				initSeedShiftXY();
+				g_noise(_f);
+				out("Value Noise (Шум значений), сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+			function fractal_g_getInfiniteValueNoise(_f){
+				initSeedShiftXY();
+				fractal_noise(_f);
+				out("Фрактальный Value Noise (Шум значений), сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+			// 5. Шум Ворли, Worley Noise (клеточный шум)
+			function g_getInfiniteWorleyNoise(_f, _f_dist){
+				dist_f_WN = _f_dist;
+				g_noise(_f);
+				out("Worley Noise (клеточный шум), сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+			function fractal_g_getInfiniteWorleyNoise(_f, _f_dist){
+				dist_f_WN = _f_dist;
+				fractal_noise(_f);
+				out("Фрактальный Worley Noise (клеточный шум), сгенерированный при seed: " + seed);
+				if(!document.getElementById('fix_seed').checked)
+					document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+			}
+			//* Мрамор от ии
+			let warpWorley2D = (x, y) => {
+				// 1. Получаем первичное искажение координат
+				// Используем твой же фрактал, но со сдвигом по осям
+				let qx = fractal2D(getWorleyNoise, x, y, mod_WW2D_octaves_1, 0.5, 2.0) * mod_warpWorley2D;
+				let qy = fractal2D(getWorleyNoise, x + 5.2, y + 1.3, mod_WW2D_octaves_1, 0.5, 2.0) * mod_warpWorley2D;
+				
+				//qx /= (noise_scale / 100);
+				//qy /= (noise_scale / 100);
+				// 2. Передаем искаженные координаты в финальный фрактал
+				// Умножение на 2.0 — это сила искажения (экспериментируй с ней)
+				return fractal2D(getWorleyNoise, x + qx, y + qy, mod_WW2D_octaves_2, 0.5, 2.0);
+			};
+			/**/
+			// 7. CellularAutomata Клеточные автоматы.
+			function g_getCellularAutomata(){
+				getCellularAutomata(buf_32);
+				view_ctx.putImageData(view_data, 0, 0, 0, 0, view_w, view_h);
+				drawScene();
+				out("CellularAutomata Клеточный автомат");
+			}
+
+			function test(){
+				let test = "";
+				test += getWorleyNoise(1, 1) + " <br><br>" + getWorleyNoise(1000, 1000);
+				//test += getWorleyNoise(200, 200) + " ,";
+				out(test);
+				document.getElementById('seed').value = seed = (Math.random() * 0x100000000) >>> 0;
+				//out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<div id="test_noise"></div>
+		<div id="block">
+			Холст: <input type="number" id="view_w" step="1" min="1" max="4096" value="512"> x 
+			<input type="number" id="view_h" step="1" min="1" max="4096" value="512">
+			<br>
+			seed: <input type="number" id="seed" step="1" min="0" max="4294967295" value="0"> fix:<input type="checkbox" id="fix_seed">
+			<br>
+			noise_scale: <input type="number" id="noise_scale" step="1" min="0" max="4294967295" value="64">
+			<br>
+			noise_offset_x: <input type="number" id="noise_offset_x" step="1" min="-2147483648" max="2147483647" value="10003.37">
+			<br>
+			noise_offset_y: <input type="number" id="noise_offset_y" step="1" min="-2147483648" max="2147483647" value="20007.81">
+			<br>
+			Смещения для уберания эфекта визуальной диагонали в 0, 0 по x и y, в шуме Перлина.
+			<br>
+			<input type="checkbox" id="fix_mod_1">
+			Math.floor( c * <input type="number" id="mod_1_mul" step="1" min="-2147483648" max="2147483647" value="10">)
+			/ <input type="number" id="mod_1_div" step="1" min="-2147483648" max="2147483647" value="10">
+			<br>
+			fix:<input type="checkbox" id="fix_fractal_scale_factor">
+			(out + <input type="number" id="out_plus" step="1" min="-2147483648" max="2147483647" value="0">)
+			* <input type="number" id="out_mul" step="1" min="-2147483648" max="2147483647" value="1">
+			+ <input type="number" id="out_plus_2" step="1" min="-2147483648" max="2147483647" value="0">
+			<h3>Фрактальный шум</h3>
+			octaves(Количество октав): <input type="number" id="fractal_perlin_octaves" step="1" min="1" max="8" value="5">
+			<br>
+			persistence(Постоянство / Амплитуда): <input type="number" id="fractal_perlin_persistence" step="0.05" min="0.1" max="2.0" value="0.5">
+			<br>
+			lacunarity(Лакунарность): <input type="number" id="fractal_perlin_lacunarity" step="0.5" min="-32" max="32" value="2.0">
+			<h3>0. Белый шум</h3>
+			<input type="button" onclick="g_noise_white(random_noise)" value="Генерировать" />
+			<input type="button" onclick="fractal_g_noise_white(random_noise)" value="Фрактальный" />
+			<h3>1. Базовый шум Перлина</h3>
+			<input type="button" onclick="perlin()" value="Генерировать" />
+			<input type="button" onclick="fractal_perlin()" value="Фрактальный" />
+			<h3>2. Симплексный шум Перлина</h3>
+			simplex_scale_factor: <input type="number" id="simplex_scale_factor" step="10" min="-10000" max="10000" value="70.17518298862789"> fix:<!--<input type="checkbox" id="fix_simplex_scale_factor"><!---->
+			<br>
+			<input type="button" onclick="perlin_simplex()" value="Генерировать" />
+			<input type="button" onclick="fractal_perlin_simplex()" value="Фрактальный" />
+			<h3>3. Симплексный шум openSimplex2F</h3>
+			<input type="button" onclick="g_openSimplex2F()" value="Генерировать" />
+			<input type="button" onclick="fractal_g_openSimplex2F()" value="Фрактальный" />
+			<h3>4. Value Noise (Шум значений)</h3>
+			<input type="button" onclick="g_getInfiniteValueNoise(getInfiniteValueNoise)" value="Генерировать" />
+			<input type="button" onclick="fractal_g_getInfiniteValueNoise(getInfiniteValueNoise)" value="Фрактальный" />
+			<h3>4.2 mod2 Value Noise</h3>
+			<input type="number" id="mod_2_intensity" min="-2147483648" max="2147483647" value="4"> Интенсивность искажения (warp intensity).
+			<br>
+			<input type="number" id="mod_2_lacunarity" min="-2147483648" max="2147483647" value="2"> Частота второй октавы (lacunarity).
+			<br>
+			<input type="number" id="mod_2_persistence_1" min="-2147483648" max="2147483647" value="1"> Амплитуда 1 октавы (persistence).
+			<br>
+			<input type="number" id="mod_2_persistence_2" min="-2147483648" max="2147483647" value="0.5"> Амплитуда 2 октавы (persistence).
+			<br>
+			<input type="button" onclick="g_getInfiniteValueNoise(mod_2_getInfiniteValueNoise)" value="Генерировать" />
+			<input type="button" onclick="fractal_g_getInfiniteValueNoise(mod_2_getInfiniteValueNoise)" value="Фрактальный" />
+			<h3>4.3 mod3 Value Noise</h3>
+			<input type="number" id="mod_3_intensity" min="-2147483648" max="2147483647" value="2"> Сила закручивания лавы (warp intensity).
+			<br>
+			<input type="number" id="mod_3_lacunarity" min="-2147483648" max="2147483647" value="1"> Масштаб вихрей (lacunarity).
+			<br>
+			<input type="button" onclick="g_getInfiniteValueNoise(mod_3_getInfiniteValueNoise)" value="Генерировать" />
+			<input type="button" onclick="fractal_g_getInfiniteValueNoise(mod_3_getInfiniteValueNoise)" value="Фрактальный" />
+			<h3>4.4 mod4 Value Noise</h3>
+			<input type="number" id="mod_4_frequency" min="-2147483648" max="2147483647" value="7"> Плотность колец (частота).
+			<br>
+			<input type="number" id="mod_4_distortion" min="-2147483648" max="2147483647" value="3"> Сила искривления колец шумом.
+			<br>
+			<input type="button" onclick="g_getInfiniteValueNoise(mod_4_getInfiniteValueNoise)" value="Генерировать" />
+			<input type="button" onclick="fractal_g_getInfiniteValueNoise(mod_4_getInfiniteValueNoise)" value="Фрактальный" />
+			<h3>5. Шум Ворли, Worley Noise (клеточный шум)</h3>
+			Выбор алгоритма:
+			<select id="worley_mode">
+				<option disabled>── ЧИСТЫЕ ДИСТАНЦИИ ──</option>
+				<option value="0" selected>Ближайшая точка (F1)</option>
+				<option value="1">Вторая точка (F2)</option>
+				<option value="2">Третья точка (F3)</option>
+
+				<option disabled>── БАЗОВЫЕ КОМБИНАЦИИ ──</option>
+				<option value="3">Стандартные трещины (F2 - F1)</option>
+				<option value="4">Крупные трещины (F3 - F2)</option>
+				<option value="5">Глубокие разломы (F3 - F1)</option>
+
+				<option disabled>── СЛОЖНЫЕ РЕЛЬЕФЫ ──</option>
+				<option value="6">Сумма ближних ячеек (F1 + F2)</option>
+				<option value="7">Общая мозаика (F1 + F2 + F3)</option>
+				<option value="8">Чешуйчатый узор (F3 - F2 - F1)</option>
+				<option value="9">Сложный стык (F3 * F2 - F1)</option>
+				<option disabled>── ИНВЕРСИЯ И СЫРЫЕ ФОРМУЛЫ ──</option>
+				<option value="10">Темные трещины (F2 - F1)</option>
+				<option value="11">Крупные темные трещины (F3 - F2)</option>
+				<option value="12">Темные разломы (F3 - F1)</option>
+				<option value="13">Мягкая сумма (F1 + F2) / max_dist</option>
+				<option value="14">Плотная сумма (F1 + F2 + F3) / max_dist</option>
+				<option value="15">Рваный рельеф (F3 - F2 - F1) / max_dist</option>
+				<option value="16">Дикий стык (F3 * F2 - F1) / max_dist</option>
+				<option value="17">Светящиеся белые грани (Smoothstep)</option>
+			</select>
+			<br>
+			Размер ячеек: <input type="number" id="grid_side_size_WN" min="-2147483648" max="2147483647" value="1">
+			<br>
+			mod мрамора: <input type="number" id="mod_warpWorley2D" min="-2147483648" max="2147483647" value="64">
+			в норме равен noise_scale.
+			<br>
+			мрамор octaves_1:<input type="number" id="mod_WW2D_octaves_1" step="1" min="1" max="7" value="3">
+			<br>
+			мрамор octaves_2:<input type="number" id="mod_WW2D_octaves_2" step="1" min="1" max="7" value="4">
+			<br>
+			<input type="button" onclick="g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v1)" value="Генерировать" />
+			<input type="button" onclick="fractal_g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v1)" value="Фрактальный" />
+			<input type="button" onclick="g_getInfiniteWorleyNoise(warpWorley2D, dist_f_v1)" value="Мрамор" />
+			<br>
+			<input type="button" onclick="g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v2)" value="Ромбы" />
+			<input type="button" onclick="fractal_g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v2)" value="Фрактальный" />
+			<input type="button" onclick="g_getInfiniteWorleyNoise(warpWorley2D, dist_f_v2)" value="Мрамор" />
+			<br>
+			<input type="button" onclick="g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v3)" value="Квадраты" />
+			<input type="button" onclick="fractal_g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v3)" value="Фрактальный" />
+			<input type="button" onclick="g_getInfiniteWorleyNoise(warpWorley2D, dist_f_v3)" value="Мрамор" />
+			<br>
+			<input type="button" onclick="g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v4)" value="Звезды" />
+			<input type="button" onclick="fractal_g_getInfiniteWorleyNoise(getWorleyNoise, dist_f_v4)" value="Фрактальный" />
+			<input type="button" onclick="g_getInfiniteWorleyNoise(warpWorley2D, dist_f_v4)" value="Мрамор" />
+			<h3>7. CellularAutomata Клеточные автоматы</h3>
+			накладываются уже на готовый шум и не меняют seed.
+			<br>
+			<input type="button" onclick="g_getCellularAutomata()" value="Правило 4 5" />
+			<!----
+			<h3>4. Симплексный шум openSimplex2S</h3>
+			<input type="button" onclick="g_openSimplex2S()" value="Генерировать" />
+			<input type="button" onclick="fractal_noise(openSimplex2S_v2, false)" value="Фрактальный" />
+			<!---->
+			<h3>777. Шум</h3>
+			<span id="info">info</span>
+			<br>
+			<input type="button" onclick="test()" value="test" />
+			<br>
+			<span id="out">out</span>
+		</div>
+	</body>
+</html>
