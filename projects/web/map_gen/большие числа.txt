@@ -1,0 +1,54 @@
+class BinaryBigDouble {
+    constructor(mantissa, binaryExponent) {
+        this.mantissa = mantissa;
+        this.binaryExponent = binaryExponent;
+        this.normalize();
+    }
+
+    normalize() {
+        if (this.mantissa === 0) {
+            this.binaryExponent = 0;
+            return;
+        }
+
+        // В JavaScript Math.log2 считает двоичный логарифм крайне быстро
+        const shift = Math.floor(Math.log2(Math.abs(this.mantissa)));
+        if (shift !== 0) {
+            // Быстрый сдвиг через степени двойки
+            this.mantissa /= Math.pow(2, shift);
+            this.binaryExponent += shift;
+        }
+    }
+
+    // Быстрый расчет силы: 1 * (coef ** level)
+    static fromExponentialGrowth(coef, level) {
+        // Формула: log2(result) = level * log2(coef)
+        const logResult = level * Math.log2(coef);
+
+        const binaryExponent = Math.floor(logResult);
+        // Оставшаяся дробная часть логарифма идет в мантиссу (будет от 1.0 до 2.0)
+        const mantissa = Math.pow(2, logResult - binaryExponent);
+
+        return new BinaryBigDouble(mantissa, binaryExponent);
+    }
+
+    // Умножение происходит молниеносно
+    multiply(other) {
+        return new BinaryBigDouble(this.mantissa * other.mantissa, this.binaryExponent + other.binaryExponent);
+    }
+
+    // Сравнение двух сил — это просто сравнение двух чисел
+    compareTo(other) {
+        if (this.binaryExponent !== other.binaryExponent) {
+            return this.binaryExponent > other.binaryExponent ? 1 : -1;
+        }
+        return this.mantissa > other.mantissa ? 1 : -1;
+    }
+}
+
+// Тест для коэф 1.2 и 2 000 000 уровней
+const maxPower = BinaryBigDouble.fromExponentialGrowth(1.2, 2000000);
+
+console.log("Двоичная экспонента:", maxPower.binaryExponent);
+// Выведет: 526068 (то есть сила равна: мантисса * 2^526068)
+
