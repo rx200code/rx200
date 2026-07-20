@@ -117,12 +117,17 @@ let init_permutation = () => {
 let fade = t => t * t * t * (t * (t * 6 - 15) + 10);
 // Линейная интерполяция (Lerp)
 let lerp = (t, a, b) => a + t * (b - a);
+/**
+// скалярное произведение векторов
 let grad = (hash, x, y) => {
 	const h = hash & 3;
 	const u = h < 2 ? x : -x;
 	const v = (h === 0 || h === 2) ? y : -y;
 	return u + v;
 };
+/**/
+// быстрый вариант grad
+let grad = (hash, x, y) => hash & 1 ? (hash & 2 ? -y - x: x - y): (hash & 2 ? y - x: x + y);
 // 1. Базовый шум Перлина (возвращает от 0.0 до 1.0)
 let noise2D = (x, y) => {
 	const xInt = Math.floor(x);
