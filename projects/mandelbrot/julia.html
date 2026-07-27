@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Julia set</title>
+		<style>
+			#test_canvas{
+				/**
+				position: relative;
+				/**/
+				position: fixed;
+				padding: 0;
+				margin: 0;
+				background-color: #888;
+				border: solid 2px #000;
+				width: 700px;
+				height: 550px;
+				float: left;
+			}
+			h3, h2{
+				margin: 0;
+			}
+			#simplex_scale_factor{
+				width: 150px;
+			}
+			#block{
+				margin-left: 710px;
+			}
+			#ce{
+				width: 700px;
+			}
+		</style>
+		<script>
+			// Вспомогательные функции
+			let createElement = (name, ...attr) => {
+				let elm = document.createElement(name);
+				for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+				return elm;
+			};
+			// Константы переменные.
+			// Внешняя ширина, высота и их отношение.
+			const canvas_w = 1000;
+			const canvas_h = 700;
+			
+			// Внутреннее пространство, матрица преобразования.
+			let view_z = 1;
+			let view_z_min = 0.05;
+			let view_z_mxx = 4_000_000_000_000;
+			let view_w = 4;// ширина внутреннего пространства.
+			let view_ratio_x = canvas_w / view_w;
+			let view_ratio_y = -view_ratio_x;
+			let view_offset_x = canvas_w / 2;
+			let view_offset_y = canvas_h / 2;
+			
+			
+			// Константы переменные.
+			let container;
+			let canvas = createElement('canvas');
+			let ctx = canvas.getContext('2d');
+			ctx.imageSmoothingEnabled = false;// Отключаем сглаживание
+			canvas.width = canvas_w;
+			canvas.height = canvas_h;
+			
+			let view_data = ctx.createImageData(canvas_w, canvas_h);
+			let buf_32 = new Uint32Array(view_data.data.buffer);
+			let buf_32_lenhth = buf_32.length;
+			
+			
+
+
+			
+			
+			
+			window.onload = () => {
+				
+				document.getElementById("ce").value = 0;
+				container = document.getElementById("test_canvas");
+				
+				container.width = canvas_w;
+				container.height = canvas_h;
+				container.style.width = canvas_w + 'px';
+				container.style.height = canvas_h + 'px';
+				container.style.padding = '0';
+				container.style.margin = '0';
+
+				container.innerHTML = '';
+				container.appendChild(canvas);
+				document.getElementById("block").style.marginLeft = (canvas_w + 10) + 'px';
+				
+				let offsetX, offsetY, isDragging = false;
+
+				canvas.addEventListener('mousedown', (e) => {
+					isDragging = true;
+					offsetX = e.clientX;
+					offsetY = e.clientY;
+					
+				});
+
+				canvas.addEventListener('dblclick', (e) => {
+					view_z = 1;
+					view_w = 4;// ширина внутреннего пространства.
+					view_ratio_x = canvas_w / view_w;
+					view_ratio_y = -view_ratio_x;
+					view_offset_x = canvas_w / 2;
+					view_offset_y = canvas_h / 2;
+					drawScene();
+				});
+
+				canvas.addEventListener('mousemove', (e) => {
+					if (!isDragging) return;
+					view_offset_x += e.movementX;
+					view_offset_y += e.movementY;
+					drawScene();
+				});
+
+				canvas.addEventListener('mouseup', () => {
+					isDragging = false;
+				});
+				canvas.addEventListener('mouseleave', () => {
+					isDragging = false;
+				});
+				
+				canvas.addEventListener('wheel', (e) => {
+					e.preventDefault();
+					let temp_z = view_z;
+					view_z *= e.deltaY < 0 ? 1.2: .8;
+					//view_z += e.deltaY < 0 ? 1: -1;
+					//view_z += e.deltaY < 0 ? (view_z <= 1 ? .2 : 1): (view_z <= 1 ? -.2 : -1);
+					if(view_z < view_z_min)view_z = view_z_min;
+					else if(view_z > view_z_mxx)view_z = view_z_mxx;
+
+					let offsetX = e.offsetX - view_offset_x;
+					let offsetY = e.offsetY - view_offset_y;
+
+					temp_z = view_z / temp_z;
+
+					offsetX *= temp_z;
+					offsetY *= temp_z;
+
+					view_offset_x = e.offsetX - offsetX;
+					view_offset_y = e.offsetY - offsetY;
+					
+					view_ratio_x *= temp_z;
+					view_ratio_y *= temp_z;
+
+					drawScene();
+				}, { passive: false });
+				
+				drawScene();
+				
+			};
+
+			let test_line = [0, 0, 1, 1];
+			let test_line_width_in = 1 / view_ratio_x;
+			let test_line_width = test_line_width_in * view_ratio_x;
+			let f_test = arr_points => {
+				test_line_width = test_line_width_in * view_ratio_x;
+				let points = [];
+				for(let i = 0; i < arr_points.length; i += 2){
+					let x = arr_points[i] * view_ratio_x + view_offset_x;
+					let y = arr_points[i + 1] * view_ratio_y + view_offset_y;
+					points[i] = x;
+					points[i + 1] = y;
+				}
+				return points;
+			};
+			let c_r = -1;//-0.2;
+			let c_i = 0;//0.75;
+			let rad_1 = Math.PI / 180;
+			let f_c = n => {
+				n = n * rad_1 + Math.PI;
+				c_r = Math.cos(n);
+				c_i = Math.sin(n);
+				drawScene();
+			};
+			let max_k = 100;
+			let draw_view_data = () => {// Рисуем в буфер. ABGR.
+				//for(let i = 0; i < buf_32.length; i++)buf_32[i] = 0xFF000000;
+				for(let y = 0; y < canvas_h; y++){
+					for(let x = 0; x < canvas_w; x++){
+						let dx = (x - view_offset_x) / view_ratio_x;
+						let dy = (y - view_offset_y) / view_ratio_y;
+						
+						//let r = dx * dx - dy * dy + c_r;
+						//let i = 2 * dx * dy + c_i;
+						let re = dx;
+						let i = dy;
+						let k = 0
+						for(; k < max_k; k++){
+							dx = re;
+							re = dx * dx - i * i + c_r;
+							i = 2 * dx * i + c_i;
+							if(re * re + i * i > 4)break;
+						}
+						if(k === max_k)buf_32[y * canvas_w + x] = 0xFF000000;
+						else{
+							//k++;
+							/**
+							let r = k * 16 + 128;
+							let g = k * 32 + 128;
+							let b = k * 64 + 128;
+							
+							r &= 0xFF;
+							g &= 0xFF;
+							b &= 0xFF;
+							/**
+							let r = (k % 2) * 32 + 128;
+							let g = (k % 4) * 64;
+							let b = (k % 2) * 16 + 128;
+							/**/
+							/**/
+							//k += re * i;
+							let r = (k * 7) & 0xFF;
+							let g = (k * 13) & 0xFF;
+							let b = (k * 21) & 0xFF;
+							/**/
+							
+							
+							/**
+							let t = k / max_k;
+							let r = 16 * (1 - t) * t * t * t * 255 & 0xFF;
+							let g = 32 * (1 - t) * (1 - t) * t * t * 255 & 0xFF;
+							let b = 128 * (1 - t) * (1 - t) * (1 - t) * t * 255 & 0xFF;
+							/**/
+							/**
+							let t = k / max_k;
+							let r = (Math.sin(t * 5.0 + 0.5) * 0.4 + 0.4) * 255;
+							let g = (Math.sin(t * 3.0 + 0.2) * 0.1 + 0.1) * 255;
+							let b = (Math.sin(t * 2.0 + 0.0) * 0.5 + 0.5) * 255;
+							/**/
+							
+							
+							
+							buf_32[y * canvas_w + x] = 0xFF000000 | (b << 16) | (g << 8) | r;
+						}
+						
+						
+					}
+				}
+				
+			};
+			function drawScene(){
+				draw_view_data();
+				ctx.putImageData(view_data, 0, 0);
+				info(
+					"x: " + (-view_offset_x / view_ratio_x).toFixed(3) + "<br>" +
+					"y: " + (-view_offset_y / view_ratio_y).toFixed(3) + "<br>" +
+					"w: " + (canvas_w / view_ratio_x).toFixed(3) + "<br>" +
+					"h: " + (canvas_h / view_ratio_y).toFixed(3) + "<br>" +
+					"z: " + view_z + "<br>" +
+					"c_r: " + c_r.toFixed(3) + "<br>" +
+					"c_i: " + c_i.toFixed(3)
+				);
+				/*
+				ctx.fillStyle = '#888';//'#87CEFA';
+				ctx.fillRect(0, 0, innerWidth, innerHeight);
+
+				// TEST
+				ctx.beginPath();
+				let line = f_test(test_line);
+				//alert(line);
+				ctx.moveTo(line[0], line[1]);
+				for(let i = 2; i < line.length; i += 2)
+					ctx.lineTo(line[i], line[i + 1]);
+				ctx.strokeStyle = 'red';
+				ctx.lineWidth = test_line_width;
+				ctx.stroke();
+				/**/
+			}
+
+			
+			
+
+			function test(){
+				let test = "test";
+				out(test);
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+		</script>
+	</head>
+	<body>
+		<div id="test_canvas"></div>
+		<div id="block">
+			<input type="button" onclick="test()" value="test" />
+			<br>
+			<input type="range" id="ce" oninput="f_c(this.valueAsNumber)" min="0" max="360" step="1" value="0">
+			<br>
+			<span id="info">info</span>
+			<br>
+			<span id="out">out</span>
+		</div>
+	</body>
+</html>
