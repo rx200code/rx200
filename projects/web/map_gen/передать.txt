@@ -1,0 +1,190 @@
+// 8. Коллапс волновой функции/
+let tiles_wfc = [// 12
+	// X
+	{type: "X", weight:1, tile: [1,1,1, 1,1,1, 1,1,1]},
+	{type: "X", weight:1, tile: [1,0,1, 0,0,0, 1,0,1]},
+	// I
+	{type: "I", weight:1, tile: [1,0,1, 1,0,1, 1,0,1]},
+	{type: "I", weight:1, tile: [1,1,1, 0,0,0, 1,1,1]},
+	// T
+	{type: "T", weight:1, tile: [1,1,1, 0,0,0, 1,0,1]},
+	{type: "T", weight:1, tile: [1,0,1, 0,0,1, 1,0,1]},
+	{type: "T", weight:1, tile: [1,0,1, 0,0,0, 1,1,1]},
+	{type: "T", weight:1, tile: [1,0,1, 1,0,0, 1,0,1]},
+	// L
+	{type: "L", weight:1, tile: [1,0,1, 1,0,0, 1,1,1]},
+	{type: "L", weight:1, tile: [1,1,1, 1,0,0, 1,0,1]},
+	{type: "L", weight:1, tile: [1,1,1, 0,0,1, 1,0,1]},
+	{type: "L", weight:1, tile: [1,0,1, 0,0,1, 1,1,1]},
+	// DOP
+	{type: "X", weight:10, tile: [0,0,0, 0,0,0, 0,0,0]}
+];
+const count_tiles = tiles_wfc.length;
+// not_top, not_right, not_bottom, not_left
+for(let i = 0; i < count_tiles; i++){
+	tiles_wfc[i].not_top = [];
+	tiles_wfc[i].not_right = [];
+	tiles_wfc[i].not_bottom = [];
+	tiles_wfc[i].not_left = [];
+	for(let j = 0; j < count_tiles; j++){
+		if(tiles_wfc[i].tile[1] !== tiles_wfc[j].tile[7])tiles_wfc[i].not_top.push(j);
+		if(tiles_wfc[i].tile[5] !== tiles_wfc[j].tile[3])tiles_wfc[i].not_right.push(j);
+		if(tiles_wfc[i].tile[7] !== tiles_wfc[j].tile[1])tiles_wfc[i].not_bottom.push(j);
+		if(tiles_wfc[i].tile[3] !== tiles_wfc[j].tile[5])tiles_wfc[i].not_left.push(j);
+	}
+}
+
+let f_collapse = (arr, r) => {
+	let sum = 0;
+	let i = 0
+	for(; i < count_tiles; i++){
+		if(arr[i])sum += tiles_wfc[i].weight;
+	}
+	let x = 0;
+	i = 0;
+	r *= sum;
+	for(; i < count_tiles; i++){
+		if(arr[i]){
+			x += tiles_wfc[i].weight;
+			if(r <= x)
+				return i;
+		}
+	}
+	return -1;
+};
+
+let wfc = (buf, b_w, b_h) => {
+	const w = Math.ceil(b_w / 3);
+	const h = Math.ceil(b_h / 3);
+
+	// Создаем изначальный массив волны.
+	let wave = [];
+	let not_collapse = [];
+
+	for(let x = 0; x < w; x++){
+		wave[x] = [];
+		not_collapse[x] = [];
+		for(let y = 0; y < h; y++){
+			wave[x][y] = [];
+			not_collapse[x][y] = -10;
+			for(let i = 0; i < count_tiles; i++){
+				wave[x][y][i] = true;
+			}
+		}
+	}
+	// Выбираем случайное поле и калапсируем.
+
+	let candidates = [[random() * w | 0, random() * h | 0, -10]];// кандидаты.
+	while(candidates.length){
+		// выбираем кандидата
+
+		let max = -10;
+		for(let i = 0; i < candidates.length; i++)
+			if(max < candidates[i][2])max = candidates[i][2];
+
+		let candidates_ids = [];
+		for(let i = 0; i < candidates.length; i++)
+			if(max === candidates[i][2])candidates_ids.push(i);
+
+
+		let candidates_id = candidates_ids[Math.floor(random() * candidates_ids.length)];
+
+		let cell_x = candidates[candidates_id][0];
+		let cell_y = candidates[candidates_id][1];
+
+		candidates.splice(candidates_id, 1);
+
+
+		let id = f_collapse(wave[cell_x][cell_y], random());
+		for(let i = 0; i < count_tiles; i++){
+			if(id !== i)wave[cell_x][cell_y][i] = false;
+		}
+
+		// Подготовка основного цикла.
+		not_collapse[cell_x][cell_y] = id;
+
+
+		// not_top, not_right, not_bottom, not_left
+		// not_top
+		let temp_x = cell_x;
+		let temp_y = cell_y - 1;
+		if(temp_y >= 0 && not_collapse[temp_x][temp_y] < 0){
+			for(let n = 0; n < tiles_wfc[id].not_top.length; n++){
+				if(wave[temp_x][temp_y][tiles_wfc[id].not_top[n]]){
+					wave[temp_x][temp_y][tiles_wfc[id].not_top[n]] = false;
+					not_collapse[temp_x][temp_y]++;
+				}
+			}
+			// добавляем кандидата если его нет, иначе обновляем его макс к калапсированию.
+			let i = 0;
+			for(; i < candidates.length; i++)
+				if(candidates[i][0] === temp_x && candidates[i][0] === temp_y)break;
+			candidates[i] = [temp_x, temp_y, not_collapse[temp_x][temp_y]];
+		}
+		// not_right
+		temp_x = cell_x + 1;
+		temp_y = cell_y;
+		if(temp_x < w && not_collapse[temp_x][temp_y] < 0){
+			for(let n = 0; n < tiles_wfc[id].not_right.length; n++){
+				if(wave[temp_x][temp_y][tiles_wfc[id].not_right[n]]){
+					wave[temp_x][temp_y][tiles_wfc[id].not_right[n]] = false;
+					not_collapse[temp_x][temp_y]++;
+				}
+			}
+			let i = 0;
+			for(; i < candidates.length; i++)
+				if(candidates[i][0] === temp_x && candidates[i][0] === temp_y)break;
+			candidates[i] = [temp_x, temp_y, not_collapse[temp_x][temp_y]];
+		}
+		// not_bottom
+		temp_x = cell_x;
+		temp_y = cell_y + 1;
+		if(temp_y < h && not_collapse[temp_x][temp_y] < 0){
+			for(let n = 0; n < tiles_wfc[id].not_bottom.length; n++){
+				if(wave[temp_x][temp_y][tiles_wfc[id].not_bottom[n]]){
+					wave[temp_x][temp_y][tiles_wfc[id].not_bottom[n]] = false;
+					not_collapse[temp_x][temp_y]++;
+				}
+			}
+			let i = 0;
+			for(; i < candidates.length; i++)
+				if(candidates[i][0] === temp_x && candidates[i][0] === temp_y)break;
+			candidates[i] = [temp_x, temp_y, not_collapse[temp_x][temp_y]];
+		}
+		// not_left
+		temp_x = cell_x - 1;
+		temp_y = cell_y;
+		if(temp_x >= 0 && not_collapse[temp_x][temp_y] < 0){
+			for(let n = 0; n < tiles_wfc[id].not_left.length; n++){
+				if(wave[temp_x][temp_y][tiles_wfc[id].not_left[n]]){
+					wave[temp_x][temp_y][tiles_wfc[id].not_left[n]] = false;
+					not_collapse[temp_x][temp_y]++;
+				}
+			}
+			let i = 0;
+			for(; i < candidates.length; i++)
+				if(candidates[i][0] === temp_x && candidates[i][0] === temp_y)break;
+			candidates[i] = [temp_x, temp_y, not_collapse[temp_x][temp_y]];
+		}
+
+	}
+
+
+
+
+	// Отрисовываем.
+	let l = b_w * b_h;
+	for(let b_x = 0; b_x < b_w; b_x++){
+		for(let b_y = 0; b_y < b_h; b_y++){
+			let x = b_x / 3 | 0;
+			let y = b_y / 3 | 0;
+			let cell_id = 0;
+			let id = 0;
+			for(; id < count_tiles; id++)
+				if(wave[x][y][id])break;
+			let i = (b_x % 3) + (b_y % 3) * 3;
+			let p = tiles_wfc[id].tile[i];
+			buf[b_y * b_w + b_x] = p ? 0xFFFFFFFF: 0xFF000000;
+		}
+	}
+};
