@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Map gen</title>
+		<style>
+			#main_view{
+				/**
+				position: relative;
+				/**/
+				position: fixed;
+				padding: 0;
+				margin: 0;
+				background-color: #888;
+				border: solid 2px #000;
+				width: 700px;
+				height: 550px;
+				float: left;
+			}
+			h3, h2{
+				margin: 0;
+			}
+			#simplex_scale_factor{
+				width: 150px;
+			}
+			#block{
+				margin-left: 710px;
+			}
+			#current_time{
+				width: 500px;
+			}
+		</style>
+		<!----
+		<script src="noise.js"></script>
+		<!---->
+		<script>
+			//####### Вспомогательные функции #######
+			let createElement = (name, ...attr) => {
+				let elm = document.createElement(name);
+				for(let arr_set of attr)elm.setAttribute(arr_set[0], arr_set[1]);
+				return elm;
+			};
+
+			// 0. Функция рандома. Быстрый генератор случайных. от 0 до 1 не включая 1.
+			let seed = 0x77777777;//(Math.random() * 0x100000000) >>> 0;//0x77777777;
+			//seed = (Math.random() * 0x100000000) >>> 0;//0x77777777;
+			let random = () => (seed = (seed * 1664525 + 1013904223) % 4294967296) / 4294967296;
+			let random_int = () => (seed = (seed * 1664525 + 1013904223) >>> 0);
+
+			// Шум
+			// 1. Базовый шум Перлина.
+			// 1.1 инициализация permutation, для установки своего seed вынесена в init_permutation.
+			const permutation = new Uint8Array(512);
+			let init_permutation = () => {
+				for(let i = 0; i < 256; i++)permutation[i] = i;
+				// Быстрое тасование Фишера-Йетса
+				for(let i = 255; i > 0; i--){
+					const j = (random() * (i + 1)) | 0;
+					const temp = permutation[i];
+					permutation[i] = permutation[j];
+					permutation[j] = temp;
+				}
+				for(let i = 0; i < 256; i++){
+					permutation[i + 256] = permutation[i];
+				}
+			};
+			init_permutation();
+
+			let random_noise = (x, y) => {
+				let h = seed ^ x * 668265263 ^ y * 374761393 ^ 0x1337af; 
+				h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+				h = Math.imul(h ^ (h >>> 13), 0x846ca68b);
+				h = h ^ (h >>> 16);
+				return (h >>> 0) / 0xFFFFFFFF;
+			};
+			let random_noise_v2 = (x, y) => {
+				let h = seed ^ x * 668265263 ^ y * 374761393 ^ 0x1337af; 
+				h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+				h = Math.imul(h ^ (h >>> 13), 0x846ca68b);
+				h = h ^ (h >>> 16);
+				return (h >>> 0);// / 0xFFFFFF;
+			};
+			let random_noise_v3 = (x, y, z) => {
+				let h = seed ^ x * 668265263 ^ y * 374761393 ^ z * 1064560031 ^ 0x1337af;
+				h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+				h = Math.imul(h ^ (h >>> 13), 0x846ca68b);
+				h = h ^ (h >>> 16);
+				return (h >>> 0);// / 0xFFFFFF;
+			};
+			let random_noise_v2_1 = x => {
+				let h = seed ^ x * 668265263 ^ 0x1337af; 
+				h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+				h = Math.imul(h ^ (h >>> 13), 0x846ca68b);
+				h = h ^ (h >>> 16);
+				return (h >>> 0) / 0xFFFFFFFF;
+			};
+			let random_noise_int = (x, y) => {
+				let h = seed ^ x * 668265263 ^ y * 374761393 ^ 0x1337af; 
+				h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+				h = Math.imul(h ^ (h >>> 13), 0x846ca68b);
+				h = h ^ (h >>> 16);
+				return h >>> 0;
+			};
+			let random_noise_int_1 = x => {
+				let h = seed ^ x * 668265263 ^ 0x1337af; 
+				h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+				h = Math.imul(h ^ (h >>> 13), 0x846ca68b);
+				h = h ^ (h >>> 16);
+				return h >>> 0;
+			};
+			let random_noise_int_1_v = x => {
+				let h = seed ^ x * 668265263 ^ 0x1337af; 
+				h = Math.imul(h ^ (h >>> 16), 0x7feb352d);
+				h = Math.imul(h ^ (h >>> 13), 0x846ca68b);
+				h = h ^ (h >>> 16);
+				return h | 0;
+			};
+			// Функция сглаживания Кэна Перлина (Smootherstep: 6t⁵ - 15t⁴ + 10t³)
+			let fade = t => t * t * t * (t * (t * 6 - 15) + 10);
+			// Линейная интерполяция (Lerp)
+			let lerp = (t, a, b) => a + t * (b - a);
+			/**
+			// скалярное произведение векторов
+			let grad = (hash, x, y) => {
+				const h = hash & 3;
+				const u = h < 2 ? x : -x;
+				const v = (h === 0 || h === 2) ? y : -y;
+				return u + v;
+			};
+			/**/
+			// быстрый вариант grad
+			let grad = (hash, x, y) => hash & 1 ? (hash & 2 ? -y - x: x - y): (hash & 2 ? y - x: x + y);
+			//let grad = (hash, x, y) =>  -x + y;// TEST
+			// 1. Базовый шум Перлина (возвращает от 0.0 до 1.0)
+			let noise2D = (x, y, c = 0x8000000) => {
+				//################
+				/**/
+				x = Math.floor(x);
+				y = Math.floor(y);
+				x /= c;
+				y /= c;
+				/**/
+				//################
+
+				const xInt = Math.floor(x);
+				const yInt = Math.floor(y);
+
+				let X = xInt & 255;
+				let Y = yInt & 255;
+
+				x -= xInt;
+				y -= yInt;
+
+				const u = fade(x);
+				const v = fade(y);
+
+				const p = permutation;
+				const aa = p[p[X] + Y];
+				const ab = p[p[X] + Y + 1];
+				const ba = p[p[X + 1] + Y];
+				const bb = p[p[X + 1] + Y + 1];
+
+				const x1 = lerp(u, grad(aa, x, y), grad(ba, x - 1, y));
+				const x2 = lerp(u, grad(ab, x, y - 1), grad(bb, x - 1, y - 1));
+
+				const val = lerp(v, x1, x2);
+				return (val + 1.0) / 2.0;
+			};
+
+			let noise2D_v2 = (x, y, c = 0x8000000) => {
+				//################
+				/**/
+				x = Math.floor(x);
+				y = Math.floor(y);
+				x /= c;
+				y /= c;
+				/**/
+				//################
+
+				const xInt = Math.floor(x);
+				const yInt = Math.floor(y);
+
+				
+				x -= xInt;
+				y -= yInt;
+
+				const u = fade(x);
+				const v = fade(y);
+
+
+				const x1 = lerp(u, grad(random_noise_v2(xInt, yInt), x, y), grad(random_noise_v2(xInt + 1, yInt), x - 1, y));
+				const x2 = lerp(u, grad(random_noise_v2(xInt, yInt + 1), x, y - 1), grad(random_noise_v2(xInt + 1, yInt + 1), x - 1, y - 1));
+				//const x1 = lerp(u, random_noise(xInt, yInt), random_noise(xInt + 1, yInt);
+				//const x2 = lerp(u, random_noise(xInt, yInt + 1), random_noise(xInt + 1, yInt + 1);
+
+				const val = lerp(v, x1, x2);
+				return (val + 1.0) / 2.0;
+			};
+
+			seed = (Math.random() * 0x100000000) >>> 0;
+			let noise2D_v2_r_v8 = (X, Y) => {
+				// Начальные границы бесконечно огромного базового региона
+				// Точка (X, Y) должна гарантированно лежать внутри этих стартовых границ
+				const WORLD_SIZE = 0x100000000;
+				let bounds = {
+					x1: Math.floor(X / WORLD_SIZE) * WORLD_SIZE,
+					x2: (Math.floor(X / WORLD_SIZE) + 1) * WORLD_SIZE,
+					y1: Math.floor(Y / WORLD_SIZE) * WORLD_SIZE,
+					y2: (Math.floor(Y / WORLD_SIZE) + 1) * WORLD_SIZE
+				};
+
+				// Хэш-функция, возвращающая строго от 0.0 до 1.0 на основе текущих границ
+				let getHashFromBounds = (b, seed) => {
+					return random_noise_v2_1(b.x1 * 13.17 + b.x2 * 37.11 + b.y1 * 73.3 + b.y2 * 91.7 + seed);
+				};
+				/**
+				let getHashFromBounds = (b, seed) => {
+					let val = b.x1 * 13.17 + b.x2 * 37.11 + b.y1 * 73.3 + b.y2 * 91.7 + seed;
+					let sinVal = Math.sin(val) * 43758.5453123;
+					return sinVal - Math.floor(sinVal);
+				};
+				/**/
+				// Максимальная глубина деления (чем больше, тем мельче могут быть детали)
+				const MAX_DEPTH = 8; 
+				
+				// Минимально допустимые размеры, ниже которых делить физически нельзя
+				const minSize = 20;
+
+				for (let depth = 0; depth < MAX_DEPTH; depth++) {
+					let w = bounds.x2 - bounds.x1;
+					let h = bounds.y2 - bounds.y1;
+
+					// Если прямоугольник уже стал слишком маленьким, останавливаемся
+					if (w < minSize * 2 || h < minSize * 2) break;
+
+					// 1. Проверяем случайную плотность (вероятность остановки деления)
+					// Хэш от текущих границ решает, нужно ли продолжать делить эту область
+					let stopChance = getHashFromBounds(bounds, depth * 5.55);
+					// В разных частях плоскости деление остановится на разной глубине
+					if (stopChance < 0.25 && depth > 2) { 
+						break; 
+					}
+
+					// 2. Определяем направление разреза (горизонтально или вертикально)
+					// Если ширина сильно больше высоты — режем вертикально, и наоборот.
+					// Если размеры близки — выбираем направление случайно через хэш.
+					let isVertical = false;
+					if (w > h * 2) {
+						isVertical = true;
+					} else if (h > w * 2) {
+						isVertical = false;
+					} else {
+						isVertical = getHashFromBounds(bounds, depth * 12.34) > 0.5;
+					}
+
+					// 3. Находим случайную точку разреза внутри текущих границ
+					let splitNoise = getHashFromBounds(bounds, depth * 87.65);
+					// Режем в диапазоне от 30% до 70% от размера стороны, чтобы не было слишком узких полос
+					let splitRatio = 0.3 + splitNoise * 0.4; 
+
+					if (isVertical) {
+						let splitX = bounds.x1 + Math.floor(w * splitRatio);
+						// Сужаем границы в зависимости от того, с какой стороны оказалась точка X
+						if (X < splitX) {
+							bounds.x2 = splitX;
+						} else {
+							bounds.x1 = splitX;
+						}
+					} else {
+						let splitY = bounds.y1 + Math.floor(h * splitRatio);
+						// Сужаем границы в зависимости от того, с какой стороны оказалась точка Y
+						if (Y < splitY) {
+							bounds.y2 = splitY;
+						} else {
+							bounds.y1 = splitY;
+						}
+					}
+				}
+
+				/**/
+				// --- РАСЧЕТ ИНТЕРПОЛЯЦИИ ГРАДИЕНТА ---
+				const finalW = bounds.x2 - bounds.x1;
+				const finalH = bounds.y2 - bounds.y1;
+
+				const nx = (X - bounds.x1) / finalW;
+				const ny = (Y - bounds.y1) / finalH;
+
+				const distX = Math.min(nx, 1.0 - nx);
+				const distY = Math.min(ny, 1.0 - ny);
+
+				return Math.min(distX, distY) * 2.0;
+			};
+
+			let noise2D_v2_r = (X, Y) => {//v7
+				// Максимальный сдвиг линий, чтобы размеры были произвольными
+				// Важно: maxShift должен быть меньше, чем base, чтобы линии не перепутались местами
+				const baseWidth = 800000000;
+				const baseHeight = 400000000;
+				const maxShiftX = 400000000; 
+				const maxShiftY = 200000000;
+
+				// --- 1. ОПРЕДЕЛЯЕМ ГРАНИЦЫ ПОЛОСЫ (Y) ---
+				let stripIndex = Math.floor(Y / baseHeight);
+				
+				let bottomY = stripIndex * baseHeight + random_noise_v2_1(stripIndex) * maxShiftY;
+				let topY = (stripIndex + 1) * baseHeight + random_noise_v2_1(stripIndex + 1) * maxShiftY;
+
+				// Корректируем индекс, если из-за смещения точка улетела в соседнюю полосу
+				if (Y < bottomY) {
+					stripIndex--;
+					topY = bottomY;
+					bottomY = stripIndex * baseHeight + random_noise_v2_1(stripIndex) * maxShiftY;
+				} else if (Y >= topY) {
+					stripIndex++;
+					bottomY = topY;
+					topY = (stripIndex + 1) * baseHeight + random_noise_v2_1(stripIndex + 1) * maxShiftY;
+				}
+
+				// --- 2. ОПРЕДЕЛЯЕМ ВЕРТИКАЛЬНЫЕ СТЫКИ (X) ---
+				let cellIndex = Math.floor(X / baseWidth);
+				
+				// В хэш обязательно идет stripIndex, чтобы в каждой полосе был свой сдвиг вертикальных линий
+				let leftX = cellIndex * baseWidth + random_noise(cellIndex, stripIndex) * maxShiftX;
+				let rightX = (cellIndex + 1) * baseWidth + random_noise(cellIndex + 1, stripIndex) * maxShiftX;
+
+				// Корректируем индекс по X, если точка вылетела за смещенную границу
+				if (X < leftX) {
+					cellIndex--;
+					rightX = leftX;
+					leftX = cellIndex * baseWidth + random_noise(cellIndex, stripIndex) * maxShiftX;
+				} else if (X >= rightX) {
+					cellIndex++;
+					leftX = rightX;
+					rightX = (cellIndex + 1) * baseWidth + random_noise(cellIndex + 1, stripIndex) * maxShiftX;
+				}
+
+				// --- 3. ИНТЕРПОЛЯЦИЯ ГРАДИЕНТА ---
+				const nx = (X - leftX) / (rightX - leftX);
+				const ny = (Y - bottomY) / (topY - bottomY);
+
+				const distX = Math.min(nx, 1.0 - nx);
+				const distY = Math.min(ny, 1.0 - ny);
+
+				return Math.min(distX, distY) * 2.0;
+			};
+			let noise2D_v2_r_v5 = (X, Y) => {
+				//################
+				/**
+				
+				X = Math.floor(X);
+				Y = Math.floor(Y);
+				let c = 0x800000;
+				X /= c;
+				Y /= c;
+				/**/
+				//################
+				const minWidth = 5000000;
+				const maxWidth = 300000000;
+				const minHeight = 3000000;
+				const maxHeight = 150000000;
+
+				// 1. Поиск горизонтальной полосы
+				let currentY = Math.floor(Y / maxHeight) * maxHeight;
+				let bottomY = currentY;
+				let topY = currentY;
+				let stripId = 0;
+
+				while (true) {
+					let noiseY = random_noise_v2_1(currentY);
+					let h = minHeight + Math.floor(noiseY * (maxHeight - minHeight));
+					if (currentY <= Y && currentY + h > Y) {
+						bottomY = currentY;
+						topY = currentY + h;
+						stripId = currentY;
+						break;
+					}
+					currentY += h;
+				}
+
+				// 2. Поиск вертикальных стыков
+				let currentX = Math.floor(X / maxWidth) * maxWidth;
+				let leftX = currentX;
+				let rightX = currentX;
+
+				while (true) {
+					let noiseX = random_noise_v2_1(currentX + stripId * 13.13);
+					let w = minWidth + Math.floor(noiseX * (maxWidth - minWidth));
+					if (currentX <= X && currentX + w > X) {
+						leftX = currentX;
+						rightX = currentX + w;
+						break;
+					}
+					currentX += w;
+				}
+
+				// 3. Вычисление линейного расстояния до ближайшей границы
+				// Нормализуем положение точки от 0.0 до 1.0 внутри этого прямоугольника
+				const nx = (X - leftX) / (rightX - leftX);
+				const ny = (Y - bottomY) / (topY - bottomY);
+
+				// Расстояние до левой/правой границы (от 0.0 на краю до 0.5 в центре по X)
+				const distX = Math.min(nx, 1.0 - nx);
+				
+				// Расстояние до нижней/верхней границы (от 0.0 на краю до 0.5 в центре по Y)
+				const distY = Math.min(ny, 1.0 - ny);
+
+				// Берем минимальное из двух расстояний и умножаем на 2, 
+				// чтобы в самом центре прямоугольника получить ровно 1.0
+				const gradient = Math.min(distX, distY) * 2.0;
+
+				return gradient; 
+			};
+			let noise2D_v2_r_м4 = (x, y) => {
+				//################
+				/**/
+				
+				x = Math.floor(x);
+				y = Math.floor(y);
+				let c = 0x800000;
+				x /= c;
+				y /= c;
+				/**/
+				//################
+				
+				return ((Math.sin(y) * 43758.5453) + 43758.5453) / 43758.5453;
+			};
+			//seed = (Math.random() * 0x100000000) >>> 0;
+			let noise2D_v2_r_v2 = (x, y) => {
+				//################
+				/**/
+				
+				x = Math.floor(x);
+				y = Math.floor(y);
+				let c = 0x800000;
+				x /= c;
+				y /= c;
+				/**/
+				//################
+				/**/
+				x |= 0;
+				y |= 0;
+				x = random_noise_int_1(x & y);
+				y = random_noise_int_1(y);
+				x = Math.floor(x);
+				x /= c;
+				y = Math.floor(y);
+				y /= c;
+				/**/
+
+				let masc = 0x3;
+				let masc_y = 0x5;
+				//x >>>= 0;
+				let result;
+				
+				if((x & masc) === masc || (y & masc_y) === masc_y)result = 0;
+				else result = 1;
+				return result;
+			};
+			//seed = (Math.random() * 0x100000000) >>> 0;
+			let noise2D_v2_r_v1 = (x, y) => {
+				x |= 0;
+				let masc = 0x80000000;
+				let n;
+				let min = 0x40000000;
+				do{
+					n = x & masc;
+					let r = random_noise_int_1(n);
+					if(r < min)break;
+					//min *= 2;
+					masc >>>= 1;
+				}while(masc & 1 ^ 1);
+				masc = ~masc + 1;
+				let n2 = n + masc;
+				//alert((n >>> 0).toString(2) + "\n" + (n2 >>> 0).toString(2));
+				let n_mid = (n2 + n) / 2;
+				let n_3 = (n2 - n) / 2;
+				x -= n_mid;
+				x = Math.abs(x);
+
+				return x / n_3;
+			};
+
+			let grad3 = [
+				[1,1,0], [-1,1,0], [1,-1,0], [-1,-1,0],
+				[1,0,1], [-1,0,1], [1,0,-1], [-1,0,-1],
+				[0,1,1], [0,-1,1], [0,1,-1], [0,-1,-1]
+			];
+			let dot = (g,  x, y, z) => g[0] * x + g[1] * y + g[2] * z;
+			let noise2D_v2_3d = (x, y, z, c = 0x8000000) => {
+				//################
+				/**/
+				x = Math.floor(x);
+				y = Math.floor(y);
+				z = Math.floor(z);
+				x /= c;
+				y /= c;
+				z /= c;
+				/**/
+				//################
+
+				let X = Math.floor(x);
+				let Y = Math.floor(y);
+				let Z = Math.floor(z);
+
+				
+				x -= X;
+				y -= Y;
+				z -= Z;
+
+				const u = fade(x);
+				const v = fade(y);
+				const w = fade(z);
+
+				/**/
+				// Calculate a set of eight hashed gradient indices
+				const perm = permutation;
+				X &= 0xFF;
+				Y &= 0xFF;
+				Z &= 0xFF;
+				let gi000 = perm[X + perm[Y + perm[Z]]] % 12;
+				let gi001 = perm[X + perm[Y + perm[Z + 1]]] % 12;
+				let gi010 = perm[X + perm[Y + 1 + perm[Z]]] % 12;
+				let gi011 = perm[X + perm[Y + 1 + perm[Z + 1]]] % 12;
+				let gi100 = perm[X + 1 + perm[Y + perm[Z]]] % 12;
+				let gi101 = perm[X + 1 + perm[Y + perm[Z + 1]]] % 12;
+				let gi110 = perm[X + 1 + perm[Y + 1 + perm[Z]]] % 12;
+				let gi111 = perm[X + 1 + perm[Y + 1 + perm[Z + 1]]] % 12;
+				/**/
+				/**
+				// Calculate a set of eight hashed gradient indices
+				let gi000 = random_noise_v3(X, Y, Z) % 12;
+				let gi001 = random_noise_v3(X, Y, Z + 1) % 12;
+				let gi010 = random_noise_v3(X, Y + 1, Z) % 12;
+				let gi011 = random_noise_v3(X, Y + 1, Z + 1) % 12;
+				let gi100 = random_noise_v3(X + 1, Y, Z) % 12;
+				let gi101 = random_noise_v3(X + 1, Y, Z + 1) % 12;
+				let gi110 = random_noise_v3(X + 1, Y + 1, Z) % 12;
+				let gi111 = random_noise_v3(X + 1, Y + 1, Z + 1) % 12;
+				/**/
+				let n000 = dot(grad3[gi000], x, y, z);
+				let n100 = dot(grad3[gi100], x - 1, y, z);
+				let n010 = dot(grad3[gi010], x, y - 1, z);
+				let n110 = dot(grad3[gi110], x - 1, y - 1, z);
+				let n001 = dot(grad3[gi001], x, y, z - 1);
+				let n101 = dot(grad3[gi101], x - 1, y, z - 1);
+				let n011 = dot(grad3[gi011], x, y - 1, z - 1);
+				let n111 = dot(grad3[gi111], x - 1, y - 1, z - 1);
+
+				// Interpolate along x the contributions from each of the corners
+				let nx00 = lerp(u, n000, n100);
+				let nx01 = lerp(u, n001, n101);
+				let nx10 = lerp(u, n010, n110);
+				let nx11 = lerp(u, n011, n111);
+				// Interpolate the four results along y
+				let nxy0 = lerp(v, nx00, nx10);
+				let nxy1 = lerp(v, nx01, nx11);
+				// Interpolate the two last results along z
+				let nxyz = lerp(w, nxy0, nxy1);
+
+				return (nxyz + 1.0) / 2.0;
+			};
+
+			let noise2D_test_v1 = (x, y, c = 0x8000000) => {
+				//################
+				/**/
+				x = Math.floor(x);
+				y = Math.floor(y);
+				x /= c;
+				y /= c;
+				/**/
+				//################
+				//let val = (Math.sin(x + y) + Math.cos(y - x * .4) + 2) / 4;
+				//let val = (x ** y - x * y);//random_noise_v2(x, y));//s & 0x1 ? 1: 0;
+				let val = random_noise_v2_1(x) & 0x1 ? 1: 0;
+				
+				return val;
+			};
+
+			//seed = (Math.random() * 0x100000000) >>> 0;
+			let points = [random_noise_int_1_v(0),random_noise_int_1_v(1), random_noise_v2_1(2)];
+			for(let i = 0; i < 9;){
+				points[i] = random_noise_int_1_v(i);
+				i++;
+				points[i] = random_noise_int_1_v(i);
+				i++;
+				points[i] = 1;//random_noise_v2_1(i);
+				i++;
+			}
+			let points_length = points.length;
+			let points_l_3 = points_length / 2;
+			let noise2D_test = (x, y) => {
+				//################
+				/**
+				x = Math.floor(x);
+				y = Math.floor(y);
+				x /= c;
+				y /= c;
+				/**/
+				//################
+				//let val = (Math.sin(x + y) + Math.cos(y - x * .4) + 2) / 4;
+				//let val = (x ** y - x * y);//random_noise_v2(x, y));//s & 0x1 ? 1: 0;
+				let val = 0;
+
+				for(let i = 0; i < points_length; i += 3){
+					let temp = (0x20000000 - ((((points[i] - x) ** 2) + ((points[i + 1] - y) ** 2)) ** .5)) * points[i + 2];
+					if(temp < 0)temp = 0;
+					val += temp;
+					
+				}
+				//val /= points_l_3;
+				
+				return val;
+			};
+
+			let noise2D_int = (x, y) => {
+				
+				x >>= 6;
+				y >>= 6;
+
+				const aa = random_noise(x, y);
+				const ab = random_noise(x - 1, y);
+				const ba = random_noise(x, y - 1);
+				const bb = random_noise(x - 1, y - 1);
+
+				let z = random_noise_int(y, x);
+				y = random_noise(y, x);
+				x = random_noise(z, x);
+				
+				const u = fade(x);
+				const v = fade(y);
+
+				const x1 = lerp(u, grad(aa, x, y), grad(ba, x - 1, y));
+				const x2 = lerp(u, grad(ab, x, y - 1), grad(bb, x - 1, y - 1));
+
+				const val = lerp(v, x1, x2);
+				return (val + 1.0) / 2.0;
+			};
+			//#######################################
+
+
+			// Константы переменные.
+			// Пространство Время.
+			const SPACE_WIDTH = 0xFFFFFFFF;// x
+			const SPACE_HEIGHT = 0xFFFFFFFF;// y
+			const SPACE_DEPTH = 0xFFFFFFFF;// z
+			const SPACE_TIME = 0xFFFFFFFF;// t
+
+			const MIN_WIDTH = -0x80000000;// x
+			const MIN_HEIGHT = -0x80000000;// y
+			const MIN_DEPTH = -0x80000000;// z
+			const MIN_TIME = 0x0;// t
+
+			const MAX_WIDTH = 0x7FFFFFFF;// x
+			const MAX_HEIGHT = 0x7FFFFFFF;// y
+			const MAX_DEPTH = 0x7FFFFFFF;// z
+			const MAX_TIME = 0xFFFFFFFF;// t
+
+			// Ширина и Высота отображения в пикселях.
+			const CANVAS_W = 700;
+			const CANVAS_H = 500;
+
+			// Масштаб
+			const MAX_SCALE = SPACE_WIDTH / CANVAS_H;
+			const MIN_SCALE = 1 / 100;// одно поле / пикселей.
+
+			// Стартовые значения координат время.
+			//let scale = MIN_SCALE;
+			//let scale = 1;
+			let scale = MAX_SCALE;
+			let right_x = CANVAS_W / 2 * scale;
+			let top_y = CANVAS_H / 2 * scale;
+			let current_t = 0;
+			
+			
+			// Константы переменные Канвас.
+			let container;
+			let canvas = createElement('canvas');
+			let ctx = canvas.getContext('2d');
+			ctx.imageSmoothingEnabled = false;// Отключаем сглаживание
+			canvas.width = CANVAS_W;
+			canvas.height = CANVAS_H;
+			
+			let view_data = ctx.createImageData(CANVAS_W, CANVAS_H);
+			let buf_32 = new Uint32Array(view_data.data.buffer);
+			let buf_32_lenhth = buf_32.length;
+			
+			
+			window.onload = () => {
+				
+				document.getElementById("current_time").value = current_t;
+				container = document.getElementById("main_view");
+				
+				container.width = CANVAS_W;
+				container.height = CANVAS_H;
+				container.style.width = CANVAS_W + 'px';
+				container.style.height = CANVAS_H + 'px';
+				container.style.padding = '0';
+				container.style.margin = '0';
+
+				container.innerHTML = '';
+				container.appendChild(canvas);
+				document.getElementById("block").style.marginLeft = (CANVAS_W + 10) + 'px';
+				
+				let isDragging = false;
+
+				canvas.addEventListener('mousedown', (e) => {
+					isDragging = true;
+				});
+
+				canvas.addEventListener('mousemove', (e) => {
+					if(!isDragging){
+						info("x: " + (right_x - e.offsetX * scale) + "<br>y: " + (top_y - e.offsetY * scale));
+						//out("right_x: " + (right_x) + "<br>top_y: " + (top_y));
+						return;
+					}
+					right_x += e.movementX * scale;
+					top_y += e.movementY * scale;
+					drawScene();
+				});
+
+				canvas.addEventListener('mouseup', () => {
+					isDragging = false;
+				});
+				canvas.addEventListener('mouseleave', () => {
+					isDragging = false;
+				});
+				
+				canvas.addEventListener('wheel', (e) => {
+					e.preventDefault();
+					let temp_scale = scale;
+					scale *= e.deltaY < 0 ? .8: 1.2;
+					if(scale < MIN_SCALE)scale = MIN_SCALE;
+					else if(scale > MAX_SCALE)scale = MAX_SCALE;
+
+					temp_scale -= scale;
+					right_x -= e.offsetX * temp_scale;
+					top_y -= e.offsetY * temp_scale;
+
+					out(scale);
+
+					drawScene();
+				}, { passive: false });
+				
+				
+				drawScene();
+				
+			};
+
+			let draw_view_data = () => {// Рисуем в буфер. ABGR.
+				for(let y = 0; y < CANVAS_H; y++){
+					for(let x = 0; x < CANVAS_W; x++){
+						let dx = right_x - x * scale;
+						let dy = top_y - y * scale;
+
+						if(dx > MAX_WIDTH || dx < MIN_WIDTH || dy > MAX_HEIGHT || dy <MIN_HEIGHT){
+							buf_32[y * CANVAS_W + x] = 0xFFAA0000;
+						}else{
+							//let c = noise2D(dx, dy) + (noise2D(dx, dy, 0x8) * .5);
+							//let c = noise2D_v2(dx, dy);
+							//let c = noise2D(dx, dy);
+							//let c = noise2D_test(dx, dy);
+							//let c = noise2D_v2_3d(dx, dy - current_t * .1, current_t * .05, 0x800000);
+							let c = noise2D_v2_r(dx, dy);
+							
+							c *= 0xFF;
+							c &= 0xFF;
+							buf_32[y * CANVAS_W + x] = 0xFF000000 | (c << 16) | (c << 8) | c;
+						}
+						
+					}
+				}
+				
+			};
+
+			function drawScene(){
+				draw_view_data();
+				ctx.putImageData(view_data, 0, 0);
+			}
+			function f_c(t){
+				current_t = t;
+				drawScene();
+				out(current_t);
+			}
+
+			let intervalId = null;
+			let plus = 0x800000;
+
+			function test(){
+				
+				if(intervalId === null){
+					intervalId = setInterval(() => {
+						current_t += plus;
+						if(current_t > MAX_TIME || current_t < MIN_TIME){
+							plus *= -1;
+							current_t += plus;
+						}
+						document.getElementById("current_time").value = current_t;
+						drawScene();
+					}, 100);
+				}else{
+					clearInterval(intervalId);
+					intervalId = null;
+				}
+				out("test");
+			}
+			function out(text){
+				document.getElementById("out").innerHTML = text;
+			}
+			function info(text){
+				document.getElementById("info").innerHTML = text;
+			}
+			
+		</script>
+	</head>
+	<body>
+		<div id="main_view"></div>
+		<div id="block">
+			<input type="button" onclick="test()" value="test" />
+			<br>
+			<input type="range" id="current_time" oninput="f_c(this.valueAsNumber)" min="0" max="4294967295" step="1" value="0">
+			<br>
+			<span id="info">info</span>
+			<br>
+			<span id="out">out</span>
+		</div>
+	</body>
+</html>
